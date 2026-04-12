@@ -5,9 +5,7 @@ import cv2
 import os
 import pandas as pd
 import re
-
 BASE_DIR = os.path.dirname(__file__)
-
 folders = ["clean", "noisy", "tampered"]
 data = []
 

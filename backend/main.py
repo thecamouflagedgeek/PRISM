@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api.routes import router
+from route.routes import router
 app=FastAPI(title="PRISM Backend")
 
 app.include_router(router)

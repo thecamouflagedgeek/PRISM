@@ -1,1 +1,7 @@
-tests/dataset/*.csv
+
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.csv
+*.db
