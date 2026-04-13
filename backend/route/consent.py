@@ -1,14 +1,19 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
 import uuid
 
-#Complinace Layer
-router=APIRouter()
-@router.get("/consent")
-def consent(data:dict):
-    if not data.get("consent"):
-        return {"status":"Blocked"}
-    
-    return{
+router = APIRouter()
+
+class ConsentRequest(BaseModel):
+    user_id: str
+    consent: bool
+
+@router.post("/consent")
+def consent(data: ConsentRequest):
+    if not data.consent:
+        return {"status": "blocked"}
+
+    return {
         "session_id": str(uuid.uuid4()),
-        "status":"Consent Given"
+        "status": "consent_recorded"
     }
