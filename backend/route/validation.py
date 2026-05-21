@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from ingestion.process import process_input
+from ingestion.process import process_document
 router=APIRouter()
 @router.post("/validate")
 def validate(data:dict):
