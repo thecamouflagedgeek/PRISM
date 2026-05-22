@@ -6,10 +6,7 @@ from ingestion.process import process_document
 from features.bank_features import BankFeatureEngineer
 from features.salary_features import SalaryFeatureEngineer
 from features.utility_features import UtilityFeatureEngineer
-
 router = APIRouter()
-
-
 # BANK FEATURES
 
 @router.post("/features/bank")
