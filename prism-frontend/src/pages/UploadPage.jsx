@@ -58,7 +58,7 @@ export default function UploadPage({ go, session, consents, files, setFiles, set
 
   return (
     <div className="dot-grid" style={{ minHeight: "100vh" }}>
-      <Nav currentPage="upload" onLogoClick={() => go("landing")} />
+      <Nav currentPage="results" onLogoClick={() => {localStorage.clear(); go("landing");}}/>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 48px",
         display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, alignItems: "start" }}>

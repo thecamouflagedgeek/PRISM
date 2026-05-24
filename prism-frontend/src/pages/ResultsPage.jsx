@@ -40,7 +40,10 @@ export default function ResultsPage({ go, session, result, setError }) {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
-      <Nav currentPage="results" onLogoClick={() => go("landing")} />
+      <Nav currentPage="results" onLogoClick={() => go("landing")}  onLogout={() => {
+    localStorage.clear();
+    go("landing");
+  }}/>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "48px 48px 80px" }}>
 
