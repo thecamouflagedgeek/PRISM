@@ -76,32 +76,140 @@ export default function LoginPage({ go, setSession }) {
         </div>
 
         {/* Right — visual */}
-        <div className="fade-up-2" style={{ position: "relative", height: 420,
-          display: "flex", justifyContent: "center", alignItems: "center" }}>
+<div
+  className="fade-up-2 dot-overlay"
+  style={{
+    position: "relative",
+    height: 460,
 
-          <div className="blob blob-orange float-anim"
-            style={{ width: 240, height: 280, opacity: 0.6,
-              borderRadius: "55% 45% 65% 35% / 55% 65% 35% 45%" }} />
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
 
-          <div className="blob blob-blue"
-            style={{ width: 130, height: 130, position: "absolute", bottom: 40, right: 20,
-              opacity: 0.5, animation: "float 6s 0.8s ease-in-out infinite" }} />
+    overflow: "hidden",
+  }}
+>
 
-          {/* Session card */}
-          <div style={{ position: "absolute", background: "var(--white)", borderRadius: 14,
-            padding: "16px 20px", boxShadow: "0 16px 40px rgba(0,0,0,0.08)",
-            border: "1px solid var(--border)", top: 40, right: 10, minWidth: 160 }}>
-            <div style={{ fontSize: 10, color: "var(--muted)", textTransform: "uppercase",
-              letterSpacing: "0.1em", marginBottom: 6 }}>Session</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--green)" }} />
-              <span style={{ fontSize: 13, fontWeight: 600, color: "var(--ink)" }}>Secure</span>
-            </div>
-            <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>
-              TLS 1.3 · AES-256
-            </div>
-          </div>
-        </div>
+  {/* ambient glow */}
+  <div
+    style={{
+      position: "absolute",
+
+      width: 320,
+      height: 320,
+
+      borderRadius: "50%",
+
+      background:
+        "radial-gradient(circle, rgba(255,170,120,0.22), rgba(180,120,255,0.16), transparent 72%)",
+
+      filter: "blur(38px)",
+
+      animation: "glowPulse 6s ease-in-out infinite",
+    }}
+  />
+
+  {/* floating particles */}
+  <div className="particle p1" />
+  <div className="particle p2" />
+  <div className="particle p3" />
+
+  {/* prism */}
+  <div className="prism-scene">
+
+    <div className="prism">
+
+      <div className="prism-face prism-front"></div>
+
+      <div className="prism-face prism-left"></div>
+
+      <div className="prism-face prism-right"></div>
+
+      <div className="prism-shine"></div>
+
+    </div>
+
+  </div>
+
+  {/* Session card */}
+  <div
+    style={{
+      position: "absolute",
+
+      background: "rgba(255,255,255,0.72)",
+
+      backdropFilter: "blur(18px)",
+      WebkitBackdropFilter: "blur(18px)",
+
+      borderRadius: 16,
+
+      padding: "16px 20px",
+
+      boxShadow: "0 16px 40px rgba(0,0,0,0.08)",
+
+      border: "1px solid rgba(255,255,255,0.6)",
+
+      top: 40,
+      right: 10,
+
+      minWidth: 170,
+    }}
+  >
+
+    <div
+      style={{
+        fontSize: 10,
+        color: "var(--muted)",
+        textTransform: "uppercase",
+        letterSpacing: "0.1em",
+        marginBottom: 6,
+      }}
+    >
+      Session
+    </div>
+
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+      }}
+    >
+
+      <div
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          background: "var(--green)",
+        }}
+      />
+
+      <span
+        style={{
+          fontSize: 13,
+          fontWeight: 600,
+          color: "var(--ink)",
+        }}
+      >
+        Secure
+      </span>
+
+    </div>
+
+    <div
+      style={{
+        fontSize: 11,
+        color: "var(--muted)",
+        marginTop: 4,
+      }}
+    >
+      TLS 1.3 · AES-256
+    </div>
+
+  </div>
+
+</div>
       </div>
     </div>
   );

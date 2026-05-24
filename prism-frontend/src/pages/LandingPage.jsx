@@ -59,42 +59,132 @@ export default function LandingPage({ go }) {
           </div>
         </div>
 
-        {/* Right — blob sculpture */}
-        <div className="fade-up-2" style={{ display: "flex", justifyContent: "center", alignItems: "center",
-          position: "relative", height: 480 }}>
+        {/* Right — PRISM Sculpture */}
+<div
+  className="fade-up-2 dot-overlay"
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    height: 560,
+    overflow: "hidden",
+  }}
+>
 
-          {/* Main blob */}
-          <div className="blob blob-orange float-anim" style={{ width: 280, height: 320,
-            position: "absolute", top: 60, left: "50%", transform: "translateX(-50%)",
-            opacity: 0.85 }} />
+  {/* floating particles */}
+  <div className="particle p1" />
+  <div className="particle p2" />
+  <div className="particle p3" />
+  <div className="particle p4" />
 
-          {/* Secondary blob */}
-          <div className="blob blob-purple" style={{ width: 140, height: 160,
-            position: "absolute", bottom: 80, right: 40,
-            borderRadius: "40% 60% 50% 70% / 60% 40% 70% 50%",
-            opacity: 0.6, animation: "float 7s 1s ease-in-out infinite" }} />
+  {/* PRISM SCENE */}
+  <div className="prism-scene">
 
-          {/* Score preview card */}
-          <div style={{ position: "absolute", bottom: 60, left: 20, zIndex: 10,
-            background: "var(--white)", borderRadius: 16, padding: "16px 20px",
-            boxShadow: "0 16px 48px rgba(0,0,0,0.1)", border: "1px solid var(--border)",
-            minWidth: 180 }}>
-            <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 500, textTransform: "uppercase",
-              letterSpacing: "0.08em", marginBottom: 4 }}>Risk Score</div>
-            <div className="heading" style={{ fontSize: 36, color: "var(--orange)" }}>742</div>
-            <div style={{ fontSize: 12, color: "var(--green)", fontWeight: 500, marginTop: 2,
-              display: "flex", alignItems: "center", gap: 4 }}>
-              <span>●</span> Medium Risk
-            </div>
-          </div>
+    <div className="prism-glow"></div>
 
-          {/* SHAP tag */}
-          <div style={{ position: "absolute", top: 80, right: 20, zIndex: 10,
-            background: "var(--ink)", borderRadius: 12, padding: "10px 14px",
-            color: "#fff", fontSize: 11, fontWeight: 500, boxShadow: "0 8px 24px rgba(0,0,0,0.2)" }}>
-            + Salary regular · +38 pts
-          </div>
-        </div>
+    <div className="prism">
+
+      <div className="prism-face prism-front"></div>
+
+      <div className="prism-face prism-left"></div>
+
+      <div className="prism-face prism-right"></div>
+
+      <div className="prism-shine"></div>
+
+    </div>
+
+  </div>
+
+  {/* Score preview card */}
+  <div
+    style={{
+      position: "absolute",
+      bottom: 70,
+      left: 10,
+      zIndex: 10,
+
+      background: "rgba(255,255,255,0.72)",
+
+      backdropFilter: "blur(18px)",
+      WebkitBackdropFilter: "blur(18px)",
+
+      borderRadius: 20,
+
+      padding: "18px 22px",
+
+      boxShadow: "0 18px 48px rgba(0,0,0,0.08)",
+
+      border: "1px solid rgba(255,255,255,0.6)",
+
+      minWidth: 190,
+    }}
+  >
+
+    <div
+      style={{
+        fontSize: 11,
+        color: "var(--muted)",
+        fontWeight: 600,
+        textTransform: "uppercase",
+        letterSpacing: "0.08em",
+        marginBottom: 4,
+      }}
+    >
+      Risk Score
+    </div>
+
+    <div
+      className="heading"
+      style={{
+        fontSize: 42,
+        color: "var(--orange)",
+        lineHeight: 1,
+      }}
+    >
+      742
+    </div>
+
+    <div
+      style={{
+        fontSize: 12,
+        color: "var(--green)",
+        fontWeight: 500,
+        marginTop: 6,
+        display: "flex",
+        alignItems: "center",
+        gap: 5,
+      }}
+    >
+      <span>●</span>
+      Medium Risk
+    </div>
+
+  </div>
+
+  {/* SHAP insight */}
+  <div
+    style={{
+      position: "absolute",
+      top: 90,
+      right: 10,
+      zIndex: 10,
+      background: "rgba(16,16,18,0.88)",
+      backdropFilter: "blur(12px)",
+      borderRadius: 14,
+      padding: "12px 16px",
+      color: "#fff",
+      fontSize: 11,
+      fontWeight: 500,
+      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+      border: "1px solid rgba(255,255,255,0.08)",
+    }}
+  >
+    + Salary regular · +38 pts
+  </div>
+
+</div>
       </section>
 
       {/* ── Trusted by ── */}
