@@ -1,9 +1,10 @@
 // src/pages/LandingPage.jsx
 import { Nav } from "../components/Nav";
+import { PageShell } from "../components/PageShell";
 
 export default function LandingPage({ go }) {
   return (
-    <div className="dot-grid" style={{ minHeight: "100vh", background: "var(--cream)" }}>
+<PageShell glowColor="rgba(232,104,58,0.80)">
       <Nav currentPage="landing" onLogoClick={() => {}} />
 
       {/* ── Hero ── */}
@@ -59,132 +60,107 @@ export default function LandingPage({ go }) {
           </div>
         </div>
 
-        {/* Right — PRISM Sculpture */}
-<div
-  className="fade-up-2 dot-overlay"
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    height: 560,
-    overflow: "hidden",
-  }}
->
+        {/* Right — 3D PRISM sculpture */}
+        <div className="fade-up-2 dot-overlay" style={{
+          display: "flex", justifyContent: "center", alignItems: "center",
+          position: "relative", height: 540, overflow: "hidden",
+        }}>
 
-  {/* floating particles */}
-  <div className="particle p1" />
-  <div className="particle p2" />
-  <div className="particle p3" />
-  <div className="particle p4" />
+          {/* Ambient particles */}
+          <div className="particle p1" />
+          <div className="particle p2" />
+          <div className="particle p3" />
+          <div className="particle p4" />
 
-  {/* PRISM SCENE */}
-  <div className="prism-scene">
+          {/* CSS 3D prism */}
+          <div className="prism-scene">
+            <div className="prism-glow" />
+            <div className="prism">
+              <div className="prism-face prism-front" />
+              <div className="prism-face prism-left" />
+              <div className="prism-face prism-right" />
+              <div className="prism-shine" />
+            </div>
+          </div>
 
-    <div className="prism-glow"></div>
+          {/* Spectral light rays below prism */}
+          <div className="spectral-rays">
+            <div className="ray ray-1" />
+            <div className="ray ray-2" />
+            <div className="ray ray-3" />
+            <div className="ray ray-4" />
+            <div className="ray ray-5" />
+            <div className="ray ray-6" />
+          </div>
 
-    <div className="prism">
+          {/* Score card — bottom left */}
+          <div style={{
+            position: "absolute", bottom: 52, left: 8, zIndex: 10,
+            background: "rgba(255,255,255,0.84)",
+            backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+            borderRadius: 20, padding: "18px 22px",
+            boxShadow: "0 20px 52px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.8)",
+            border: "1px solid rgba(255,255,255,0.75)",
+            minWidth: 190, animation: "fadeUp 0.6s 0.8s ease both",
+          }}>
+            <div style={{ fontSize: 10, color: "var(--muted)", fontWeight: 600,
+              textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Risk Score</div>
+            <div className="heading" style={{ fontSize: 44, color: "var(--orange)", lineHeight: 1 }}>742</div>
+            <div style={{ fontSize: 12, color: "var(--green)", fontWeight: 600,
+              marginTop: 6, display: "flex", alignItems: "center", gap: 5 }}>
+              <span style={{ fontSize: 8 }}>●</span> Medium Risk
+            </div>
+            <div style={{ marginTop: 10, height: 3, borderRadius: 2, background: "var(--border)" }}>
+              <div style={{ height: "100%", width: "60%", borderRadius: 2,
+                background: "linear-gradient(90deg, var(--orange), #F59E0B)" }} />
+            </div>
+          </div>
 
-      <div className="prism-face prism-front"></div>
+          {/* SHAP chip — top right */}
+          <div style={{
+            position: "absolute", top: 86, right: 8, zIndex: 10,
+            background: "rgba(17,17,16,0.90)",
+            backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
+            borderRadius: 12, padding: "10px 15px",
+            color: "#fff", fontSize: 12, fontWeight: 500,
+            boxShadow: "0 10px 32px rgba(0,0,0,0.22)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            animation: "fadeUp 0.6s 1.0s ease both",
+            display: "flex", alignItems: "center", gap: 7,
+          }}>
+            <span style={{ color: "var(--green)", fontWeight: 700 }}>+</span>
+            Salary regular · +38 pts
+          </div>
 
-      <div className="prism-face prism-left"></div>
+          {/* Fraud clear chip */}
+          <div style={{
+            position: "absolute", top: 164, right: 8, zIndex: 10,
+            background: "rgba(34,197,94,0.10)",
+            backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
+            borderRadius: 10, padding: "8px 13px",
+            border: "1px solid rgba(34,197,94,0.28)",
+            animation: "fadeUp 0.6s 1.2s ease both",
+            display: "flex", alignItems: "center", gap: 6,
+          }}>
+            <span style={{ fontSize: 11, color: "var(--green)" }}>✓</span>
+            <span style={{ fontSize: 11, color: "var(--green)", fontWeight: 600 }}>No fraud flags</span>
+          </div>
 
-      <div className="prism-face prism-right"></div>
+          {/* Top factor chip — bottom right */}
+          <div style={{
+            position: "absolute", bottom: 100, right: 8, zIndex: 10,
+            background: "rgba(124,92,246,0.10)",
+            backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
+            borderRadius: 10, padding: "9px 13px",
+            border: "1px solid rgba(124,92,246,0.28)",
+            animation: "fadeUp 0.6s 1.4s ease both",
+          }}>
+            <div style={{ fontSize: 10, color: "var(--purple)", fontWeight: 600,
+              textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Top factor</div>
+            <div style={{ fontSize: 11, color: "var(--purple)", fontWeight: 500 }}>EMI discipline · +42 pts</div>
+          </div>
 
-      <div className="prism-shine"></div>
-
-    </div>
-
-  </div>
-
-  {/* Score preview card */}
-  <div
-    style={{
-      position: "absolute",
-      bottom: 70,
-      left: 10,
-      zIndex: 10,
-
-      background: "rgba(255,255,255,0.72)",
-
-      backdropFilter: "blur(18px)",
-      WebkitBackdropFilter: "blur(18px)",
-
-      borderRadius: 20,
-
-      padding: "18px 22px",
-
-      boxShadow: "0 18px 48px rgba(0,0,0,0.08)",
-
-      border: "1px solid rgba(255,255,255,0.6)",
-
-      minWidth: 190,
-    }}
-  >
-
-    <div
-      style={{
-        fontSize: 11,
-        color: "var(--muted)",
-        fontWeight: 600,
-        textTransform: "uppercase",
-        letterSpacing: "0.08em",
-        marginBottom: 4,
-      }}
-    >
-      Risk Score
-    </div>
-
-    <div
-      className="heading"
-      style={{
-        fontSize: 42,
-        color: "var(--orange)",
-        lineHeight: 1,
-      }}
-    >
-      742
-    </div>
-
-    <div
-      style={{
-        fontSize: 12,
-        color: "var(--green)",
-        fontWeight: 500,
-        marginTop: 6,
-        display: "flex",
-        alignItems: "center",
-        gap: 5,
-      }}
-    >
-      <span>●</span>
-      Medium Risk
-    </div>
-
-  </div>
-
-  {/* SHAP insight */}
-  <div
-    style={{
-      position: "absolute",
-      top: 90,
-      right: 10,
-      zIndex: 10,
-      background: "rgba(16,16,18,0.88)",
-      backdropFilter: "blur(12px)",
-      borderRadius: 14,
-      padding: "12px 16px",
-      color: "#fff",
-      fontSize: 11,
-      fontWeight: 500,
-      boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-      border: "1px solid rgba(255,255,255,0.08)",
-    }}
-  >
-    + Salary regular · +38 pts
-  </div>
-
-</div>
+        </div>
       </section>
 
       {/* ── Trusted by ── */}
@@ -278,15 +254,8 @@ export default function LandingPage({ go }) {
                 { n: "03", t: "Feature Engineering", d: "Cashflow CV, payment discipline, employment signals" },
                 { n: "04", t: "Explainable Score",   d: "300–900 score with SHAP reason codes + fraud flags" },
               ].map(({ n, t, d }) => (
-                <div
-  key={n}
-  style={{
-    padding: "20px 18px",
-    borderRadius: "var(--r-md)",
-    border: "1px solid rgba(255,255,255,0.08)",
-    background: "rgba(255,255,255,0.03)"
-  }}
->
+                <div key={n} style={{ padding: "20px 18px", borderRadius: "var(--r-md)",
+                  border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)" }}>
                   <div style={{ fontSize: 11, color: "var(--orange)", fontWeight: 700,
                     fontFamily: "'Syne', sans-serif", marginBottom: 8 }}>{n}</div>
                   <div style={{ fontSize: 14, color: "var(--white)", fontWeight: 600,
@@ -325,6 +294,6 @@ export default function LandingPage({ go }) {
           ))}
         </div>
       </footer>
-    </div>
+    </PageShell>
   );
 }

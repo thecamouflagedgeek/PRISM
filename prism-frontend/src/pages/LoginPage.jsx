@@ -2,13 +2,47 @@
 import { useState } from "react";
 import { Nav } from "../components/Nav";
 
-export default function LoginPage({ go, setSession }) {
-  const [bid, setBid] = useState("");
 
-  const handleContinue = () => {
-    if (!bid.trim()) return;
-    setSession({ borrowerId: bid.trim(), id: null });
-    go("consent");
+const API = import.meta.env.VITE_API_URL || "https://prism-backend-4mfu.onrender.com";
+  
+
+export default function LoginPage({ go, setSession,setError}){
+  const [bid, setBid] = useState("");
+  const [loading, setLoading] = useState(false);
+  const handleContinue = async () => {
+    const borrowerId=bid.trim();
+    if(!borrowerId || loading)
+      return;
+
+    setLoading(true);
+    try
+    {
+      const res=await fetch(`${API}/consent`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json",Accept:"application/json"},body: JSON.stringify({borrower_id:borrowerId,}),
+      });
+      const data=await res.json();
+      if(!res.ok)
+      {
+        throw new Error(data.detail || data.message || "Failed to create session");
+      }
+
+      setSession({ borrowerId, id:data.session_id || data.sessionId || data.id,});
+      go("consent");
+    }
+    catch(err)
+    {
+      console.error("Session creation failed",err);
+      if(setError)
+      {
+        setError(err.message);
+      }
+      alert(err.message ||"Unable to connect to server.");
+    }
+    finally 
+    {
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,7 +89,7 @@ export default function LoginPage({ go, setSession }) {
             <button className="btn-primary btn-orange"
               onClick={handleContinue} disabled={!bid.trim()}
               style={{ padding: "14px 28px", fontSize: 15, alignSelf: "flex-start" }}>
-              Continue to Consent →
+                {loading ? "Creating Session...":" Continue to Consent → "}
             </button>
           </div>
 

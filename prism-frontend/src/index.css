@@ -18,7 +18,7 @@
   --green:    #22C55E;
   --red:      #EF4444;
   --amber:    #F59E0B;
-  --dot-color: rgba(0,0,0,0.07);
+  --dot-color: rgba(0,0,0,0.18);
   --r-sm: 10px;
   --r-md: 16px;
   --r-lg: 24px;
@@ -34,6 +34,25 @@ body {
 }
 
 .app-root { min-height: 100vh; }
+
+/* ── Dot grid background ── */
+.dot-grid {
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(circle, var(--dot-color) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+
+/* Stronger dot grid for hero section */
+.dot-grid-strong {
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(circle, rgba(0,0,0,0.22) 1.4px, transparent 1.4px),
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 22px 22px, 110px 110px, 110px 110px;
+  background-position: 0 0, -1px -1px, -1px -1px;
+}
 
 /* ── Typography ── */
 .display {
@@ -189,12 +208,205 @@ body {
   to   { width: var(--target-w); }
 }
 
+/* 3D Prism rotation */
+@keyframes prism-rotate {
+  0%   { transform: rotateY(0deg)   rotateX(12deg); }
+  25%  { transform: rotateY(90deg)  rotateX(6deg);  }
+  50%  { transform: rotateY(180deg) rotateX(12deg); }
+  75%  { transform: rotateY(270deg) rotateX(6deg);  }
+  100% { transform: rotateY(360deg) rotateX(12deg); }
+}
+
+/* Spectral light beam sweep */
+@keyframes spectral-sweep {
+  0%   { opacity: 0;    transform: translateX(-60px) scaleX(0.4); }
+  20%  { opacity: 0.9;  transform: translateX(0px)   scaleX(1); }
+  60%  { opacity: 0.7;  transform: translateX(40px)  scaleX(1.2); }
+  100% { opacity: 0;    transform: translateX(120px) scaleX(0.4); }
+}
+
+/* Rainbow shimmer on prism faces */
+@keyframes rainbow-face {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+/* Floating particles */
+@keyframes particle-float {
+  0%   { transform: translateY(0px)   translateX(0px)   scale(1);    opacity: 0.6; }
+  33%  { transform: translateY(-18px) translateX(8px)   scale(1.15); opacity: 0.9; }
+  66%  { transform: translateY(-8px)  translateX(-10px) scale(0.9);  opacity: 0.7; }
+  100% { transform: translateY(0px)   translateX(0px)   scale(1);    opacity: 0.6; }
+}
+
+/* Glow pulse */
+@keyframes glow-pulse {
+  0%,100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 0.75; transform: scale(1.08); }
+}
+
+/* Light refraction rays */
+@keyframes ray-fan {
+  0%   { opacity: 0;   transform: rotate(-15deg) scaleY(0.6); }
+  30%  { opacity: 0.7; transform: rotate(0deg)   scaleY(1); }
+  70%  { opacity: 0.5; transform: rotate(8deg)   scaleY(1.1); }
+  100% { opacity: 0;   transform: rotate(20deg)  scaleY(0.6); }
+}
+
 .fade-up   { animation: fadeUp 0.5s ease forwards; }
 .fade-up-1 { animation: fadeUp 0.5s 0.1s ease both; }
 .fade-up-2 { animation: fadeUp 0.5s 0.2s ease both; }
 .fade-up-3 { animation: fadeUp 0.5s 0.3s ease both; }
 .fade-up-4 { animation: fadeUp 0.5s 0.4s ease both; }
 .float-anim { animation: float 5s ease-in-out infinite; }
+
+/* ── 3D Prism scene ── */
+.prism-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+  perspective-origin: 50% 40%;
+}
+
+.prism-glow {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(232,104,58,0.28) 0%,
+    rgba(124,92,246,0.18) 40%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  animation: glow-pulse 3.5s ease-in-out infinite;
+}
+
+.prism {
+  position: relative;
+  width: 140px;
+  height: 170px;
+  transform-style: preserve-3d;
+  animation: prism-rotate 10s linear infinite;
+}
+
+/* Triangular prism faces using clip-path + 3D transform */
+.prism-face {
+  position: absolute;
+  width: 140px;
+  height: 170px;
+  background-size: 300% 300%;
+  animation: rainbow-face 4s ease infinite;
+}
+
+.prism-front {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.95) 0%,
+    rgba(232,104,58,0.6)  25%,
+    rgba(255,200,100,0.7) 45%,
+    rgba(124,92,246,0.6)  65%,
+    rgba(56,189,248,0.7)  80%,
+    rgba(255,255,255,0.9) 100%
+  );
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  transform: translateZ(50px);
+  filter: drop-shadow(0 0 20px rgba(232,104,58,0.4));
+  animation: rainbow-face 4s ease infinite;
+}
+
+.prism-left {
+  background: linear-gradient(
+    180deg,
+    rgba(124,92,246,0.85) 0%,
+    rgba(56,189,248,0.7)  50%,
+    rgba(34,197,94,0.6)   100%
+  );
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  transform: rotateY(-60deg) translateZ(28px);
+  opacity: 0.8;
+}
+
+.prism-right {
+  background: linear-gradient(
+    180deg,
+    rgba(255,200,80,0.85) 0%,
+    rgba(232,104,58,0.7)  50%,
+    rgba(239,68,68,0.6)   100%
+  );
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  transform: rotateY(60deg) translateZ(28px);
+  opacity: 0.8;
+}
+
+/* Glass-like shine overlay */
+.prism-shine {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.7) 0%,
+    rgba(255,255,255,0.1) 40%,
+    transparent 60%
+  );
+  transform: translateZ(51px);
+}
+
+/* Spectral light rays emitted from prism */
+.spectral-rays {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 120px;
+  pointer-events: none;
+}
+
+.ray {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 2px;
+  border-radius: 2px;
+  transform-origin: left center;
+  opacity: 0;
+}
+
+.ray-1 { width: 90px;  background: rgba(239,68,68,0.7);   transform: rotate(-35deg); animation: ray-fan 3.5s 0.0s ease-in-out infinite; }
+.ray-2 { width: 100px; background: rgba(249,115,22,0.7);  transform: rotate(-22deg); animation: ray-fan 3.5s 0.2s ease-in-out infinite; }
+.ray-3 { width: 110px; background: rgba(234,179,8,0.7);   transform: rotate(-10deg); animation: ray-fan 3.5s 0.4s ease-in-out infinite; }
+.ray-4 { width: 110px; background: rgba(34,197,94,0.7);   transform: rotate(2deg);  animation: ray-fan 3.5s 0.6s ease-in-out infinite; }
+.ray-5 { width: 100px; background: rgba(56,189,248,0.7);  transform: rotate(14deg); animation: ray-fan 3.5s 0.8s ease-in-out infinite; }
+.ray-6 { width: 90px;  background: rgba(124,92,246,0.7);  transform: rotate(28deg); animation: ray-fan 3.5s 1.0s ease-in-out infinite; }
+
+/* Floating particles */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.p1 { width:10px; height:10px; background: var(--orange);  top:18%; left:18%; opacity:0.7; animation: particle-float 4.0s 0.0s ease-in-out infinite; }
+.p2 { width: 7px; height: 7px; background: var(--purple);  top:25%; right:20%; opacity:0.6; animation: particle-float 5.2s 0.7s ease-in-out infinite; }
+.p3 { width: 5px; height: 5px; background: #38BDF8;        bottom:30%; left:25%; opacity:0.5; animation: particle-float 3.8s 1.3s ease-in-out infinite; }
+.p4 { width: 8px; height: 8px; background: #22C55E;        bottom:22%; right:18%; opacity:0.65; animation: particle-float 4.6s 0.4s ease-in-out infinite; }
+
+/* Dot overlay on hero column */
+.dot-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(0,0,0,0.15) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+  pointer-events: none;
+  z-index: 0;
+}
 
 /* ── Form inputs ── */
 .input-field {
@@ -272,361 +484,3 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--cream); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-/* ================================================= */
-/* SCENE */
-/* ================================================= */
-
-.prism-scene {
-
-  position: relative;
-
-  width: 420px;
-  height: 420px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ================================================= */
-/* AMBIENT GLOW */
-/* ================================================= */
-
-.prism-glow {
-
-  position: absolute;
-
-  width: 320px;
-  height: 320px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(255,180,120,0.22),
-      rgba(200,140,255,0.16),
-      transparent 72%
-    );
-
-  filter: blur(40px);
-
-  animation:
-    glowPulse 6s ease-in-out infinite;
-}
-
-/* ================================================= */
-/* PRISM */
-/* ================================================= */
-
-.prism {
-
-  position: relative;
-
-  width: 220px;
-  height: 280px;
-
-  transform-style: preserve-3d;
-
-  animation:
-    prismFloat 6s ease-in-out infinite,
-    prismRotate 18s linear infinite;
-}
-
-/* ================================================= */
-/* PRISM FACES */
-/* ================================================= */
-
-.prism-face {
-
-  position: absolute;
-
-  width: 220px;
-  height: 280px;
-
-  clip-path: polygon(
-    50% 0%,
-    0% 100%,
-    100% 100%
-  );
-
-  border:
-    1px solid rgba(255,255,255,0.28);
-
-  backdrop-filter: blur(12px);
-
-  box-shadow:
-    inset 0 0 12px rgba(255,255,255,0.18),
-    0 10px 30px rgba(0,0,0,0.06);
-}
-
-/* FRONT */
-
-.prism-front {
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,210,170,0.95),
-      rgba(255,170,130,0.72),
-      rgba(220,160,255,0.65),
-      rgba(170,210,255,0.35)
-    );
-
-  transform:
-    translateZ(40px);
-}
-
-/* LEFT */
-
-.prism-left {
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,160,120,0.82),
-      rgba(210,120,255,0.55)
-    );
-
-  opacity: 0.88;
-
-  transform:
-    rotateY(-68deg)
-    translateZ(18px);
-}
-
-/* RIGHT */
-
-.prism-right {
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,245,250,0.92),
-      rgba(255,220,180,0.75),
-      rgba(220,180,255,0.45)
-    );
-
-  opacity: 0.92;
-
-  transform:
-    rotateY(68deg)
-    translateZ(18px);
-}
-
-/* ================================================= */
-/* SHINE */
-/* ================================================= */
-
-.prism-shine {
-
-  position: absolute;
-
-  top: 20px;
-  left: 60px;
-
-  width: 40px;
-  height: 200px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.75),
-      rgba(255,255,255,0)
-    );
-
-  filter: blur(10px);
-
-  transform:
-    rotate(8deg);
-
-  opacity: 0.8;
-}
-
-/* ================================================= */
-/* ANIMATIONS */
-/* ================================================= */
-
-@keyframes prismRotate {
-
-  0% {
-
-    transform:
-      rotateY(0deg)
-      rotateX(-8deg);
-  }
-
-  100% {
-
-    transform:
-      rotateY(360deg)
-      rotateX(-8deg);
-  }
-}
-
-@keyframes prismFloat {
-
-  0%,100% {
-
-    translate: 0 0;
-  }
-
-  50% {
-
-    translate: 0 -12px;
-  }
-}
-
-@keyframes glowPulse {
-
-  0%,100% {
-
-    opacity: 0.75;
-    transform: scale(1);
-  }
-
-  50% {
-
-    opacity: 1;
-    transform: scale(1.08);
-  }
-}
-
-/* ================================================= */
-/* PREMIUM DOTTED GLOW BACKGROUND */
-/* ================================================= */
-
-.dot-grid {
-
-  position: relative;
-
-  overflow: hidden;
-
-  background-color: #f7f6f3;
-}
-
-/* animated dotted layer */
-
-.dot-grid::before {
-
-  content: "";
-
-  position: absolute;
-  inset: 0;
-
-  background-image:
-    radial-gradient(
-      rgba(0,0,0,0.11) 1px,
-      transparent 1px
-    );
-
-  background-size: 24px 24px;
-
-  opacity: 0.55;
-
-  pointer-events: none;
-
-  animation:
-    dotDrift 24s linear infinite;
-}
-
-/* glowing layer */
-
-.dot-grid::after {
-
-  content: "";
-
-  position: absolute;
-  inset: -20%;
-
-  background:
-    radial-gradient(
-      circle at 20% 20%,
-      rgba(255,180,120,0.16),
-      transparent 28%
-    ),
-
-    radial-gradient(
-      circle at 80% 30%,
-      rgba(190,140,255,0.14),
-      transparent 30%
-    ),
-
-    radial-gradient(
-      circle at 60% 80%,
-      rgba(255,210,180,0.12),
-      transparent 30%
-    );
-
-  filter: blur(70px);
-
-  animation:
-    ambientMove 18s ease-in-out infinite alternate;
-
-  pointer-events: none;
-}
-
-/* ================================================= */
-/* DOT OVERLAY */
-/* ================================================= */
-
-.dot-overlay {
-
-  position: relative;
-}
-
-.dot-overlay::before {
-
-  content: "";
-
-  position: absolute;
-  inset: 0;
-
-  background-image:
-    radial-gradient(
-      rgba(0,0,0,0.05) 1px,
-      transparent 1px
-    );
-
-  background-size: 22px 22px;
-
-  opacity: 0.22;
-
-  pointer-events: none;
-}
-
-/* ================================================= */
-/* ANIMATIONS */
-/* ================================================= */
-
-@keyframes dotDrift {
-
-  0% {
-
-    transform: translateY(0px);
-  }
-
-  100% {
-
-    transform: translateY(24px);
-  }
-}
-
-@keyframes ambientMove {
-
-  0% {
-
-    transform:
-      translateX(-2%)
-      translateY(-2%)
-      scale(1);
-  }
-
-  100% {
-
-    transform:
-      translateX(2%)
-      translateY(2%)
-      scale(1.08);
-  }
-}

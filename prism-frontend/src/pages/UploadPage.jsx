@@ -2,41 +2,55 @@
 import { useRef } from "react";
 import { Nav } from "../components/Nav";
 
-const BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+const BASE = import.meta.env.VITE_API_URL || "https://prism-backend-4mfu.onrender.com";
 
 export default function UploadPage({ go, session, consents, files, setFiles, setResult, setError }) {
 
   const slots = [
-    { key: "bank",    label: "Bank Statement",  icon: "🏦", required: true,  enabled: consents.bank,
+    { key: "bank",    label: "Bank Statement",required: true,  enabled: consents.bank,
       desc: "Last 6–12 months. PDF format. Any Indian bank." },
-    { key: "salary",  label: "Salary Slip",     icon: "💼", required: false, enabled: consents.salary,
+    { key: "salary",  label: "Salary Slip",required: false, enabled: consents.salary,
       desc: "Last 3 months. Improves income verification." },
-    { key: "utility", label: "Utility Bill",    icon: "⚡", required: false, enabled: consents.utility,
+    { key: "utility", label: "Utility Bill",required: false, enabled: consents.utility,
       desc: "Electricity, water, or telecom. Any provider." },
   ];
 
   const canProceed = files.bank !== null;
 
-  const handleSubmit = async () => {
+  const handleSubmit=async() => {
     go("processing");
-    try {
-      const form = new FormData();
-      form.append("bank_file", files.bank);
-      if (files.salary)  form.append("salary_file",  files.salary);
-      if (files.utility) form.append("utility_file", files.utility);
+    try
+    {
+      if(!session?.id)
+      {
+        throw new Errow("Session not found. Please login again");
+      }
+      const form=new FormData();
+      form.append("bank_file",files.bank);
+      if(files.salary)
+      {
+        form.append("salary_file",files.salary);
+      }
+      if(files.utility)
+      {
+        form.append("utility_file",files.utility);
+      }
 
-      const res = await fetch(`${BASE}/assess`, {
-  method: "POST",
-  headers: {
-    "session-id": session.id
-  },
-  body: form
-});
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail?.message || "Assessment failed");
+      const res=await fetch(`${BASE}/assess`,{method:"POST",
+        headers:{"session-id":session.id,},
+        body:form,
+      });
+      const data=await res.json();
+      if(!res.ok)
+      {
+        throw new Error(data.detail || data.message || "Assessment failed");
+      }
       setResult(data);
       go("results");
-    } catch (e) {
+    }
+    catch(e) 
+    {
+      console.error("Assessment error",e);
       setError(e.message);
       go("upload");
     }
