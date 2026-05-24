@@ -1,5 +1,4 @@
-// src/components/Nav.jsx
-
+import { useLanguage } from "../components/LanguageContext";
 const STEPS = [
   { key: "login",   label: "Login"   },
   { key: "consent", label: "Consent" },
@@ -9,6 +8,7 @@ const STEPS = [
 
 export function Nav({ currentPage, onLogoClick }) {
   const stepKeys = STEPS.map(s => s.key);
+  const { language, toggleLanguage } = useLanguage();
   const currentIdx = stepKeys.indexOf(
     currentPage === "processing" ? "upload" : currentPage
   );
@@ -52,6 +52,16 @@ export function Nav({ currentPage, onLogoClick }) {
             </button>
           </>
         )}
+        <button
+  onClick={toggleLanguage}
+  className="btn-outline"
+  style={{
+    fontSize: 12,
+    padding: "8px 14px"
+  }}
+>
+  {language === "en" ? "हिंदी" : "English"}
+</button>
         {currentPage !== "landing" && (
           <div style={{ fontSize: 12, color: "var(--muted)", display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--green)" }} />

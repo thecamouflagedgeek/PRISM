@@ -5,20 +5,15 @@ const BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 const CONSENT_ITEMS = [
   { key: "bank",    label: "Bank Statement Access",       required: true,
-    desc: "We will extract transaction data, cashflow signals, and income patterns from your bank statement.",
-    icon: "🏦" },
+    desc: "We will extract transaction data, cashflow signals, and income patterns from your bank statement."},
   { key: "salary",  label: "Salary Slip Access",          required: false,
-    desc: "Optional. Improves scoring accuracy by adding employment income verification.",
-    icon: "💼" },
+    desc: "Optional. Improves scoring accuracy by adding employment income verification."},
   { key: "utility", label: "Utility Bill Access",         required: false,
-    desc: "Optional. Payment discipline score from electricity, water, and telecom bills.",
-    icon: "⚡" },
+    desc: "Optional. Payment discipline score from electricity, water, and telecom bills."},
   { key: "bureau",  label: "Credit Bureau Pull",          required: false,
-    desc: "Optional. Adds CIBIL/bureau data to your assessment if available.",
-    icon: "📊" },
+    desc: "Optional. Adds CIBIL/bureau data to your assessment if available."},
   { key: "dpdpa",   label: "DPDPA 2023 Acknowledgement",  required: true,
-    desc: "You acknowledge that your data will be processed under India's Digital Personal Data Protection Act, 2023.",
-    icon: "📋" },
+    desc: "You acknowledge that your data will be processed under India's Digital Personal Data Protection Act, 2023."},
 ];
 
 export default function ConsentPage({ go, session, setSession, consents, setConsents, setError }) {

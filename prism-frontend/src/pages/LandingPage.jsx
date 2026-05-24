@@ -1,8 +1,13 @@
 // src/pages/LandingPage.jsx
 import { Nav } from "../components/Nav";
 import { PageShell } from "../components/PageShell";
+import { useLanguage } from "../components/LanguageContext";
+import { translations } from "../translations";
 
 export default function LandingPage({ go }) {
+  const { language } = useLanguage();
+  const t = translations[language];
+  
   return (
 <PageShell glowColor="rgba(232,104,58,0.80)">
       <Nav currentPage="landing" onLogoClick={() => {}} />
@@ -22,25 +27,44 @@ export default function LandingPage({ go }) {
             </span>
           </div>
 
-          <h1 className="display fade-up-1" style={{ fontSize: "clamp(44px, 5vw, 64px)", color: "var(--ink)", marginBottom: 16 }}>
-            It's The{" "}
-            <span style={{ color: "var(--orange)" }}>Smarter</span>{" "}
-            Way To Assess Credit.
-          </h1>
+          <h1>{t.heroTitle}</h1>
 
-          <p className="fade-up-2" style={{ fontSize: 17, color: "var(--muted)", lineHeight: 1.65,
-            maxWidth: 420, marginBottom: 36, fontWeight: 300 }}>
-            PRISM replaces bureau-only scoring with multi-modal AI — bank behaviour,
-            employment continuity, and payment discipline in one explainable score.
-          </p>
+<p>{t.heroDesc}</p>
+
+<button>{t.getStarted}</button>
+
+          <h1
+  className="display fade-up-1"
+  style={{
+    fontSize: "clamp(44px,5vw,64px)",
+    color: "var(--ink)",
+    marginBottom: 16,
+  }}
+>
+  {t.heroTitle}
+</h1>
+
+          <p
+  className="fade-up-2"
+  style={{
+    fontSize: 17,
+    color: "var(--muted)",
+    lineHeight: 1.65,
+    maxWidth: 420,
+    marginBottom: 36,
+    fontWeight: 300,
+  }}
+>
+  {t.heroDesc}
+</p>
 
           <div className="fade-up-3" style={{ display: "flex", gap: 12, alignItems: "center" }}>
             <button className="btn-primary btn-orange" onClick={() => go("login")}
               style={{ padding: "13px 28px", fontSize: 15 }}>
-              Get Started →
+              {t.getStarted} →
             </button>
             <button className="btn-outline" style={{ padding: "12px 22px" }}>
-              View Demo
+              {t.viewDemo}
             </button>
           </div>
 
@@ -93,7 +117,7 @@ export default function LandingPage({ go }) {
             <div className="ray ray-6" />
           </div>
 
-          {/* Score card — bottom left */}
+          {/* Score card — bottom left 
           <div style={{
             position: "absolute", bottom: 52, left: 8, zIndex: 10,
             background: "rgba(255,255,255,0.84)",
@@ -114,9 +138,9 @@ export default function LandingPage({ go }) {
               <div style={{ height: "100%", width: "60%", borderRadius: 2,
                 background: "linear-gradient(90deg, var(--orange), #F59E0B)" }} />
             </div>
-          </div>
+          </div>*/}
 
-          {/* SHAP chip — top right */}
+          {/* SHAP chip — top right 
           <div style={{
             position: "absolute", top: 86, right: 8, zIndex: 10,
             background: "rgba(17,17,16,0.90)",
@@ -130,9 +154,9 @@ export default function LandingPage({ go }) {
           }}>
             <span style={{ color: "var(--green)", fontWeight: 700 }}>+</span>
             Salary regular · +38 pts
-          </div>
+          </div>*/}
 
-          {/* Fraud clear chip */}
+          {/* Fraud clear chip
           <div style={{
             position: "absolute", top: 164, right: 8, zIndex: 10,
             background: "rgba(34,197,94,0.10)",
@@ -144,9 +168,9 @@ export default function LandingPage({ go }) {
           }}>
             <span style={{ fontSize: 11, color: "var(--green)" }}>✓</span>
             <span style={{ fontSize: 11, color: "var(--green)", fontWeight: 600 }}>No fraud flags</span>
-          </div>
+          </div>*/}
 
-          {/* Top factor chip — bottom right */}
+          {/* Top factor chip — bottom right
           <div style={{
             position: "absolute", bottom: 100, right: 8, zIndex: 10,
             background: "rgba(124,92,246,0.10)",
@@ -158,7 +182,7 @@ export default function LandingPage({ go }) {
             <div style={{ fontSize: 10, color: "var(--purple)", fontWeight: 600,
               textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Top factor</div>
             <div style={{ fontSize: 11, color: "var(--purple)", fontWeight: 500 }}>EMI discipline · +42 pts</div>
-          </div>
+          </div>*/}
 
         </div>
       </section>

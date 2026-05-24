@@ -85,10 +85,10 @@ export default function UploadPage({ go, session, consents, files, setFiles, set
               What happens next
             </div>
             {[
-              { icon: "📄", label: "Parse",            sub: "pdfplumber / PyMuPDF" },
-              { icon: "✅", label: "Validate",         sub: "Field confidence scoring" },
-              { icon: "⚙️",  label: "Feature engineer", sub: "Cashflow, discipline, employment" },
-              { icon: "📊", label: "Score",            sub: "300–900 with SHAP reasons" },
+              {label: "Parse",            sub: "pdfplumber / PyMuPDF" },
+              {  label: "Validate",         sub: "Field confidence scoring" },
+              { label: "Feature engineer", sub: "Cashflow, discipline, employment" },
+              { label: "Score",            sub: "300–900 with SHAP reasons" },
             ].map(({ icon, label, sub }, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 12,
                 padding: "8px 0",

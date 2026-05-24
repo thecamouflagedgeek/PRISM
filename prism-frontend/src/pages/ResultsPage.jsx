@@ -36,6 +36,7 @@ export default function ResultsPage({ go, session, result, setError }) {
   };
 
   if (!result) return null;
+  console.log(result);
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
@@ -137,10 +138,25 @@ export default function ResultsPage({ go, session, result, setError }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 16,
             padding: "0 0 0 32px", borderLeft: "1px solid var(--border)" }}>
             {[
-              { label: "Confidence",  value: `${(result.confidence_score * 100).toFixed(0)}%` },
-              { label: "Coverage",    value: `${result.data_quality?.feature_coverage}%` },
-              { label: "Fraud flags", value: result.fraud_flags?.length || 0 },
-            ].map(({ label, value }) => (
+  {
+    label: "Confidence",
+    value:
+      result.confidence_score != null
+        ? `${(result.confidence_score * 100).toFixed(0)}%`
+        : "N/A",
+  },
+  {
+    label: "Coverage",
+    value:
+      result.data_quality?.feature_coverage != null
+        ? `${result.data_quality.feature_coverage}%`
+        : "N/A",
+  },
+  {
+    label: "Fraud flags",
+    value: result.fraud_flags?.length ?? 0,
+  },
+].map(({ label, value }) => (
               <div key={label}>
                 <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 500,
                   textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>{label}</div>
