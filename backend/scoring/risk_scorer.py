@@ -174,7 +174,81 @@ def compute_risk_score(
 
     # 6. IV SUMMARY (FEATURE IMPORTANCE)
     iv = IV_TABLE
+        # =========================================================
+    # EXPLANATION LAYER (NEW - SAFE ADDITION)
+    # =========================================================
 
+    reason_codes = []
+    shap_reasons = []
+
+    # -------------------------
+    # BANK REASONS
+    # -------------------------
+    if bank:
+        cdr = bank.get("credit_debit_ratio")
+        cv = bank.get("cashflow_cv")
+
+        reason_codes.append({
+            "factor": "Credit-Debit Ratio",
+            "value": cdr,
+            "impact": "positive" if cdr and cdr > 1.2 else "negative"
+        })
+
+        reason_codes.append({
+            "factor": "Cashflow Stability",
+            "value": cv,
+            "impact": "positive" if cv and cv < 0.5 else "negative"
+        })
+
+        shap_reasons.extend([
+            {
+                "factor": "Credit-Debit Ratio (WoE)",
+                "value": cdr,
+                "source": "Bank Statement"
+            },
+            {
+                "factor": "Cashflow CV (WoE)",
+                "value": cv,
+                "source": "Bank Statement"
+            }
+        ])
+
+    # -------------------------
+    # SALARY REASONS
+    # -------------------------
+    if salary:
+        ngr = salary.get("net_to_gross_ratio")
+
+        reason_codes.append({
+            "factor": "Income Stability",
+            "value": ngr,
+            "impact": "positive" if ngr and ngr > 0.7 else "negative"
+        })
+
+        shap_reasons.append({
+            "factor": "Net to Gross Ratio",
+            "value": ngr,
+            "source": "Salary Slip"
+        })
+
+    # -------------------------
+    # UTILITY REASONS
+    # -------------------------
+    if utility:
+        flag = utility.get("payment_discipline_flag")
+
+        reason_codes.append({
+            "factor": "Utility Discipline",
+            "value": flag,
+            "impact": "positive" if flag else "negative"
+        })
+
+        shap_reasons.append({
+            "factor": "Payment Discipline",
+            "value": flag,
+            "source": "Utility Bill"
+        })
+        
     return {
         "risk_score": score,
         "probability_of_default": round(pd, 4),
