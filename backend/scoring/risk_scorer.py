@@ -248,13 +248,20 @@ def compute_risk_score(
             "value": flag,
             "source": "Utility Bill"
         })
-        
-    return {
+
+        return {
         "risk_score": score,
         "probability_of_default": round(pd, 4),
         "risk_tier": tier,
         "confidence_score": confidence,
         "iv_scores": iv,
         "model_type": "WoE_Logistic_Scorecard",
-        "notes": "Production-style scorecard using WoE + logistic PD scaling"
+        "notes": "Production-style scorecard using WoE + logistic PD scaling",
+        "reason_codes": reason_codes,
+        "shap_reasons": shap_reasons,
+        "features": {
+            "bank": bank,
+            "salary": salary,
+            "utility": utility
+        }
     }
