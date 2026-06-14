@@ -52,7 +52,7 @@ def woe(value, bins):
     return 0.0
 
 def sigmoid(x):
-    x=max((min,x,500),-500)
+    x=max(min(x,500),-500)
     return 1 / (1 + math.exp(-x))
 
 
