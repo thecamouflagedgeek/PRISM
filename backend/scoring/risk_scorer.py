@@ -2,11 +2,6 @@ from typing import Dict, List, Optional
 import math
 import numpy as np
 
-
-# =========================================================
-# CONFIG (FINTECH SCORECARD PARAMETERS)
-# =========================================================
-
 BASE_POINTS = 600
 PDO = 50          # points to double odds
 BASE_ODDS = 1/20  # industry standard starting odds
@@ -14,10 +9,6 @@ BASE_ODDS = 1/20  # industry standard starting odds
 FACTOR = PDO / math.log(2)
 OFFSET = BASE_POINTS - FACTOR * math.log(BASE_ODDS)
 
-
-# =========================================================
-# WOE TABLES (YOU WILL LATER TRAIN THESE FROM DATA)
-# =========================================================
 
 WOE_TABLES = {
     "credit_debit_ratio": [
@@ -50,10 +41,6 @@ IV_TABLE = {
 }
 
 
-# =========================================================
-# SAFE WOE FUNCTION
-# =========================================================
-
 def woe(value, bins):
     if value is None:
         return 0.0
@@ -64,12 +51,8 @@ def woe(value, bins):
 
     return 0.0
 
-
-# =========================================================
-# LOGISTIC MODEL (PD ESTIMATION CORE)
-# =========================================================
-
 def sigmoid(x):
+    x=max((min,x,500),-500)
     return 1 / (1 + math.exp(-x))
 
 
@@ -98,19 +81,9 @@ def compute_log_odds(bank, salary, utility):
 
     return score
 
-
-# =========================================================
-# SCORE TRANSLATION (LOG ODDS → CREDIT SCORE)
-# =========================================================
-
 def to_credit_score(log_odds: float) -> int:
     score = OFFSET + FACTOR * log_odds
     return int(max(300, min(900, score)))
-
-
-# =========================================================
-# CONFIDENCE MODEL (REAL VERSION)
-# =========================================================
 
 def compute_confidence(bank, salary, utility):
 
@@ -138,11 +111,6 @@ def compute_confidence(bank, salary, utility):
         0.2 * utility_q,
         2
     )
-
-
-# =========================================================
-# MAIN ENGINE (PRODUCTION SCORECARD)
-# =========================================================
 
 def compute_risk_score(
     bank: Optional[dict],
@@ -172,18 +140,10 @@ def compute_risk_score(
     else:
         tier = "Very High Risk"
 
-    # 6. IV SUMMARY (FEATURE IMPORTANCE)
     iv = IV_TABLE
-        # =========================================================
-    # EXPLANATION LAYER (NEW - SAFE ADDITION)
-    # =========================================================
-
     reason_codes = []
     shap_reasons = []
 
-    # -------------------------
-    # BANK REASONS
-    # -------------------------
     if bank:
         cdr = bank.get("credit_debit_ratio")
         cv = bank.get("cashflow_cv")
@@ -213,9 +173,6 @@ def compute_risk_score(
             }
         ])
 
-    # -------------------------
-    # SALARY REASONS
-    # -------------------------
     if salary:
         ngr = salary.get("net_to_gross_ratio")
 
@@ -231,9 +188,6 @@ def compute_risk_score(
             "source": "Salary Slip"
         })
 
-    # -------------------------
-    # UTILITY REASONS
-    # -------------------------
     if utility:
         flag = utility.get("payment_discipline_flag")
 
@@ -249,11 +203,11 @@ def compute_risk_score(
             "source": "Utility Bill"
         })
 
-        return {
+    return {
         "risk_score": score,
         "probability_of_default": round(pd, 4),
         "risk_tier": tier,
-        "confidence_score": confidence,
+        "confidence_score": round(confidence*100,2),
         "iv_scores": iv,
         "model_type": "WoE_Logistic_Scorecard",
         "notes": "Production-style scorecard using WoE + logistic PD scaling",

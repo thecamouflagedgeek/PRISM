@@ -1,4 +1,4 @@
-// src/pages/ResultsPage.jsx
+
 import { useState } from "react";
 import { Nav } from "../components/Nav";
 
