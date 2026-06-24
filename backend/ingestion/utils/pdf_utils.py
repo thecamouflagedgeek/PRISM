@@ -1,7 +1,7 @@
 import pdfplumber
 import fitz
 
-def extract_txt_pdfplumbr(pdf_path):
+def extract_txt_pdfplumber(pdf_path):
     text = ""
 
     with pdfplumber.open(pdf_path) as pdf:
