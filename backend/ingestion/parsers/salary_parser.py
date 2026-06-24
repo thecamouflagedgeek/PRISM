@@ -24,9 +24,9 @@ class SalaryParser:
         
         if hasattr(self.ocr, "clean_text"):
             full_text = self.ocr.clean_text(full_text)
-        
-        if not salary_data:
-            return pd.DataFrame([{"employer":None, "pay_period":None,"gross_salary":0,"net_salary":0}])
+            
+        if not full_text.strip():
+            return pd.DataFrame([{"employer": None,"pay_period": None,"gross_salary": 0,"net_salary": 0}])
         
         salary_data = {}
 

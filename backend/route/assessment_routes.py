@@ -1,111 +1,50 @@
-from fastapi import APIRouter, UploadFile, File, Header, HTTPException,Depends
-import tempfile, os
-from datetime import datetime
-import pandas as pd
-from core.session_store import get_session
-from ingestion.parsers.bank_parser import BankParser
+from fastapi import APIRouter, Request, HTTPException
+from ingestion.parsers.bank_parser import BankParser 
 from ingestion.parsers.salary_parser import SalaryParser
 from ingestion.parsers.utility_parser import UtilityParser
-from services.ocr_service import get_ocr_engine
-from features.bank_features import BankFeatureEngineer
-from features.salary_features import SalaryFeatureEngineer
-from features.utility_features import UtilityFeatureEngineer
+from utils.text_extractor import extract_text
 from scoring.risk_scorer import compute_risk_score
 
-router = APIRouter(prefix="/assess", tags=["Assessment"])
+router = APIRouter()
 
-def save_temp(file: UploadFile):
-    if file is None:
-        return None
-
-    if not file.filename:
-        return None
-
-    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-    tmp.write(file.file.read())
-    tmp.close()
-    return tmp.name
-
-def assert_valid_path(path, name="file"):
-    if not path:
-        raise ValueError(f"{name} path is missing (None received)")
-    
-def process_doc(parser, engineer_cls, path, ocr_engine=None):
-    raw = parser.extract(path)
-    df = parser.transform(raw)
-
-    parser.validate(df)
-
-    engineer = engineer_cls(df)
-    features = engineer.build_features()
-
-    return features
-
-@router.post("")
-async def assess(
-    bank_file: UploadFile = File(...),
-    salary_file: UploadFile = File(None),
-    utility_file: UploadFile = File(None),
-    session_id: str = Header(...),
-    ocr_engine=Depends(get_ocr_engine)
-):
-
-    session = get_session(session_id)
-
-    if not session:
-        raise HTTPException(401, "Invalid session")
-
-    if not session.consent_bank:
-        raise HTTPException(403, "Bank consent required")
-
-    #BANK
-    bank_path = save_temp(bank_file)
-    assert_valid_path(bank_path, "bank_file")
+@router.post("/assess")
+async def assess(request: Request):
     try:
-        bank_features = process_doc(
-            BankParser(),
-            BankFeatureEngineer,
-            bank_path
+        data = await request.json()
+
+        documents = data.get("documents", [])
+
+        bank_features = None
+        salary_features = None
+        utility_features = None
+
+        for doc in documents:
+
+            doc_type = doc.get("document_type", "").lower()
+            text = doc.get("text", "")
+
+            if doc_type == "bank":
+                bank_features =BankParser(text)
+
+            elif doc_type == "salary":
+                salary_features = SalaryParser(text)
+
+            elif doc_type == "utility":
+                utility_features = UtilityParser(text)
+
+        result = compute_risk_score(
+            bank_features,
+            salary_features,
+            utility_features
         )
-    finally:
-        os.remove(bank_path)
 
-    #SALARY
-    salary_features = None
-    if salary_file and session.consent_salary:
-        salary_path = save_temp(salary_file)
-        
-        try:
-            salary_parser = SalaryParser(ocr_engine)
-            
-            salary_df = salary_parser.parse(salary_path)
-            if salary_df is None or len(salary_df) == 0:
-                raise HTTPException(422, "Salary parsing failed")
-            engineer = SalaryFeatureEngineer(salary_df)
-            salary_features = engineer.build_features()
-        
-        finally:
-            os.remove(salary_path)
-        
+        return {
+            "status": "success",
+            **result
+        }
 
-    #UTILITY
-    utility_features = None
-    if utility_file and session.consent_utility:
-        utility_path = save_temp(utility_file)
-        assert_valid_path(utility_path, "utility_file")
-
-    #SCORING
-    result = compute_risk_score(
-        bank_features,
-        salary_features,
-        utility_features
-    )
-
-    session.assessment_result = result
-
-    return {
-        "status": "success",
-        "assessed_at": datetime.utcnow().isoformat(),
-        "session_id": session_id,
-        **result
-    }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
