@@ -5,6 +5,8 @@ import numpy as np
 class SalaryFeatureEngineer:
 
     def __init__(self, df: pd.DataFrame):
+        if df is None:
+            raise ValueError("SalaryFeatureEngineer received None")
         self.df = df.copy()
 
     def _safe_value(self, column_name):

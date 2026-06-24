@@ -1,12 +1,12 @@
-from fastapi import APIRouter, UploadFile, File, Header, HTTPException
+from fastapi import APIRouter, UploadFile, File, Header, HTTPException,Depends
 import tempfile, os
 from datetime import datetime
-
+import pandas as pd
 from core.session_store import get_session
 from ingestion.parsers.bank_parser import BankParser
 from ingestion.parsers.salary_parser import SalaryParser
 from ingestion.parsers.utility_parser import UtilityParser
-
+from services.ocr_service import get_ocr_engine
 from features.bank_features import BankFeatureEngineer
 from features.salary_features import SalaryFeatureEngineer
 from features.utility_features import UtilityFeatureEngineer
@@ -15,12 +15,22 @@ from scoring.risk_scorer import compute_risk_score
 router = APIRouter(prefix="/assess", tags=["Assessment"])
 
 def save_temp(file: UploadFile):
+    if file is None:
+        return None
+
+    if not file.filename:
+        return None
+
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
     tmp.write(file.file.read())
     tmp.close()
     return tmp.name
 
-def process_doc(parser, engineer_cls, path):
+def assert_valid_path(path, name="file"):
+    if not path:
+        raise ValueError(f"{name} path is missing (None received)")
+    
+def process_doc(parser, engineer_cls, path, ocr_engine=None):
     raw = parser.extract(path)
     df = parser.transform(raw)
 
@@ -36,7 +46,8 @@ async def assess(
     bank_file: UploadFile = File(...),
     salary_file: UploadFile = File(None),
     utility_file: UploadFile = File(None),
-    session_id: str = Header(...)
+    session_id: str = Header(...),
+    ocr_engine=Depends(get_ocr_engine)
 ):
 
     session = get_session(session_id)
@@ -49,6 +60,7 @@ async def assess(
 
     #BANK
     bank_path = save_temp(bank_file)
+    assert_valid_path(bank_path, "bank_file")
     try:
         bank_features = process_doc(
             BankParser(),
@@ -62,27 +74,25 @@ async def assess(
     salary_features = None
     if salary_file and session.consent_salary:
         salary_path = save_temp(salary_file)
+        
         try:
-            salary_features = process_doc(
-                SalaryParser(),
-                SalaryFeatureEngineer,
-                salary_path
-            )
+            salary_parser = SalaryParser(ocr_engine)
+            
+            salary_df = salary_parser.parse(salary_path)
+            if salary_df is None or len(salary_df) == 0:
+                raise HTTPException(422, "Salary parsing failed")
+            engineer = SalaryFeatureEngineer(salary_df)
+            salary_features = engineer.build_features()
+        
         finally:
             os.remove(salary_path)
+        
 
     #UTILITY
     utility_features = None
     if utility_file and session.consent_utility:
         utility_path = save_temp(utility_file)
-        try:
-            utility_features = process_doc(
-                UtilityParser(),
-                UtilityFeatureEngineer,
-                utility_path
-            )
-        finally:
-            os.remove(utility_path)
+        assert_valid_path(utility_path, "utility_file")
 
     #SCORING
     result = compute_risk_score(
