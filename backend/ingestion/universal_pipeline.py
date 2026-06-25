@@ -178,6 +178,10 @@ class TextExtractor:
 
         try:
             text = extract_txt_pdfplumber(file_path)
+            if not text:
+                text = extract_txt_pymupdf(file_path)
+                print("PDFPLUMBER TEXT LENGTH:", len(text))
+                print("PYMUPDF TEXT LENGTH:", len(text))
         except Exception:
             pass
 
