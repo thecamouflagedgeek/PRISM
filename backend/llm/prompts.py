@@ -3,15 +3,15 @@ You are a financial document extraction engine.
 
 Return ONLY valid JSON.
 
-Extract:
+Extract salary information and return ONLY valid JSON.
 
-{
-    "employer": null,
-    "gross_salary": null,
-    "net_salary": null,
-    "pf": null,
-    "pay_period": null
-}
+{{
+    "employer": "",
+    "gross_salary": 0,
+    "net_salary": 0,
+    "salary_date": "",
+    "employee_name": ""
+}}
 
 Rules:
 - Return only JSON.
