@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Header, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, Header, HTTPException
 from typing import List
 import tempfile
 import os
@@ -7,12 +7,9 @@ from datetime import datetime
 from core.session_store import get_session
 
 from ingestion.universal_pipeline import UniversalParser
-
 from features.bank_features import BankFeatureEngineer
 from features.salary_features import SalaryFeatureEngineer
 from features.utility_features import UtilityFeatureEngineer
-
-from services.ocr_service import get_ocr_engine
 
 from scoring.risk_scorer import compute_risk_score
 
@@ -34,11 +31,13 @@ def save_temp(file: UploadFile):
     return tmp.name
 
 
+_parser = UniversalParser()
+
+
 @router.post("")
 async def assess(
     files: List[UploadFile] = File(...),
     session_id: str = Header(...),
-    ocr_engine=Depends(get_ocr_engine)
 ):
     session = get_session(session_id)
 
@@ -58,15 +57,13 @@ async def assess(
     salary_features = None
     utility_features = None
 
-    universal_parser = UniversalParser(ocr_engine)
-
     for file in files:
         file_path = save_temp(file)
         if not file_path:
             continue
 
         try:
-            doc_type, mapped_data = universal_parser.process(file_path)
+            doc_type, mapped_data = _parser.process(file_path)
 
             if doc_type == "BANK":
                 engineer = BankFeatureEngineer(mapped_data)
@@ -98,12 +95,10 @@ async def assess(
             detail="A valid bank statement is strictly required but none was identified."
         )
 
-    # ---------------- SCORE ----------------
-
     result = compute_risk_score(
         bank_features,
         salary_features,
-        utility_features
+        utility_features,
     )
 
     session.assessment_result = result
@@ -112,5 +107,5 @@ async def assess(
         "status": "success",
         "assessed_at": datetime.utcnow().isoformat(),
         "session_id": session_id,
-        **result
+        **result,
     }

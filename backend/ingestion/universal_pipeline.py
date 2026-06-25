@@ -167,8 +167,10 @@ def synonym_score(text_lower: str, synonyms: List[str]) -> int:
 # ---------------------------------------------------------------------------
 
 class TextExtractor:
-    def __init__(self, ocr_engine=None):
+    def __init__(self, ocr_engine=None, poppler_path=None, tesseract_cmd=None):
         self.ocr_engine = ocr_engine
+        self.poppler_path = poppler_path
+        self.tesseract_cmd = tesseract_cmd
 
     def extract(self, file_path: str) -> str:
         text = ""
@@ -669,8 +671,8 @@ class ValidationPipeline:
 # ---------------------------------------------------------------------------
 
 class UniversalParser:
-    def __init__(self, ocr_engine=None):
-        self.extractor = TextExtractor(ocr_engine)
+    def __init__(self, ocr_engine=None,poppler_path=None,tesseract_cmd=None):
+        self.extractor = TextExtractor(ocr_engine, poppler_path=poppler_path,tesseract_cmd=tesseract_cmd)
         self.evaluator = ConfidenceEvaluator()
         self.validator = ValidationPipeline()
 
