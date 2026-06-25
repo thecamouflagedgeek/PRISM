@@ -1,0 +1,21 @@
+user_id,loan_description,monthly_income,variance_income,bill_delay_days,job_changes,label
+1,"Loan for higher education",50000,2000,0,0,0
+2,"Need money urgently for unknown purpose",40000,15000,12,3,1
+3,"Business expansion and growth",60000,3000,1,1,0
+4,"Emergency personal use",30000,20000,15,4,1
+5,"Medical expenses for family",55000,2500,0,0,0
+6,"Loan for gambling",45000,18000,10,2,1
+7,"Home renovation",70000,4000,2,1,0
+8,"Unclear urgent requirement",35000,22000,18,5,1
+9,"Startup investment",65000,5000,3,1,0
+10,"Multiple debts repayment unclear",30000,25000,20,4,1
+11,"Education loan for college",52000,3000,1,0,0
+12,"Urgent financial crisis",28000,27000,25,6,1
+13,"Medical surgery expenses",60000,2000,0,0,0
+14,"Random personal use",32000,23000,14,3,1
+15,"Business scaling",72000,4000,2,1,0
+16,"Loan for betting activities",40000,20000,12,2,1
+17,"House purchase",80000,3500,1,0,0
+18,"Unstable income emergency",30000,28000,22,5,1
+19,"Education and skill development",55000,3000,0,0,0
+20,"Unknown urgent need",27000,30000,30,7,1

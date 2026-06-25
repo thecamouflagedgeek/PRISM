@@ -1,0 +1,21 @@
+loan_amnt,annual_inc,dti,delinq_2yrs,loan_status
+5000,60000,12.5,0,Fully Paid
+10000,45000,22.1,1,Charged Off
+15000,80000,10.2,0,Fully Paid
+20000,30000,35.0,2,Charged Off
+12000,55000,18.3,0,Fully Paid
+8000,40000,28.5,1,Charged Off
+25000,90000,9.0,0,Fully Paid
+18000,35000,30.2,2,Charged Off
+7000,50000,15.0,0,Fully Paid
+22000,32000,33.5,3,Charged Off
+9000,65000,11.5,0,Fully Paid
+16000,42000,25.0,1,Charged Off
+14000,75000,13.0,0,Fully Paid
+21000,28000,36.0,2,Charged Off
+11000,58000,16.2,0,Fully Paid
+13000,47000,24.5,1,Charged Off
+17000,82000,8.5,0,Fully Paid
+19000,31000,32.0,3,Charged Off
+6000,52000,14.0,0,Fully Paid
+23000,29000,34.8,2,Charged Off

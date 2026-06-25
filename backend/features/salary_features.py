@@ -4,39 +4,27 @@ import numpy as np
 
 class SalaryFeatureEngineer:
 
-    def __init__(self, df: pd.DataFrame):
-        if df is None:
-            raise ValueError("SalaryFeatureEngineer received None")
-        self.df = df.copy()
+    def __init__(self, data:dict):
+        self.data=data
 
-    def _safe_value(self, column_name):
-        """
-        Safely extract first value from dataframe column.
-        Returns 0 if column missing or empty.
-        """
-
-        if column_name not in self.df.columns:
+    def _safe_value(self, key):
+        value = self.data.get(key)
+        
+        if value is None:
             return 0
-
-        value = pd.to_numeric(
-            self.df[column_name],
-            errors="coerce"
-        ).fillna(0)
-
-        if len(value) == 0:
+        try:
+            return float(value)
+        except:
             return 0
-
-        return float(value.iloc[0])
 
     def net_to_gross_ratio(self):
 
         gross = self._safe_value("gross_salary")
         net = self._safe_value("net_salary")
 
-        if gross <= 0:
+        if gross == 0:
             return 0
-
-        return round(net / gross, 4)
+        return net / gross
 
     def pf_contribution_flag(self):
 

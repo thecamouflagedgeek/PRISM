@@ -1,22 +1,24 @@
-from ingestion.parsers.base_parser import BaseParser
-from ingestion.universal_pipeline import UniversalParser
+from llm.extractor import extract_financial_data
+from llm.schema import SalarySchema
 
-class SalaryParser(BaseParser):
-    def __init__(self, ocr_engine=None):
-        self.universal_parser = UniversalParser(ocr_engine)
 
-    def extract(self, file_path: str):
-        pass
+class SalaryParser:
 
-    def transform(self, data):
-        pass
+    def __init__(self, ocr):
+        self.ocr = ocr
 
-    def validate(self, df):
-        pass
-        
-    def parse(self, file_path: str):
-        # SalaryParser in assessment_routes.py uses .parse() instead of process_doc
-        doc_type, mapped_data = self.universal_parser.process(file_path)
-        if doc_type != "SALARY":
-            raise ValueError(f"Expected SALARY document, but classified as {doc_type}")
-        return mapped_data
+    def parse(self, file_path):
+
+        text = self.ocr.extract_text(
+            file_path
+        )
+
+        extracted = extract_financial_data(
+            text
+        )
+
+        validated = SalarySchema(
+            **extracted
+        )
+
+        return validated.model_dump()
