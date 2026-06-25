@@ -1,5 +1,5 @@
-from fastapi import APIRouter, UploadFile, File, Header, HTTPException
-from typing import List
+from fastapi import APIRouter, UploadFile, File, Header, HTTPException, Form
+from typing import List, Optional
 import tempfile
 import os
 from datetime import datetime
@@ -16,16 +16,17 @@ from scoring.risk_scorer import compute_risk_score
 router = APIRouter(prefix="/assess", tags=["Assessment"])
 
 
-def save_temp(file: UploadFile):
+async def save_temp(file: UploadFile) -> Optional[str]:
     if file is None or not file.filename:
         return None
 
+    contents = await file.read()
+
     tmp = tempfile.NamedTemporaryFile(
         delete=False,
-        suffix=".pdf"
+        suffix=os.path.splitext(file.filename)[-1] or ".pdf"
     )
-
-    tmp.write(file.file.read())
+    tmp.write(contents)
     tmp.close()
 
     return tmp.name
@@ -58,7 +59,7 @@ async def assess(
     utility_features = None
 
     for file in files:
-        file_path = save_temp(file)
+        file_path = await save_temp(file)
         if not file_path:
             continue
 
