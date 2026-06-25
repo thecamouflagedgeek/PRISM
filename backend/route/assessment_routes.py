@@ -1,112 +1,112 @@
-from fastapi import APIRouter, UploadFile, File, Header, HTTPException, Form
-from typing import List, Optional
-import tempfile
-import os
+from fastapi import APIRouter, UploadFile, File, Header, HTTPException, Depends
+import tempfile, os
 from datetime import datetime
-
+import pandas as pd
 from core.session_store import get_session
-
-from ingestion.universal_pipeline import UniversalParser
+from ingestion.parsers.bank_parser import BankParser
+from ingestion.parsers.salary_parser import SalaryParser
+from ingestion.parsers.utility_parser import UtilityParser
+from services.ocr_service import get_ocr_engine
 from features.bank_features import BankFeatureEngineer
 from features.salary_features import SalaryFeatureEngineer
 from features.utility_features import UtilityFeatureEngineer
-
 from scoring.risk_scorer import compute_risk_score
 
 router = APIRouter(prefix="/assess", tags=["Assessment"])
 
 
-async def save_temp(file: UploadFile) -> Optional[str]:
-    if file is None or not file.filename:
+async def save_temp(file: UploadFile):
+    if file is None:
+        return None
+
+    if not file.filename:
         return None
 
     contents = await file.read()
 
-    tmp = tempfile.NamedTemporaryFile(
-        delete=False,
-        suffix=os.path.splitext(file.filename)[-1] or ".pdf"
-    )
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
     tmp.write(contents)
     tmp.close()
 
     return tmp.name
 
 
-_parser = UniversalParser()
+def assert_valid_path(path, name="file"):
+    if not path:
+        raise ValueError(f"{name} path is missing (None received)")
+
+
+def process_doc(parser, engineer_cls, path, ocr_engine=None):
+    raw = parser.extract(path)
+    df = parser.transform(raw)
+
+    parser.validate(df)
+    engineer = engineer_cls(df)
+    features = engineer.build_features()
+    return features
 
 
 @router.post("")
 async def assess(
-    files: List[UploadFile] = File(...),
+    bank_file: UploadFile = File(...),
+    salary_file: UploadFile = File(None),
+    utility_file: UploadFile = File(None),
     session_id: str = Header(...),
+    ocr_engine=Depends(get_ocr_engine)
 ):
     session = get_session(session_id)
-
     if not session:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid session"
-        )
-
+        raise HTTPException(401, "Invalid session")
     if not session.consent_bank:
-        raise HTTPException(
-            status_code=403,
-            detail="Bank consent required"
+        raise HTTPException(403, "Bank consent required")
+
+    # BANK
+    bank_path = await save_temp(bank_file)
+    assert_valid_path(bank_path, "bank_file")
+    try:
+        bank_features = process_doc(
+            BankParser(),
+            BankFeatureEngineer,
+            bank_path
         )
+    finally:
+        os.remove(bank_path)
 
-    bank_features = None
+    # SALARY
     salary_features = None
-    utility_features = None
-
-    for file in files:
-        file_path = await save_temp(file)
-        if not file_path:
-            continue
+    if salary_file and session.consent_salary:
+        salary_path = await save_temp(salary_file)
 
         try:
-            doc_type, mapped_data = _parser.process(file_path)
+            salary_parser = SalaryParser(ocr_engine)
+            salary_data = salary_parser.parse(salary_path)
 
-            if doc_type == "BANK":
-                engineer = BankFeatureEngineer(mapped_data)
-                bank_features = engineer.build_features()
+            if not salary_data or not isinstance(salary_data, dict):
+                raise HTTPException(422, "Salary parsing failed")
 
-            elif doc_type == "SALARY" and session.consent_salary:
-                engineer = SalaryFeatureEngineer(mapped_data)
-                salary_features = engineer.build_features()
+            engineer = SalaryFeatureEngineer(salary_data)
+            salary_features = engineer.build_features()
 
-            elif doc_type == "UTILITY" and session.consent_utility:
-                engineer = UtilityFeatureEngineer(mapped_data)
-                utility_features = engineer.build_features()
-
-            elif doc_type == "UNKNOWN":
-                raise ValueError("Could not confidently classify document type.")
-
-        except Exception as e:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Failed processing {file.filename}: {str(e)}"
-            )
         finally:
-            if file_path and os.path.exists(file_path):
-                os.remove(file_path)
+            os.remove(salary_path)
 
-    if not bank_features:
-        raise HTTPException(
-            status_code=400,
-            detail="A valid bank statement is strictly required but none was identified."
-        )
+    # UTILITY
+    utility_features = None
+    if utility_file and session.consent_utility:
+        utility_path = await save_temp(utility_file)
+        assert_valid_path(utility_path, "utility_file")
 
+    # SCORING
     result = compute_risk_score(
         bank_features,
         salary_features,
-        utility_features,
+        utility_features
     )
-
     session.assessment_result = result
 
     return {
         "status": "success",
         "assessed_at": datetime.utcnow().isoformat(),
         "session_id": session_id,
-        **result,
+        **result
     }
