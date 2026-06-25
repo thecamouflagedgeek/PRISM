@@ -1,7 +1,29 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ocr-env/
+backend/ocr-env/
 
+# Python
 __pycache__/
 *.pyc
 *.pyo
+
+# Environment variables
 .env
-*.csv
-*.db
+
+# OCR temp files
+temp_page.jpg
+backend/temp_page.jpg
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
