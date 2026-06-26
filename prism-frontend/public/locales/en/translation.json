@@ -1,0 +1,57 @@
+{
+  "landing": {
+    "badge": "TIH IoT CHANAKYA Fellowship 2025",
+    "heroTitle": "Let Your Data Do The Scoring.",
+    "heroDesc": "Three document sources. One explainable risk score. Full audit trail.",
+    "getStarted": "Get Started",
+    "viewDemo": "View Demo",
+    "assessmentBtn": "Start Assessment →",
+    "readyBtn": "Begin Assessment →",
+    "trustedBy": "Designed for",
+    "trustedItems": {
+      "nbfcs": "NBFCs",
+      "microfinance": "Microfinance",
+      "banks": "Banks",
+      "thinFile": "Thin-file borrowers",
+      "msmes": "MSMEs",
+      "ruralIndia": "Rural India"
+    },
+    "threePillars": {
+      "title": "Let Your Data Do The Scoring.",
+      "subtitle": "Three document sources. One explainable risk score. Full audit trail.",
+      "bank": {
+        "tag": "BA-01 · BA-02",
+        "title": "Bank Statement",
+        "desc": "Cashflow, income regularity, EMI detection, spending patterns"
+      },
+      "salary": {
+        "tag": "BA-03",
+        "title": "Salary Slip",
+        "desc": "Net-to-gross ratio, PF contribution, employer stability"
+      },
+      "utility": {
+        "tag": "CS-01",
+        "title": "Utility Bills",
+        "desc": "Payment discipline, on-time rate, billing consistency"
+      },
+      "learnMore": "Learn more →"
+    },
+    "howItWorks": {
+      "title": "I Feel Like FinTech Tonight.",
+      "desc": "Explainable AI scoring. SHAP reason codes. What-if simulation. DPDPA 2023 aligned. All in one pipeline.",
+      "step1": { "num": "01", "title": "Upload Documents", "desc": "Bank statement, salary slip, utility bills" },
+      "step2": { "num": "02", "title": "Parse & Validate", "desc": "pdfplumber extraction + field confidence scoring" },
+      "step3": { "num": "03", "title": "Feature Engineering", "desc": "Cashflow CV, payment discipline, employment signals" },
+      "step4": { "num": "04", "title": "Explainable Score", "desc": "300–900 score with SHAP reason codes + fraud flags" }
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "desc": "Run a full credit assessment in under 60 seconds."
+    },
+    "footer": {
+      "copy": "PRISM · TIH IoT CHANAKYA Fellowship 2025 · Fr. Conceicao Rodrigues College of Engineering",
+      "privacy": "Privacy Policy",
+      "terms": "Terms"
+    }
+  }
+}

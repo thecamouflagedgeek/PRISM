@@ -2,12 +2,11 @@
 import { Nav } from "../components/Nav";
 import { PageShell } from "../components/PageShell";
 import { useLanguage } from "../components/LanguageContext";
-import { translations } from "../translations";
+import { useTranslation } from "react-i18next";
 
 export default function LandingPage({ go }) {
   const { language } = useLanguage();
-  const t = translations[language];
-  
+  const { t } = useTranslation();
   return (
 <PageShell glowColor="rgba(232,104,58,0.80)">
       <Nav currentPage="landing" onLogoClick={() => {}} />
@@ -23,15 +22,15 @@ export default function LandingPage({ go }) {
             background: "var(--white)", marginBottom: 28 }}>
             <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--orange)" }} />
             <span style={{ fontSize: 12, fontWeight: 500, color: "var(--ink2)" }}>
-              TIH IoT CHANAKYA Fellowship 2025
+              {t('landing.badge')}
             </span>
           </div>
 
-          <h1>{t.heroTitle}</h1>
+          <h1>{t('landing.heroTitle')}</h1>
 
-<p>{t.heroDesc}</p>
+<p>{t('landing.heroDesc')}</p>
 
-<button>{t.getStarted}</button>
+<button>{t('landing.getStarted')}</button>
 
           <h1
   className="display fade-up-1"
@@ -41,7 +40,7 @@ export default function LandingPage({ go }) {
     marginBottom: 16,
   }}
 >
-  {t.heroTitle}
+  {t('landing.heroTitle')}
 </h1>
 
           <p
@@ -55,16 +54,16 @@ export default function LandingPage({ go }) {
     fontWeight: 300,
   }}
 >
-  {t.heroDesc}
+  {t('landing.heroDesc')}
 </p>
 
           <div className="fade-up-3" style={{ display: "flex", gap: 12, alignItems: "center" }}>
             <button className="btn-primary btn-orange" onClick={() => go("login")}
               style={{ padding: "13px 28px", fontSize: 15 }}>
-              {t.getStarted} →
+              {t('landing.getStarted')} →
             </button>
             <button className="btn-outline" style={{ padding: "12px 22px" }}>
-              {t.viewDemo}
+              {t('landing.viewDemo')}
             </button>
           </div>
 
@@ -117,73 +116,6 @@ export default function LandingPage({ go }) {
             <div className="ray ray-6" />
           </div>
 
-          {/* Score card — bottom left 
-          <div style={{
-            position: "absolute", bottom: 52, left: 8, zIndex: 10,
-            background: "rgba(255,255,255,0.84)",
-            backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
-            borderRadius: 20, padding: "18px 22px",
-            boxShadow: "0 20px 52px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.8)",
-            border: "1px solid rgba(255,255,255,0.75)",
-            minWidth: 190, animation: "fadeUp 0.6s 0.8s ease both",
-          }}>
-            <div style={{ fontSize: 10, color: "var(--muted)", fontWeight: 600,
-              textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Risk Score</div>
-            <div className="heading" style={{ fontSize: 44, color: "var(--orange)", lineHeight: 1 }}>742</div>
-            <div style={{ fontSize: 12, color: "var(--green)", fontWeight: 600,
-              marginTop: 6, display: "flex", alignItems: "center", gap: 5 }}>
-              <span style={{ fontSize: 8 }}>●</span> Medium Risk
-            </div>
-            <div style={{ marginTop: 10, height: 3, borderRadius: 2, background: "var(--border)" }}>
-              <div style={{ height: "100%", width: "60%", borderRadius: 2,
-                background: "linear-gradient(90deg, var(--orange), #F59E0B)" }} />
-            </div>
-          </div>*/}
-
-          {/* SHAP chip — top right 
-          <div style={{
-            position: "absolute", top: 86, right: 8, zIndex: 10,
-            background: "rgba(17,17,16,0.90)",
-            backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
-            borderRadius: 12, padding: "10px 15px",
-            color: "#fff", fontSize: 12, fontWeight: 500,
-            boxShadow: "0 10px 32px rgba(0,0,0,0.22)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            animation: "fadeUp 0.6s 1.0s ease both",
-            display: "flex", alignItems: "center", gap: 7,
-          }}>
-            <span style={{ color: "var(--green)", fontWeight: 700 }}>+</span>
-            Salary regular · +38 pts
-          </div>*/}
-
-          {/* Fraud clear chip
-          <div style={{
-            position: "absolute", top: 164, right: 8, zIndex: 10,
-            background: "rgba(34,197,94,0.10)",
-            backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
-            borderRadius: 10, padding: "8px 13px",
-            border: "1px solid rgba(34,197,94,0.28)",
-            animation: "fadeUp 0.6s 1.2s ease both",
-            display: "flex", alignItems: "center", gap: 6,
-          }}>
-            <span style={{ fontSize: 11, color: "var(--green)" }}>✓</span>
-            <span style={{ fontSize: 11, color: "var(--green)", fontWeight: 600 }}>No fraud flags</span>
-          </div>*/}
-
-          {/* Top factor chip — bottom right
-          <div style={{
-            position: "absolute", bottom: 100, right: 8, zIndex: 10,
-            background: "rgba(124,92,246,0.10)",
-            backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
-            borderRadius: 10, padding: "9px 13px",
-            border: "1px solid rgba(124,92,246,0.28)",
-            animation: "fadeUp 0.6s 1.4s ease both",
-          }}>
-            <div style={{ fontSize: 10, color: "var(--purple)", fontWeight: 600,
-              textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Top factor</div>
-            <div style={{ fontSize: 11, color: "var(--purple)", fontWeight: 500 }}>EMI discipline · +42 pts</div>
-          </div>*/}
-
         </div>
       </section>
 
@@ -192,9 +124,16 @@ export default function LandingPage({ go }) {
         padding: "20px 48px", display: "flex", alignItems: "center", gap: 48,
         background: "var(--white)", overflow: "hidden" }}>
         <span style={{ fontSize: 12, color: "var(--muted)", fontWeight: 500, whiteSpace: "nowrap" }}>
-          Designed for
+          {t('landing.trustedBy')}
         </span>
-        {["NBFCs", "Microfinance", "Banks", "Thin-file borrowers", "MSMEs", "Rural India"].map(l => (
+        {[
+          t('landing.trustedItems.nbfcs'),
+          t('landing.trustedItems.microfinance'),
+          t('landing.trustedItems.banks'),
+          t('landing.trustedItems.thinFile'),
+          t('landing.trustedItems.msmes'),
+          t('landing.trustedItems.ruralIndia')
+        ].map(l => (
           <span key={l} style={{ fontSize: 14, color: "var(--ink2)", fontWeight: 500,
             opacity: 0.6, whiteSpace: "nowrap" }}>{l}</span>
         ))}
@@ -204,10 +143,10 @@ export default function LandingPage({ go }) {
       <section style={{ maxWidth: 1100, margin: "80px auto", padding: "0 48px" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <h2 className="heading" style={{ fontSize: 38, color: "var(--ink)", marginBottom: 12 }}>
-            Let Your Data Do The Scoring.
+            {t('landing.threePillars.title')}
           </h2>
           <p style={{ color: "var(--muted)", fontSize: 16, fontWeight: 300 }}>
-            Three document sources. One explainable risk score. Full audit trail.
+            {t('landing.threePillars.subtitle')}
           </p>
         </div>
 
@@ -215,21 +154,21 @@ export default function LandingPage({ go }) {
           {[
             {
               blob: "blob-orange",
-              title: "Bank Statement",
-              sub: "Cashflow, income regularity, EMI detection, spending patterns",
-              tag: "BA-01 · BA-02",
+              title: t('landing.threePillars.bank.title'),
+              sub: t('landing.threePillars.bank.desc'),
+              tag: t('landing.threePillars.bank.tag'),
             },
             {
               blob: "blob-purple",
-              title: "Salary Slip",
-              sub: "Net-to-gross ratio, PF contribution, employer stability",
-              tag: "BA-03",
+              title: t('landing.threePillars.salary.title'),
+              sub: t('landing.threePillars.salary.desc'),
+              tag: t('landing.threePillars.salary.tag'),
             },
             {
               blob: "blob-blue",
-              title: "Utility Bills",
-              sub: "Payment discipline, on-time rate, billing consistency",
-              tag: "CS-01",
+              title: t('landing.threePillars.utility.title'),
+              sub: t('landing.threePillars.utility.desc'),
+              tag: t('landing.threePillars.utility.tag'),
             },
           ].map(({ blob, title, sub, tag }) => (
             <div key={title} className="card" style={{ position: "relative", overflow: "hidden" }}>
@@ -244,7 +183,7 @@ export default function LandingPage({ go }) {
                 <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.6 }}>{sub}</p>
                 <div style={{ marginTop: 20, fontSize: 13, fontWeight: 500, color: "var(--orange)",
                   display: "flex", alignItems: "center", gap: 4 }}>
-                  Learn more →
+                  {t('landing.threePillars.learnMore')}
                 </div>
               </div>
             </div>
@@ -259,24 +198,23 @@ export default function LandingPage({ go }) {
             gap: 48, flexWrap: "wrap" }}>
             <div style={{ maxWidth: 380 }}>
               <h2 className="heading" style={{ fontSize: 38, color: "var(--white)", marginBottom: 16 }}>
-                I Feel Like FinTech Tonight.
+                {t('landing.howItWorks.title')}
               </h2>
               <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, lineHeight: 1.65,
                 fontWeight: 300 }}>
-                Explainable AI scoring. SHAP reason codes. What-if simulation.
-                DPDPA 2023 aligned. All in one pipeline.
+                {t('landing.howItWorks.desc')}
               </p>
               <button className="btn-primary btn-orange" onClick={() => go("login")}
                 style={{ marginTop: 28 }}>
-                Start Assessment →
+                {t('landing.assessmentBtn')}
               </button>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, flex: 1, minWidth: 320 }}>
               {[
-                { n: "01", t: "Upload Documents",    d: "Bank statement, salary slip, utility bills" },
-                { n: "02", t: "Parse & Validate",    d: "pdfplumber extraction + field confidence scoring" },
-                { n: "03", t: "Feature Engineering", d: "Cashflow CV, payment discipline, employment signals" },
-                { n: "04", t: "Explainable Score",   d: "300–900 score with SHAP reason codes + fraud flags" },
+                { n: t('landing.howItWorks.step1.num'), t: t('landing.howItWorks.step1.title'), d: t('landing.howItWorks.step1.desc') },
+                { n: t('landing.howItWorks.step2.num'), t: t('landing.howItWorks.step2.title'), d: t('landing.howItWorks.step2.desc') },
+                { n: t('landing.howItWorks.step3.num'), t: t('landing.howItWorks.step3.title'), d: t('landing.howItWorks.step3.desc') },
+                { n: t('landing.howItWorks.step4.num'), t: t('landing.howItWorks.step4.title'), d: t('landing.howItWorks.step4.desc') },
               ].map(({ n, t, d }) => (
                 <div key={n} style={{ padding: "20px 18px", borderRadius: "var(--r-md)",
                   border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)" }}>
@@ -295,14 +233,14 @@ export default function LandingPage({ go }) {
       {/* ── CTA ── */}
       <section style={{ padding: "80px 48px", textAlign: "center" }}>
         <h2 className="heading" style={{ fontSize: 38, color: "var(--ink)", marginBottom: 12 }}>
-          Ready to get started?
+          {t('landing.cta.title')}
         </h2>
         <p style={{ color: "var(--muted)", marginBottom: 28, fontSize: 15 }}>
-          Run a full credit assessment in under 60 seconds.
+          {t('landing.cta.desc')}
         </p>
         <button className="btn-primary btn-orange" onClick={() => go("login")}
           style={{ padding: "14px 32px", fontSize: 15 }}>
-          Begin Assessment →
+          {t('landing.readyBtn')}
         </button>
       </section>
 
@@ -310,10 +248,10 @@ export default function LandingPage({ go }) {
       <footer style={{ borderTop: "1px solid var(--border)", padding: "28px 48px",
         display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ fontSize: 12, color: "var(--muted)" }}>
-          PRISM · TIH IoT CHANAKYA Fellowship 2025 · Fr. Conceicao Rodrigues College of Engineering
+          {t('landing.footer.copy')}
         </div>
         <div style={{ display: "flex", gap: 20 }}>
-          {["Privacy Policy", "Terms"].map(l => (
+          {[t('landing.footer.privacy'), t('landing.footer.terms')].map(l => (
             <span key={l} style={{ fontSize: 12, color: "var(--muted)", cursor: "pointer" }}>{l}</span>
           ))}
         </div>
