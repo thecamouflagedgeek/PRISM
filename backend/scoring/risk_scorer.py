@@ -1,221 +1,254 @@
-from typing import Dict, List, Optional
-import math
+"""
+PRISM — scoring/risk_scorer.py
+================================
+Single entry point for the LR scoring pipeline.
+Called exclusively from route/assess.py as:
+
+    from scoring.risk_scorer import compute_risk_score
+    result = compute_risk_score(bank_features, salary_features, utility_features)
+
+Accepts the feature dicts produced by:
+    BankFeatureEngineer.build_features()
+    SalaryFeatureEngineer.build_features()
+    UtilityFeatureEngineer.build_features()
+
+and maps them onto the 5 trained model features:
+    credit_debit_ratio, cashflow_cv, net_to_gross_ratio,
+    utility_stability, min_balance
+
+Does NOT touch parsers, OCR, sessions, or any ingestion logic.
+"""
+
+import os
 import numpy as np
+import joblib
+from typing import Optional, Dict
 
-BASE_POINTS = 600
-PDO = 50          # points to double odds
-BASE_ODDS = 1/20  # industry standard starting odds
+# ── Artifact paths ────────────────────────────────────────────────────────────
+_BASE = os.path.dirname(__file__)   # backend/scoring/
+_ARTIFACTS = os.path.join(_BASE, "artifacts")
 
-FACTOR = PDO / math.log(2)
-OFFSET = BASE_POINTS - FACTOR * math.log(BASE_ODDS)
+# Loaded once at import time — not on every request
+_model          = joblib.load(os.path.join(_ARTIFACTS, "lr_model.pkl"))
+_binning_models = joblib.load(os.path.join(_ARTIFACTS, "binning_models.pkl"))
+_woe_meta       = joblib.load(os.path.join(_ARTIFACTS, "woe_datasets.pkl"))
+_mean_woe       = _woe_meta["X_train_woe"].values.mean(axis=0)  # for SHAP
 
+# Feature order MUST match what the model was trained on
+_FEATURES = [
+    "credit_debit_ratio",
+    "cashflow_cv",
+    "net_to_gross_ratio",
+    "utility_stability",
+    "min_balance",
+]
 
-WOE_TABLES = {
-    "credit_debit_ratio": [
-        (0.0, 0.8, -1.2),
-        (0.8, 1.2, -0.3),
-        (1.2, 1.8, 0.7),
-        (1.8, 10.0, 1.4)
-    ],
+# PDO scaling constants
+_PDO        = 50
+_BASE_SCORE = 600
+_BASE_ODDS  = 1 / 20
+_FACTOR     = _PDO / np.log(2)
+_OFFSET     = _BASE_SCORE - _FACTOR * np.log(_BASE_ODDS)
 
-    "cashflow_cv": [
-        (0.0, 0.25, 1.3),
-        (0.25, 0.5, 0.4),
-        (0.5, 0.8, -0.6),
-        (0.8, 10.0, -1.4)
-    ],
-
-    "net_to_gross_ratio": [
-        (0.0, 0.5, -1.1),
-        (0.5, 0.7, -0.2),
-        (0.7, 0.85, 0.9),
-        (0.85, 1.0, 1.3)
-    ]
+_FEATURE_LABELS = {
+    "credit_debit_ratio" : "Credit-to-Debit Ratio",
+    "cashflow_cv"        : "Cashflow Stability",
+    "net_to_gross_ratio" : "Net-to-Gross Salary Ratio",
+    "utility_stability"  : "Utility Payment Stability",
+    "min_balance"        : "Minimum Account Balance",
 }
 
-
-IV_TABLE = {
-    "credit_debit_ratio": 0.45,
-    "cashflow_cv": 0.38,
-    "net_to_gross_ratio": 0.30
-}
+# ─────────────────────────────────────────────────────────────────────────────
 
 
-def woe(value, bins):
-    if value is None:
-        return 0.0
-
-    for low, high, w in bins:
-        if low <= value < high:
-            return w
-
-    return 0.0
-
-def sigmoid(x):
-    x=max(min(x,500),-500)
-    return 1 / (1 + math.exp(-x))
-
-
-def compute_log_odds(bank, salary, utility):
+def _map_features(
+    bank    : Optional[dict],
+    salary  : Optional[dict],
+    utility : Optional[dict],
+) -> dict:
     """
-    Converts WoE features → log-odds (this is REAL scorecard logic)
+    Maps the three feature engineer outputs into the flat dict of
+    the 5 model features.
+
+    Field names below match what BankFeatureEngineer / SalaryFeatureEngineer /
+    UtilityFeatureEngineer actually return. If your engineers use different
+    key names, adjust the .get() calls here — nowhere else needs to change.
     """
+    return {
+        # ── From BankFeatureEngineer ──────────────────────────────────────────
+        "credit_debit_ratio" : _safe(bank,    "credit_debit_ratio"),
+        "cashflow_cv"        : _safe(bank,    "cashflow_cv"),
+        "min_balance"        : _safe(bank,    "min_balance"),
 
-    score = 0.0
+        # ── From SalaryFeatureEngineer ────────────────────────────────────────
+        "net_to_gross_ratio" : _safe(salary,  "net_to_gross_ratio"),
 
-    # BANK
-    if bank:
-        score += woe(bank.get("credit_debit_ratio"), WOE_TABLES["credit_debit_ratio"]) * 1.2
-        score += woe(bank.get("cashflow_cv"), WOE_TABLES["cashflow_cv"]) * 1.0
+        # ── From UtilityFeatureEngineer ───────────────────────────────────────
+        # payment_discipline_flag is boolean → convert to float for binning
+        "utility_stability"  : float(_safe(utility, "payment_discipline_flag") or 0.0),
+    }
 
-    # SALARY
-    if salary:
-        score += woe(salary.get("net_to_gross_ratio"), WOE_TABLES["net_to_gross_ratio"]) * 1.1
 
-        pf = salary.get("pf_contribution_flag")
-        score += 0.4 if pf else -0.3
+def _safe(d: Optional[dict], key: str):
+    """Return d[key] if d is a non-None dict with that key, else None."""
+    if not d or not isinstance(d, dict):
+        return None
+    val = d.get(key)
+    return None if val is None or (isinstance(val, float) and np.isnan(val)) else val
 
-    # UTILITY (simple signal)
-    if utility:
-        score += 0.5 if utility.get("payment_discipline_flag") else -0.5
 
-    return score
+def _woe_transform(feature_dict: dict) -> np.ndarray:
+    """
+    Transform raw feature values → WoE vector using trained binning models.
+    Missing values map to 0.0 (neutral WoE — no log-odds contribution).
+    Returns shape (1, n_features).
+    """
+    woe_vals = []
+    for col in _FEATURES:
+        val = feature_dict.get(col)
+        if val is None:
+            woe_vals.append(0.0)
+        else:
+            woe_vals.append(
+                float(_binning_models[col].transform(
+                    np.array([val]), metric="woe"
+                )[0])
+            )
+    return np.array(woe_vals).reshape(1, -1)
 
-def to_credit_score(log_odds: float) -> int:
-    score = OFFSET + FACTOR * log_odds
-    return int(max(300, min(900, score)))
 
-def compute_confidence(bank, salary, utility):
+def _to_score(log_odds: float) -> int:
+    return int(np.clip(_OFFSET + _FACTOR * log_odds, 300, 900))
 
-    def valid(x):
-        return x is not None and x != 0
 
-    bank_q = sum([
-        valid(bank.get("credit_debit_ratio") if bank else None),
-        valid(bank.get("cashflow_cv") if bank else None)
-    ]) / 2 if bank else 0
+def _risk_tier(pd_value: float) -> str:
+    if pd_value < 0.20:   return "Low Risk"
+    elif pd_value < 0.40: return "Medium Risk"
+    elif pd_value < 0.70: return "High Risk"
+    else:                 return "Very High Risk"
 
-    salary_q = sum([
-        valid(salary.get("net_to_gross_ratio") if salary else None),
-        salary.get("pf_contribution_flag") is not None if salary else 0
-    ]) / 2 if salary else 0
 
-    utility_q = sum([
-        utility is not None,
-        utility.get("payment_discipline_flag") is not None if utility else 0
-    ]) / 2 if utility else 0
+def _shap_reason_codes(X_woe_row: np.ndarray) -> list:
+    """
+    Exact SHAP for LR: φ_i = β_i × (WoE_i − E[WoE_i])
+    Sorted by absolute impact, top 4 returned.
+    """
+    coefs   = _model.coef_[0]
+    phi     = coefs * (X_woe_row - _mean_woe)
 
-    return round(
-        0.5 * bank_q +
-        0.3 * salary_q +
-        0.2 * utility_q,
-        2
+    reasons = []
+    for i, col in enumerate(_FEATURES):
+        reasons.append({
+            "factor"    : _FEATURE_LABELS[col],
+            "shap_value": round(float(phi[i]), 4),
+            "impact"    : "positive" if phi[i] > 0 else "negative",
+        })
+
+    reasons.sort(key=lambda r: abs(r["shap_value"]), reverse=True)
+    return reasons[:4]
+
+
+def _confidence(
+    bank    : Optional[dict],
+    salary  : Optional[dict],
+    utility : Optional[dict],
+    pd_value: float,
+) -> dict:
+    """
+    Multiplicative confidence:
+        C = doc_coverage × data_quality × model_certainty
+    (fraud_confidence excluded here — injected by fraud module if available)
+    """
+    doc_coverage = (
+        0.60 * (bank    is not None) +
+        0.20 * (salary  is not None) +
+        0.20 * (utility is not None)
     )
 
-def compute_risk_score(
-    bank: Optional[dict],
-    salary: Optional[dict],
-    utility: Optional[dict]
-) -> Dict:
+    # Count non-None model features
+    n_present = sum(
+        1 for col in _FEATURES
+        if _safe(bank or salary or utility, col) is not None
+            or (col == "net_to_gross_ratio" and salary)
+            or (col == "utility_stability"  and utility)
+    )
+    data_quality = n_present / len(_FEATURES)
 
-    # 1. LOG ODDS FROM WOE MODEL
-    log_odds = compute_log_odds(bank, salary, utility)
+    model_certainty = abs(pd_value - 0.5) * 2   # 0 at PD=0.5, 1 at PD=0 or 1
 
-    # 2. CONVERT TO SCORE
-    score = to_credit_score(log_odds)
+    score = doc_coverage * data_quality * model_certainty
 
-    # 3. PD (Probability of Default)
-    pd = sigmoid(-log_odds)
-
-    # 4. CONFIDENCE
-    confidence = compute_confidence(bank, salary, utility)
-
-    # 5. RISK TIER (BASED ON PD — INDUSTRY STYLE)
-    if pd < 0.2:
-        tier = "Low Risk"
-    elif pd < 0.4:
-        tier = "Medium Risk"
-    elif pd < 0.7:
-        tier = "High Risk"
-    else:
-        tier = "Very High Risk"
-
-    iv = IV_TABLE
-    reason_codes = []
-    shap_reasons = []
-
-    if bank:
-        cdr = bank.get("credit_debit_ratio")
-        cv = bank.get("cashflow_cv")
-
-        reason_codes.append({
-            "factor": "Credit-Debit Ratio",
-            "value": cdr,
-            "impact": "positive" if cdr and cdr > 1.2 else "negative"
-        })
-
-        reason_codes.append({
-            "factor": "Cashflow Stability",
-            "value": cv,
-            "impact": "positive" if cv and cv < 0.5 else "negative"
-        })
-
-        shap_reasons.extend([
-            {
-                "factor": "Credit-Debit Ratio (WoE)",
-                "value": cdr,
-                "source": "Bank Statement"
-            },
-            {
-                "factor": "Cashflow CV (WoE)",
-                "value": cv,
-                "source": "Bank Statement"
-            }
-        ])
-
-    if salary:
-        ngr = salary.get("net_to_gross_ratio")
-
-        reason_codes.append({
-            "factor": "Income Stability",
-            "value": ngr,
-            "impact": "positive" if ngr and ngr > 0.7 else "negative"
-        })
-
-        shap_reasons.append({
-            "factor": "Net to Gross Ratio",
-            "value": ngr,
-            "source": "Salary Slip"
-        })
-
-    if utility:
-        flag = utility.get("payment_discipline_flag")
-
-        reason_codes.append({
-            "factor": "Utility Discipline",
-            "value": flag,
-            "impact": "positive" if flag else "negative"
-        })
-
-        shap_reasons.append({
-            "factor": "Payment Discipline",
-            "value": flag,
-            "source": "Utility Bill"
-        })
+    if score >= 0.80:   band = "High Confidence"
+    elif score >= 0.50: band = "Moderate Confidence"
+    elif score >= 0.20: band = "Low Confidence — Manual Review Recommended"
+    else:               band = "Very Low Confidence — Do Not Automate Decision"
 
     return {
-        "risk_score": score,
-        "probability_of_default": round(pd, 4),
-        "risk_tier": tier,
-        "confidence_score": round(confidence*100,2),
-        "iv_scores": iv,
-        "model_type": "WoE_Logistic_Scorecard",
-        "notes": "Production-style scorecard using WoE + logistic PD scaling",
-        "reason_codes": reason_codes,
-        "shap_reasons": shap_reasons,
-        "features": {
-            "bank": bank,
-            "salary": salary,
-            "utility": utility
-        }
+        "confidence_pct": round(score * 100, 2),
+        "band"          : band,
+        "components"    : {
+            "document_coverage": round(doc_coverage,   3),
+            "data_quality"     : round(data_quality,   3),
+            "model_certainty"  : round(model_certainty,3),
+        },
+    }
+
+
+# ── Public API ────────────────────────────────────────────────────────────────
+
+def compute_risk_score(
+    bank_features    : Optional[dict],
+    salary_features  : Optional[dict],
+    utility_features : Optional[dict],
+) -> Dict:
+    """
+    Main scoring function. Called from route/assess.py.
+
+    Parameters
+    ----------
+    bank_features    : output of BankFeatureEngineer.build_features()
+    salary_features  : output of SalaryFeatureEngineer.build_features()  or None
+    utility_features : output of UtilityFeatureEngineer.build_features() or None
+
+    Returns
+    -------
+    dict — full risk assessment result, spread into the /assess response
+    """
+    # 1. Map engineer outputs → model feature dict
+    feature_dict = _map_features(bank_features, salary_features, utility_features)
+
+    # 2. WoE transform
+    X_woe    = _woe_transform(feature_dict)
+
+    # 3. LR inference
+    log_odds = float(_model.decision_function(X_woe)[0])
+    pd_value = float(np.clip(_model.predict_proba(X_woe)[0][1], 0.0003, 0.9999))
+
+    # 4. Credit score (PDO scaling)
+    score    = _to_score(log_odds)
+
+    # 5. Reason codes (exact SHAP)
+    reason_codes = _shap_reason_codes(X_woe[0])
+
+    # 6. Confidence
+    confidence = _confidence(bank_features, salary_features, utility_features, pd_value)
+
+    return {
+        "risk_score"            : score,
+        "probability_of_default": round(pd_value, 4),
+        "risk_tier"             : _risk_tier(pd_value),
+        "log_odds"              : round(log_odds, 4),
+        "confidence"            : confidence,
+        "reason_codes"          : reason_codes,
+        "model_metadata"        : {
+            "model_type" : "WoE_Logistic_Scorecard",
+            "pdo"        : _PDO,
+            "base_score" : _BASE_SCORE,
+            "base_odds"  : "1:20",
+            "score_range": "300–900",
+        },
+        "feature_woe_values"    : {
+            _FEATURES[i]: round(float(X_woe[0][i]), 4)
+            for i in range(len(_FEATURES))
+        },
     }

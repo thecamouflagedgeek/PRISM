@@ -6,6 +6,7 @@ import pytesseract
 pytesseract.pytesseract.tesseract_cmd = (
     r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 )
+
 from pdf2image import convert_from_path
 
 
