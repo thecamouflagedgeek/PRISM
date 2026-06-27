@@ -11,7 +11,8 @@ from features.bank_features import BankFeatureEngineer
 from features.salary_features import SalaryFeatureEngineer
 from features.utility_features import UtilityFeatureEngineer
 from scoring.risk_scorer import compute_risk_score
-
+import math
+import numpy as np
 router = APIRouter(prefix="/assess", tags=["Assessment"])
 
 
@@ -46,6 +47,44 @@ def process_doc(parser, engineer_cls, path, ocr_engine=None):
     return features
 
 
+def clean_json(obj):
+    if isinstance(obj, dict):
+        return {k: clean_json(v) for k, v in obj.items()}
+
+    if isinstance(obj, list):
+        return [clean_json(v) for v in obj]
+
+    if isinstance(obj, np.generic):
+        obj = obj.item()
+
+    if isinstance(obj, float):
+        if math.isnan(obj) or math.isinf(obj):
+            return None
+
+    return obj
+
+def features_to_dict(features):
+    if features is None:
+        return None
+
+    if isinstance(features, dict):
+        data = features
+
+    elif hasattr(features, "model_dump"):      # Pydantic v2
+        data = features.model_dump()
+
+    elif hasattr(features, "dict"):            # Pydantic v1
+        data = features.dict()
+
+    elif hasattr(features, "to_dict"):         # pandas
+        data = features.to_dict()
+
+    else:
+        data = vars(features)
+
+    return clean_json(data)
+
+
 @router.post("")
 async def assess(
     bank_file: UploadFile = File(...),
@@ -76,7 +115,6 @@ async def assess(
     salary_features = None
     if salary_file and session.consent_salary:
         salary_path = await save_temp(salary_file)
-
         try:
             salary_parser = SalaryParser(ocr_engine)
             salary_data = salary_parser.parse(salary_path)
@@ -86,7 +124,6 @@ async def assess(
 
             engineer = SalaryFeatureEngineer(salary_data)
             salary_features = engineer.build_features()
-
         finally:
             os.remove(salary_path)
 
@@ -95,6 +132,14 @@ async def assess(
     if utility_file and session.consent_utility:
         utility_path = await save_temp(utility_file)
         assert_valid_path(utility_path, "utility_file")
+        try:
+            utility_features = process_doc(
+                UtilityParser(),
+                UtilityFeatureEngineer,
+                utility_path
+            )
+        finally:
+            os.remove(utility_path)
 
     # SCORING
     result = compute_risk_score(
@@ -103,10 +148,30 @@ async def assess(
         utility_features
     )
     session.assessment_result = result
-
-    return {
-        "status": "success",
-        "assessed_at": datetime.utcnow().isoformat(),
-        "session_id": session_id,
-        **result
+    
+    response = {
+    "status": "success",
+    "assessed_at": datetime.utcnow().isoformat(),
+    "session_id": session_id,
+    **result,
+    "features": {
+        "bank": features_to_dict(bank_features),
+        "salary": features_to_dict(salary_features),
+        "utility": features_to_dict(utility_features),},
     }
+    
+    def find_nan(obj, path="root"):
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                find_nan(v, f"{path}.{k}")
+        elif isinstance(obj, list):
+            for i, v in enumerate(obj):
+                find_nan(v, f"{path}[{i}]")
+        elif isinstance(obj, float):
+            if math.isnan(v := obj):
+                print("NaN found at:", path)
+    find_nan(response)
+    print(response)
+    return response
+
+    

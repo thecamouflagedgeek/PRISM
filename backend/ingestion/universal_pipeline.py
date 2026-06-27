@@ -43,6 +43,14 @@ BANK_SYNONYMS = {
     ],
 }
 
+# Strong discriminative signals that appear in bank statements but NOT utility/salary docs
+BANK_DISCRIMINATIVE = [
+    "statement of account", "bank statement", "transaction history",
+    "passbook", "mini statement", "account statement",
+    "ifsc", "micr", "branch", "upi", "neft", "rtgs", "imps",
+    "cheque", "chq", "ecs", "nach", "atm", "pos",
+]
+
 SALARY_SYNONYMS = {
     "gross_salary": [
         "gross salary", "gross pay", "gross earnings", "gross income",
@@ -98,6 +106,22 @@ UTILITY_SYNONYMS = {
         "settled", "payment confirmed"
     ],
 }
+
+# Strong discriminative signals that only appear in utility bills
+UTILITY_DISCRIMINATIVE = [
+    "water bill", "electricity bill", "gas bill", "utility bill",
+    "water supply", "water charges", "sewerage", "drainage",
+    "municipal", "municipality", "nmc", "bmc", "mcgm", "pcmc",
+    "electricity", "power bill", "energy bill", "msedcl", "bescom",
+    "tpddl", "tneb", "wesco", "reliance energy",
+    "gas connection", "piped gas", "mgl", "igl", "adani gas",
+    "broadband bill", "telephone bill", "mobile bill", "postpaid",
+    "consumer no", "consumer number", "ca no", "meter no", "meter number",
+    "reading", "previous reading", "current reading",
+    "units consumed", "kwh", "kilowatt",
+    "bill period", "billing period", "bill date", "bill no", "bill number",
+    "arrears", "current bill", "late payment",
+]
 
 
 # ---------------------------------------------------------------------------
@@ -280,6 +304,24 @@ class BankExtractor(BaseExtractor):
     def extract(self, text: str) -> ExtractionResult:
         lines = text.split("\n")
         found, missing, diagnostics = [], [], []
+        text_lower = text.lower()
+
+        # --- Early exit: if strong utility signals are present, yield low confidence ---
+        utility_signal_count = synonym_score(text_lower, UTILITY_DISCRIMINATIVE)
+        if utility_signal_count >= 2:
+            diagnostics.append(
+                f"Suppressed BANK confidence: {utility_signal_count} utility-specific "
+                f"signals detected in document."
+            )
+            return ExtractionResult(
+                doc_type=self.doc_type,
+                data=pd.DataFrame(columns=["date", "amount", "type", "narration", "closing_balance"]),
+                confidence=0.05,
+                entities_found=[],
+                missing_entities=self.required_entities + self.optional_entities,
+                quality_score=0.0,
+                diagnostics=diagnostics,
+            )
 
         # --- Detect column order from header line ---
         cr_col_pos, dr_col_pos = None, None
@@ -373,9 +415,14 @@ class BankExtractor(BaseExtractor):
         df = self._build_df(rows)
         confidence, quality = self._score_result(found, missing)
 
-        # Boost confidence if we have a solid transaction set
-        if len(rows) >= 5:
+        # Boost confidence ONLY when strong bank-discriminative signals are present.
+        # Avoids boosting on utility/salary docs that also have dates + amounts.
+        bank_signal_count = synonym_score(text_lower, BANK_DISCRIMINATIVE)
+        if len(rows) >= 5 and bank_signal_count >= 2:
             confidence = min(confidence + 0.15, 1.0)
+        elif len(rows) >= 5:
+            # Rows alone aren't enough — modest boost only
+            confidence = min(confidence + 0.05, 1.0)
 
         return ExtractionResult(
             doc_type=self.doc_type,
@@ -573,6 +620,19 @@ class UtilityExtractor(BaseExtractor):
 
         confidence, quality = self._score_result(found, missing)
 
+        # Boost confidence when utility-discriminative keywords are present.
+        # This is the primary fix for utility bills being misclassified as BANK.
+        utility_signal_count = synonym_score(text_lower, UTILITY_DISCRIMINATIVE)
+        if utility_signal_count >= 3:
+            confidence = min(confidence + 0.40, 1.0)
+        elif utility_signal_count >= 1:
+            confidence = min(confidence + 0.20, 1.0)
+
+        if utility_signal_count > 0:
+            diagnostics.append(
+                f"Utility classification boosted: {utility_signal_count} utility-specific signals found."
+            )
+
         return ExtractionResult(
             doc_type=self.doc_type,
             data=pd.DataFrame([entities]) if entities else pd.DataFrame(),
@@ -675,8 +735,8 @@ class ValidationPipeline:
 # ---------------------------------------------------------------------------
 
 class UniversalParser:
-    def __init__(self, ocr_engine=None,poppler_path=None,tesseract_cmd=None):
-        self.extractor = TextExtractor(ocr_engine, poppler_path=poppler_path,tesseract_cmd=tesseract_cmd)
+    def __init__(self, ocr_engine=None, poppler_path=None, tesseract_cmd=None):
+        self.extractor = TextExtractor(ocr_engine, poppler_path=poppler_path, tesseract_cmd=tesseract_cmd)
         self.evaluator = ConfidenceEvaluator()
         self.validator = ValidationPipeline()
 

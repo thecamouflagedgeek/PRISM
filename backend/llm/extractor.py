@@ -166,6 +166,7 @@ def extract_financial_data(text: str, doc_type: str = "salary_slip") -> dict:
         return result
 
     except json.JSONDecodeError as e:
+        parse_error=str(e)
         print(f"\n⚠ JSON parse failed after cleaning: {e}")
         print(f"Cleaned output:\n{cleaned}\n")
 
@@ -173,7 +174,7 @@ def extract_financial_data(text: str, doc_type: str = "salary_slip") -> dict:
     print("↺ Attempting LLM repair...")
 
     repair_prompt = build_repair_prompt(
-        validation_errors=[str(e)],
+        validation_errors=[parse_error],
         broken_json=cleaned,
         document_text=text[:5000],
         schema_json=_get_schema_hint(doc_type),
