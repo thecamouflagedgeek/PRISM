@@ -4,7 +4,7 @@ import re
 
 from llm.prompts import build_extraction_prompt, build_repair_prompt
 
-MODEL_NAME = "qwen2.5:3b"
+MODEL_NAME = "qwen2.5:7b"
 
 
 # ---------------------------------------------------------------------------
@@ -15,6 +15,7 @@ def call_llm(system_prompt: str, user_prompt: str) -> str:
     full_prompt = f"SYSTEM:\n{system_prompt}\n\nUSER:\n{user_prompt}"
 
     result = subprocess.run(
+
         ["ollama", "run", MODEL_NAME],
         input=full_prompt,
         capture_output=True,

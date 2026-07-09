@@ -4,7 +4,7 @@ import pdfplumber
 import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    r"D:\tesseract\tesseract.exe"
 )
 
 from pdf2image import convert_from_path
@@ -51,8 +51,9 @@ class OCRService:
     ):
 
         pages = convert_from_path(
-            pdf_path
-        )
+    pdf_path,
+    poppler_path=r"C:\poppler-26.02.0\Library\bin"
+)
 
         text = ""
 

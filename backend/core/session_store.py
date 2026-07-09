@@ -9,6 +9,8 @@ class Session:
     def __init__(self, borrower_id: str):
         self.session_id = str(uuid.uuid4())
         self.borrower_id = borrower_id
+        self.phone_number = borrower_id
+        self.is_authenticated = True
         self.created_at = datetime.utcnow()
         self.expires_at = self.created_at + timedelta(minutes=TTL_MINUTES)
 
