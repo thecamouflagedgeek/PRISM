@@ -1,15 +1,21 @@
-from llm.extractor import extract_financial_data
-from llm.schema import SalarySchema
+from ingestion.parsers.base_parser import BaseParser
+from ingestion.universal_pipeline import UniversalParser
 
-class SalaryParser:
+class SalaryParser(BaseParser):
+    def __init__(self, ocr_engine=None):
+        self.universal_parser = UniversalParser(ocr_engine)
 
-    def __init__(self, ocr_engine):
-        self.ocr = ocr_engine
+    def extract(self, file_path: str):
+        pass
 
-    def parse(self, file_path):
+    def transform(self, data):
+        pass
 
-        text = self.ocr.extract_text(file_path)
-
-        structured_data = extract_financial_data(text)
-
-        return structured_data
+    def validate(self, df):
+        pass
+        
+    def parse(self, file_path: str):
+        doc_type, mapped_data, raw_text = self.universal_parser.process(file_path)
+        if doc_type != "SALARY":
+            raise ValueError(f"Expected SALARY document, but classified as {doc_type}")
+        return mapped_data

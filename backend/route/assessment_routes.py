@@ -1,13 +1,13 @@
-from fastapi import APIRouter, UploadFile, File, Header, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, Header, HTTPException, Depends, Form
 import tempfile, os
 from datetime import datetime
 import pandas as pd
 from core.session_store import get_session
-from ingestion.parsers.bank_parser import BankParser
+from ingestion.parsers.bank_parser import BankParser, ExtractionQualityError
 from ingestion.parsers.salary_parser import SalaryParser
 from ingestion.parsers.utility_parser import UtilityParser
 from services.ocr_service import get_ocr_engine
-from features.bank_features import BankFeatureEngineer
+from features.bank_features import BankFeatureEngineer, BankFeatureEngineerError
 from features.salary_features import SalaryFeatureEngineer
 from features.utility_features import UtilityFeatureEngineer
 from scoring.risk_scorer import compute_risk_score
@@ -36,14 +36,36 @@ def assert_valid_path(path, name="file"):
     if not path:
         raise ValueError(f"{name} path is missing (None received)")
 
-
-def process_doc(parser, engineer_cls, path, ocr_engine=None):
-    raw = parser.extract(path)
+def process_doc(parser, engineer_cls, path, password=None):
+    try:
+        raw = parser.extract(path, password=password)
+    except ExtractionQualityError as e:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "extraction_quality_insufficient",
+                "message": "Extracted data failed quality checks and cannot be reliably scored.",
+                "issues": e.issues
+            }
+        )
+    except ValueError as e:
+        if "Text extraction failed" in str(e):
+            raise HTTPException(422, detail={"error": "document_unreadable", "message": "The uploaded document appears to be a scanned image PDF."})
+        raise
     df = parser.transform(raw)
-
     parser.validate(df)
-    engineer = engineer_cls(df)
-    features = engineer.build_features()
+    try:
+        engineer = engineer_cls(df)
+        features = engineer.build_features()
+    except BankFeatureEngineerError as e:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "feature_engineering_failed",
+                "message": "Failed to compute features from extracted data.",
+                "issues": str(e)
+            }
+        )
     return features
 
 
@@ -90,6 +112,8 @@ async def assess(
     bank_file: UploadFile = File(...),
     salary_file: UploadFile = File(None),
     utility_file: UploadFile = File(None),
+    bank_password: str = Form(None),
+    utility_password: str = Form(None),
     session_id: str = Header(...),
     ocr_engine=Depends(get_ocr_engine)
 ):
@@ -104,9 +128,10 @@ async def assess(
     assert_valid_path(bank_path, "bank_file")
     try:
         bank_features = process_doc(
-            BankParser(),
+            BankParser(ocr_engine),
             BankFeatureEngineer,
-            bank_path
+            bank_path,
+            password=bank_password
         )
     finally:
         os.remove(bank_path)
@@ -134,13 +159,16 @@ async def assess(
         assert_valid_path(utility_path, "utility_file")
         try:
             utility_features = process_doc(
-                UtilityParser(),
+                UtilityParser(ocr_engine),
                 UtilityFeatureEngineer,
                 utility_path
             )
         finally:
             os.remove(utility_path)
 
+    print("BANK FEATURES:", bank_features)
+    print("SALARY FEATURES:", salary_features)
+    print("UTILITY FEATURES:", utility_features)
     # SCORING
     result = compute_risk_score(
         bank_features,

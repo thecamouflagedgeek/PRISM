@@ -152,6 +152,10 @@ AMOUNT_PATTERN = re.compile(
     r"|\b\d{1,6}\.\d{2}\b"
 )
 
+# Standalone dash used as an "empty column" placeholder in tabular bank statements.
+# Negative lookbehind/lookahead avoid matching a minus sign embedded in a number.
+DASH_TOKEN = re.compile(r"(?<!\d)-(?!\d)")
+
 
 def find_date(text: str) -> Optional[str]:
     for pat in DATE_PATTERNS:
@@ -162,7 +166,13 @@ def find_date(text: str) -> Optional[str]:
 
 
 def find_all_amounts(text: str) -> List[float]:
-    """Return all parseable amounts from a string, largest to smallest."""
+    """
+    Return all parseable amounts from a string, LARGEST TO SMALLEST.
+    Use this when you want "the most significant amount on the line"
+    regardless of position — e.g. picking a bill total, a salary figure.
+    Do NOT use this where column position determines meaning (debit vs
+    credit vs balance) — use find_all_amounts_ordered for that.
+    """
     raw = AMOUNT_PATTERN.findall(text)
     results = []
     for r in raw:
@@ -171,6 +181,23 @@ def find_all_amounts(text: str) -> List[float]:
         except ValueError:
             pass
     return sorted(results, reverse=True)
+
+
+def find_all_amounts_ordered(text: str) -> List[float]:
+    """
+    Same extraction as find_all_amounts but preserves LEFT-TO-RIGHT reading
+    order instead of sorting by value. Required whenever position (not
+    magnitude) determines meaning — e.g. distinguishing debit/credit/balance
+    columns in a bank transaction line.
+    """
+    raw = AMOUNT_PATTERN.findall(text)
+    results = []
+    for r in raw:
+        try:
+            results.append(float(r.replace(",", "")))
+        except ValueError:
+            pass
+    return results  # NOT sorted — preserves original left-to-right order
 
 
 def find_amount(text: str) -> Optional[float]:
@@ -186,8 +213,85 @@ def synonym_score(text_lower: str, synonyms: List[str]) -> int:
     return sum(1 for s in synonyms if s in text_lower)
 
 
+def parse_debit_credit_balance(
+    line: str, debit_first: bool = True
+) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+    """
+    Assigns debit / credit / balance for a single transaction line using the
+    sequence of numbers and standalone dashes (empty-column markers), rather
+    than character-offset column detection. Character-offset detection breaks
+    on OCR/pdfplumber text because it has no guaranteed fixed-width alignment
+    between the header line and transaction lines.
+
+    debit_first: True if the statement's header lists Debit before Credit
+                 (e.g. 'Debit Credit Balance'), False if reversed
+                 (e.g. 'Credit Debit Balance').
+
+    Returns (debit, credit, balance) — any of which may be None.
+    """
+    amounts = find_all_amounts_ordered(line)
+    has_dash = bool(DASH_TOKEN.search(line))
+
+    debit, credit, balance = None, None, None
+
+    if len(amounts) >= 3:
+        # Both debit and credit populated, plus balance: last 3 numbers in order
+        if debit_first:
+            debit, credit, balance = amounts[-3], amounts[-2], amounts[-1]
+        else:
+            credit, debit, balance = amounts[-3], amounts[-2], amounts[-1]
+
+    elif len(amounts) == 2 and has_dash:
+        # One of debit/credit is empty (shown as a dash); populated one comes
+        # first per header order, final number is always the balance
+        if debit_first:
+            debit, balance = amounts[0], amounts[1]
+        else:
+            credit, balance = amounts[0], amounts[1]
+
+    elif len(amounts) == 2:
+        # No dash detected — ambiguous. Fall back to treating first as debit.
+        debit, balance = amounts[0], amounts[1]
+
+    elif len(amounts) == 1:
+        # Only one number recognizable — treat as balance only
+        balance = amounts[0]
+
+    return debit, credit, balance
+
+
 # ---------------------------------------------------------------------------
-# 3. TEXT EXTRACTOR
+# 3. STATEMENT SUMMARY PARSER — cross-validation ground truth
+# ---------------------------------------------------------------------------
+
+SUMMARY_PATTERNS = {
+    "transaction_count": re.compile(r"Total Transaction Count\s+(\d+)", re.IGNORECASE),
+    "debit_amount": re.compile(r"Total Debit Amount\s+([\d,]+\.\d{2})", re.IGNORECASE),
+    "credit_amount": re.compile(r"Total Credit Amount\s+([\d,]+\.\d{2})", re.IGNORECASE),
+    "opening_balance": re.compile(r"Opening Balance\s+([\d,]+\.\d{2})", re.IGNORECASE),
+    "closing_balance": re.compile(r"Closing Balance\s+([\d,]+\.\d{2})", re.IGNORECASE),
+}
+
+
+def parse_statement_summary(text: str) -> Dict[str, Any]:
+    """
+    Extracts the bank's own self-reported summary figures (transaction count,
+    total debit/credit, opening/closing balance) when present. This is the
+    most reliable ground truth available for validating extraction quality —
+    far more reliable than an arbitrary hardcoded row-count threshold, since
+    real accounts can legitimately have very few transactions in a period.
+    """
+    summary: Dict[str, Any] = {}
+    for key, pattern in SUMMARY_PATTERNS.items():
+        m = pattern.search(text)
+        if m:
+            val = m.group(1).replace(",", "")
+            summary[key] = int(val) if key == "transaction_count" else float(val)
+    return summary
+
+
+# ---------------------------------------------------------------------------
+# 4. TEXT EXTRACTOR
 # ---------------------------------------------------------------------------
 
 class TextExtractor:
@@ -196,31 +300,31 @@ class TextExtractor:
         self.poppler_path = poppler_path
         self.tesseract_cmd = tesseract_cmd
 
-    def extract(self, file_path: str) -> str:
+    def extract(self, file_path: str, password: str = None) -> str:
         text = ""
         ocr_used = False
 
         try:
-            text = extract_txt_pdfplumber(file_path)
+            text = extract_txt_pdfplumber(file_path, password=password)
             if not text:
-                text = extract_txt_pymupdf(file_path)
-                print("PDFPLUMBER TEXT LENGTH:", len(text))
-                print("PYMUPDF TEXT LENGTH:", len(text))
+                text = extract_txt_pymupdf(file_path, password=password)
         except Exception:
             pass
 
         if len(text.strip()) < 50:
             try:
-                text = extract_txt_pymupdf(file_path)
+                text = extract_txt_pymupdf(file_path, password=password)
             except Exception:
                 pass
 
         if len(text.strip()) < 50 and self.ocr_engine:
             try:
-                text = self.ocr_engine.extract_text_from_pdf(file_path)
+                text = self.ocr_engine.extract_text(file_path, password=password)
                 ocr_used = True
-            except Exception:
-                pass
+            except Exception as e:
+                import traceback
+                print(">>> OCR FAILED:", repr(e))
+                traceback.print_exc()
 
         # OCR output skips normalize() stripping — just clean whitespace
         if ocr_used:
@@ -246,7 +350,7 @@ class TextExtractor:
 
 
 # ---------------------------------------------------------------------------
-# 4. EXTRACTION RESULT DATACLASS
+# 5. EXTRACTION RESULT DATACLASS
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -258,10 +362,11 @@ class ExtractionResult:
     missing_entities: List[str] = field(default_factory=list)
     quality_score: float = 0.0
     diagnostics: List[str] = field(default_factory=list)
+    raw_text: str = ""                 # kept for downstream cross-validation
 
 
 # ---------------------------------------------------------------------------
-# 5. BASE EXTRACTOR
+# 6. BASE EXTRACTOR
 # ---------------------------------------------------------------------------
 
 class BaseExtractor:
@@ -293,7 +398,7 @@ class BaseExtractor:
 
 
 # ---------------------------------------------------------------------------
-# 6. BANK EXTRACTOR
+# 7. BANK EXTRACTOR
 # ---------------------------------------------------------------------------
 
 class BankExtractor(BaseExtractor):
@@ -321,23 +426,18 @@ class BankExtractor(BaseExtractor):
                 missing_entities=self.required_entities + self.optional_entities,
                 quality_score=0.0,
                 diagnostics=diagnostics,
+                raw_text=text,
             )
 
-        # --- Detect column order from header line ---
-        cr_col_pos, dr_col_pos = None, None
+        # --- Detect debit/credit column order from header line ---
+        # Replaces the old character-offset column detection, which assumed
+        # fixed-width alignment between the header line and transaction lines —
+        # an assumption that does not hold for pdfplumber/OCR extracted text.
+        debit_first = True
         for line in lines[:40]:
             lower = line.lower()
-            has_cr = synonym_present(lower, ["credit", "cr ", "deposit"])
-            has_dr = synonym_present(lower, ["debit", "dr ", "withdrawal"])
-            if has_cr and has_dr:
-                cr_col_pos = min(
-                    (lower.index(s) for s in ["credit", "cr ", "deposit"] if s in lower),
-                    default=None
-                )
-                dr_col_pos = min(
-                    (lower.index(s) for s in ["debit", "dr ", "withdrawal"] if s in lower),
-                    default=None
-                )
+            if "debit" in lower and "credit" in lower:
+                debit_first = lower.index("debit") < lower.index("credit")
                 break
 
         # --- Parse transactions ---
@@ -347,36 +447,10 @@ class BankExtractor(BaseExtractor):
             if not date:
                 continue
 
-            amounts = find_all_amounts(line)
-            if not amounts:
-                continue
+            debit, credit, balance = parse_debit_credit_balance(line, debit_first=debit_first)
+            if balance is None:
+                continue  # no usable numeric data on this line
 
-            line_upper = line.upper()
-            line_lower = line.lower()
-
-            # Determine CR / DR using column position, then inline markers, then position
-            debit, credit = None, None
-
-            if cr_col_pos is not None and dr_col_pos is not None:
-                split = max(cr_col_pos, dr_col_pos)
-                left_amt = find_all_amounts(line[:split])
-                right_amt = find_all_amounts(line[split:])
-                if dr_col_pos < cr_col_pos:
-                    debit = left_amt[0] if left_amt else None
-                    credit = right_amt[0] if right_amt else None
-                else:
-                    credit = left_amt[0] if left_amt else None
-                    debit = right_amt[0] if right_amt else None
-            elif "CR" in line_upper or synonym_present(line_lower, BANK_SYNONYMS["credit"]):
-                credit = amounts[0] if amounts else None
-            elif "DR" in line_upper or synonym_present(line_lower, BANK_SYNONYMS["debit"]):
-                debit = amounts[0] if amounts else None
-            else:
-                # Fallback: if 2+ amounts, first=debit, last=balance; if 1, treat as balance only
-                if len(amounts) >= 2:
-                    debit = amounts[0]
-
-            balance = amounts[-1]  # last amount on a transaction line is almost always balance
             narration = line.replace(date, "").strip()
             narration = re.sub(r"\b[\d,]+(?:\.\d{1,2})?\b", "", narration).strip()
 
@@ -394,8 +468,6 @@ class BankExtractor(BaseExtractor):
         else:
             missing.append("transactions")
             diagnostics.append("No date-anchored transaction rows detected.")
-
-        if not rows:
             diagnostics.append(
                 "Unable to locate transaction lines. "
                 "Possible causes: scanned image, non-standard layout, or wrong document type."
@@ -421,8 +493,12 @@ class BankExtractor(BaseExtractor):
         if len(rows) >= 5 and bank_signal_count >= 2:
             confidence = min(confidence + 0.15, 1.0)
         elif len(rows) >= 5:
-            # Rows alone aren't enough — modest boost only
             confidence = min(confidence + 0.05, 1.0)
+        elif len(rows) > 0 and bank_signal_count >= 2:
+            # Small statements (few real transactions) with strong bank
+            # discriminative signals still deserve a modest boost — a quiet
+            # month is not the same thing as a bad extraction.
+            confidence = min(confidence + 0.10, 1.0)
 
         return ExtractionResult(
             doc_type=self.doc_type,
@@ -432,6 +508,7 @@ class BankExtractor(BaseExtractor):
             missing_entities=missing,
             quality_score=quality,
             diagnostics=diagnostics,
+            raw_text=text,
         )
 
     def _build_df(self, rows: List[dict]) -> pd.DataFrame:
@@ -470,7 +547,7 @@ class BankExtractor(BaseExtractor):
 
 
 # ---------------------------------------------------------------------------
-# 7. SALARY EXTRACTOR
+# 8. SALARY EXTRACTOR
 # ---------------------------------------------------------------------------
 
 class SalaryExtractor(BaseExtractor):
@@ -558,11 +635,12 @@ class SalaryExtractor(BaseExtractor):
             missing_entities=missing,
             quality_score=quality,
             diagnostics=diagnostics,
+            raw_text=text,
         )
 
 
 # ---------------------------------------------------------------------------
-# 8. UTILITY EXTRACTOR
+# 9. UTILITY EXTRACTOR
 # ---------------------------------------------------------------------------
 
 class UtilityExtractor(BaseExtractor):
@@ -641,11 +719,12 @@ class UtilityExtractor(BaseExtractor):
             missing_entities=missing,
             quality_score=quality,
             diagnostics=diagnostics,
+            raw_text=text,
         )
 
 
 # ---------------------------------------------------------------------------
-# 9. CONFIDENCE EVALUATOR — runs all extractors, picks best
+# 10. CONFIDENCE EVALUATOR — runs all extractors, picks best
 # ---------------------------------------------------------------------------
 
 class ConfidenceEvaluator:
@@ -671,6 +750,7 @@ class ConfidenceEvaluator:
                     data=None,
                     confidence=0.0,
                     diagnostics=[f"Extractor error: {str(e)}"],
+                    raw_text=text,
                 ))
 
         best = max(results, key=lambda r: r.confidence)
@@ -687,7 +767,7 @@ class ConfidenceEvaluator:
 
 
 # ---------------------------------------------------------------------------
-# 10. VALIDATION PIPELINE (progressive, descriptive errors)
+# 11. VALIDATION PIPELINE (progressive, descriptive errors)
 # ---------------------------------------------------------------------------
 
 class ValidationPipeline:
@@ -731,7 +811,7 @@ class ValidationPipeline:
 
 
 # ---------------------------------------------------------------------------
-# 11. UNIVERSAL PARSER — public entry point
+# 12. UNIVERSAL PARSER — public entry point
 # ---------------------------------------------------------------------------
 
 class UniversalParser:
@@ -740,20 +820,25 @@ class UniversalParser:
         self.evaluator = ConfidenceEvaluator()
         self.validator = ValidationPipeline()
 
-    def process(self, file_path: str) -> Tuple[str, Any]:
+    def process(self, file_path: str, password: str = None) -> Tuple[str, Any, str]:
         """
-        Returns (doc_type, mapped_data) where mapped_data is a DataFrame
-        compatible with the existing PRISM feature engineering layer.
+        Returns (doc_type, mapped_data, raw_text).
+
+        raw_text is now returned alongside the mapped DataFrame so callers
+        (e.g. BankParser) can cross-validate extracted rows against the
+        statement's own self-reported summary section (transaction count,
+        total debit/credit, closing balance) rather than relying on an
+        arbitrary row-count threshold.
+
+        NOTE: this changes the return signature from a 2-tuple to a 3-tuple.
+        BankParser.extract() must be updated to unpack all three values.
         """
         # Stage A: Extract & normalize text
-        text = self.extractor.extract(file_path)
+        text = self.extractor.extract(file_path, password=password)
 
         # Only reject if ALL extraction strategies (including OCR) produced nothing
-        if not text.strip():
-            raise ValueError(
-                "Text extraction failed: no readable content recovered from document. "
-                "The file may be corrupted, password-protected, or an unsupported format."
-            )
+        if not text or not text.strip():
+            raise ValueError("Text extraction failed: NO READABLE CONTENT")
 
         # Stage B–D: Run all extractors, evaluate confidence, pick best
         result = self.evaluator.evaluate(text)
@@ -761,4 +846,4 @@ class UniversalParser:
         # Stage E: Validate
         self.validator.validate(result)
 
-        return result.doc_type, result.data
+        return result.doc_type, result.data, text

@@ -6,7 +6,7 @@ class UtilityParser(BaseParser):
         self.universal_parser = UniversalParser(ocr_engine)
 
     def extract(self, file_path: str):
-        doc_type, mapped_data = self.universal_parser.process(file_path)
+        doc_type, mapped_data, raw_text = self.universal_parser.process(file_path)
         if doc_type != "UTILITY":
             raise ValueError(f"Expected UTILITY document, but classified as {doc_type}")
         return mapped_data
