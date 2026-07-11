@@ -17,6 +17,10 @@ class BankParser(BaseParser):
         doc_type, mapped_data, raw_text = self.universal_parser.process(file_path,password=password)
         summary = parse_statement_summary(raw_text)
         self._validate_extraction_quality(mapped_data,raw_text=raw_text,statement_summary=summary)
+        print("BANK PARSER OUTPUT")
+        print(mapped_data.head(20))
+        print(mapped_data.dtypes)
+        print(mapped_data.columns.tolist())
         return mapped_data
     
     def _validate_extraction_quality(self,df: pd.DataFrame, raw_text:str ="",statement_days:int = 30,statement_summary:dict =None):

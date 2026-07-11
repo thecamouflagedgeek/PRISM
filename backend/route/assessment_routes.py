@@ -3,14 +3,22 @@ import tempfile, os
 from datetime import datetime
 import pandas as pd
 from core.session_store import get_session
-from ingestion.parsers.bank_parser import BankParser, ExtractionQualityError
-from ingestion.parsers.salary_parser import SalaryParser
+from ingestion.parsers.salary_parser import SalaryParser, SalaryParsingError
 from ingestion.parsers.utility_parser import UtilityParser
 from services.ocr_service import get_ocr_engine
-from features.bank_features import BankFeatureEngineer, BankFeatureEngineerError
+from features.bank_features import BankFeatureEngineer
 from features.salary_features import SalaryFeatureEngineer
 from features.utility_features import UtilityFeatureEngineer
 from scoring.risk_scorer import compute_risk_score
+from ingestion.bank_transaction_pipeline import BankTransactionPipeline, BankTransactionPipelineError
+from ingestion.document.classifier import is_credit_card_statement
+from ingestion.extractors.credit_card_summary import extract_credit_card_summary
+from ingestion.extractors.table import parse_credit_card_transactions
+from ingestion.document_pipeline import DocumentPipeline, DocumentProcessingError
+from features.credit_card_features import CreditCardFeatureEngineer
+from ingestion.parsers.bank_parser import ExtractionQualityError
+from ingestion.parsers.bank_parser import ExtractionQualityError as BankExtractionQualityError
+from ingestion.parsers.utility_parser import ExtractionQualityError as UtilityExtractionQualityError
 import math
 import numpy as np
 router = APIRouter(prefix="/assess", tags=["Assessment"])
@@ -39,25 +47,14 @@ def assert_valid_path(path, name="file"):
 def process_doc(parser, engineer_cls, path, password=None):
     try:
         raw = parser.extract(path, password=password)
-    except ExtractionQualityError as e:
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "error": "extraction_quality_insufficient",
-                "message": "Extracted data failed quality checks and cannot be reliably scored.",
-                "issues": e.issues
-            }
-        )
-    except ValueError as e:
-        if "Text extraction failed" in str(e):
-            raise HTTPException(422, detail={"error": "document_unreadable", "message": "The uploaded document appears to be a scanned image PDF."})
-        raise
+    except (BankExtractionQualityError, UtilityExtractionQualityError) as e:
+        raise HTTPException(422, detail={"error": "extraction_quality_insufficient", "message": str(e), "issues": e.issues})
     df = parser.transform(raw)
     parser.validate(df)
     try:
         engineer = engineer_cls(df)
         features = engineer.build_features()
-    except BankFeatureEngineerError as e:
+    except Exception as e:
         raise HTTPException(
             status_code=422,
             detail={
@@ -127,26 +124,48 @@ async def assess(
     bank_path = await save_temp(bank_file)
     assert_valid_path(bank_path, "bank_file")
     try:
-        bank_features = process_doc(
-            BankParser(ocr_engine),
-            BankFeatureEngineer,
-            bank_path,
-            password=bank_password
-        )
+        pipeline = DocumentPipeline(ocr_engine=ocr_engine)
+        try:
+            pipeline_result = pipeline.process(bank_path, password=bank_password)
+        except DocumentProcessingError as e:
+            raise HTTPException(
+            status_code=422,
+            detail={"error": e.error_code, "message": e.message, "issues": e.issues}
+            )
     finally:
         os.remove(bank_path)
-
+    
+    if not pipeline_result.is_scoreable:
+        return {
+        "status": "success",
+        "assessed_at": datetime.utcnow().isoformat(),
+        "session_id": session_id,
+        "document_type": pipeline_result.document_type,
+        "scoreable": False,
+        "note": (
+            f"This is a {pipeline_result.document_type.replace('_', ' ')}. "
+            "PRISM's credit scorecard is currently calibrated for savings/current "
+            "account statements only. Extracted features are provided for reference, "
+            "but no risk_score is generated for this document type yet."
+        ),
+        "features": {"bank": pipeline_result.features, "salary": None, "utility": None},
+    }
+    
+    bank_features = pipeline_result.features
+    
     # SALARY
     salary_features = None
     if salary_file and session.consent_salary:
         salary_path = await save_temp(salary_file)
         try:
             salary_parser = SalaryParser(ocr_engine)
-            salary_data = salary_parser.parse(salary_path)
-
-            if not salary_data or not isinstance(salary_data, dict):
-                raise HTTPException(422, "Salary parsing failed")
-
+            try:
+                salary_data = salary_parser.parse(salary_path)
+            except SalaryParsingError as e:
+                raise HTTPException(
+                status_code=422,
+                detail={"error": "salary_parsing_failed", "message": str(e)})
+            
             engineer = SalaryFeatureEngineer(salary_data)
             salary_features = engineer.build_features()
         finally:
@@ -201,5 +220,3 @@ async def assess(
     find_nan(response)
     print(response)
     return response
-
-    
