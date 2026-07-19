@@ -1,19 +1,8 @@
-import joblib
-import numpy as np
+from scoring.risk_scorer import _load_artifacts, _map_features, _woe_transform
+_load_artifacts()
 
-binning = joblib.load("scoring/artifacts/binning.pkl")
-
-features = [
-    "credit_debit_ratio",
-    "cashflow_cv",
-    "net_to_gross_ratio",
-    "utility_stability",
-    "min_balance",
-]
-
-for col in features:
-    b = binning[col]
-    print(f"\n{'='*60}")
-    print(f"FEATURE: {col}")
-    print(f"{'='*60}")
-    print(b.binning_table.build())
+# paste the real bank/salary/utility dicts for the applicant that scored 300
+feature_dict = _map_features(bank, salary, utility)
+X_woe = _woe_transform(feature_dict)
+print(feature_dict)
+print(X_woe)

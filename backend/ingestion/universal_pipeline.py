@@ -842,7 +842,8 @@ class UniversalParser:
 
         # Stage B–D: Run all extractors, evaluate confidence, pick best
         result = self.evaluator.evaluate(text)
-
+        print("\n================ OCR TEXT ================")
+        print(result)
         # Stage E: Validate
         self.validator.validate(result)
 

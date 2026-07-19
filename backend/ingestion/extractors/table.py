@@ -10,6 +10,8 @@ left-to-right order, not magnitude.
 import re
 import pandas as pd
 from typing import List, Optional, Tuple
+from typing import List
+import pandas as pd
 
 DATE_PATTERNS = [
     re.compile(r"\b\d{1,2}[/\-.]\d{1,2}[/\-.]\d{4}\b"),
@@ -41,21 +43,21 @@ def find_date(text: str) -> Optional[str]:
 
 
 def find_all_amounts_ordered(text: str) -> List[float]:
-    """
-    Preserves left-to-right reading order — required whenever position (not
-    magnitude) determines meaning, e.g. debit vs credit vs balance columns.
-    Do NOT sort this by value; a sorted list breaks column-position logic
-    whenever the balance happens to be numerically smaller than the debit.
-    """
     raw = AMOUNT_PATTERN.findall(text)
+
+    print("\n--------------------------------------")
+    print(text)
+    print("Regex Matches :", raw)
+
     results = []
     for r in raw:
         try:
             results.append(float(r.replace(",", "")))
         except ValueError:
             pass
-    return results
 
+    print("Parsed Amounts:", results)
+    return results
 
 def clean_amount(val) -> Optional[float]:
     if val is None:
@@ -89,7 +91,9 @@ def parse_debit_credit_balance(
     that has no guaranteed fixed-width alignment between header and rows.
     """
     amounts = find_all_amounts_ordered(line)
-    has_dash = bool(DASH_TOKEN.search(line))
+
+    if len(amounts) == 0:
+        return None, None, None
 
     debit, credit, balance = None, None, None
 
@@ -99,15 +103,45 @@ def parse_debit_credit_balance(
         else:
             credit, debit, balance = amounts[-3], amounts[-2], amounts[-1]
 
-    elif len(amounts) == 2 and has_dash:
-        if debit_first:
-            debit, balance = amounts[0], amounts[1]
-        else:
-            credit, balance = amounts[0], amounts[1]
-
     elif len(amounts) == 2:
-        # No dash detected — ambiguous. Conservative fallback: first is debit.
-        debit, balance = amounts[0], amounts[1]
+        balance = amounts[-1]
+
+        # Which column is amounts[0] actually in? Compare the position of the
+        # dash (empty-column placeholder) to the position of the FIRST amount
+        # token in the raw line -- not just "is there a dash somewhere".
+        dash_match = DASH_TOKEN.search(line)
+        first_amount_match = re.search(r"[\d,]+\.\d{2}", line)
+
+        if dash_match and first_amount_match:
+            dash_before_first_amount = dash_match.start() < first_amount_match.start()
+        else:
+            # No dash found at all -- ambiguous, fall through to the
+            # conservative default below.
+            dash_before_first_amount = None
+
+        if dash_before_first_amount is None:
+            # No dash present: conservative fallback, assume first amount is
+            # whichever column comes first per the statement's own header order.
+            if debit_first:
+                debit = amounts[0]
+            else:
+                credit = amounts[0]
+
+        elif dash_before_first_amount:
+            # Dash occupies the FIRST (leftmost) column -> that column is
+            # empty, so amounts[0] belongs to the SECOND column.
+            if debit_first:
+                credit = amounts[0]   # debit column was the empty (dashed) one
+            else:
+                debit = amounts[0]    # credit column was the empty (dashed) one
+
+        else:
+            # Dash occupies the SECOND column -> amounts[0] belongs to the
+            # FIRST column.
+            if debit_first:
+                debit = amounts[0]
+            else:
+                credit = amounts[0]
 
     elif len(amounts) == 1:
         balance = amounts[0]
@@ -178,35 +212,70 @@ def parse_transaction_rows(text: str) -> List[dict]:
 
 
 def build_transaction_df(rows: List[dict]) -> pd.DataFrame:
-    """Converts raw parsed rows into the canonical schema consumed by feature engineering."""
+    """
+    Converts parsed transaction rows into the canonical dataframe
+    consumed by the feature engineering layer.
+    """
+
     if not rows:
-        return pd.DataFrame(columns=["date", "amount", "type", "narration", "closing_balance"])
+        return pd.DataFrame(
+            columns=[
+                "date",
+                "amount",
+                "type",
+                "narration",
+                "closing_balance",
+            ]
+        )
 
     df = pd.DataFrame(rows)
 
+    # Ensure all expected columns exist
     for col in ["date", "narration", "debit", "credit", "closing_balance"]:
         if col not in df.columns:
             df[col] = None
 
+    # Clean numeric fields
     df["debit"] = df["debit"].apply(clean_amount)
     df["credit"] = df["credit"].apply(clean_amount)
     df["closing_balance"] = df["closing_balance"].apply(clean_amount)
 
+    # Canonical amount column
     df["amount"] = df.apply(
-        lambda r: r["credit"] if pd.notna(r.get("credit")) and r.get("credit", 0) > 0
-        else (r["debit"] if pd.notna(r.get("debit")) else 0),
-        axis=1
+        lambda r: (
+            r["credit"]
+            if pd.notna(r["credit"]) and r["credit"] > 0
+            else (
+                r["debit"]
+                if pd.notna(r["debit"]) and r["debit"] > 0
+                else None
+            )
+        ),
+        axis=1,
     )
 
+    # Transaction type
     def detect_type(row):
-        if pd.notna(row.get("credit")) and row.get("credit", 0) > 0:
+        if pd.notna(row["credit"]) and row["credit"] > 0:
             return "CR"
-        if pd.notna(row.get("debit")) and row.get("debit", 0) > 0:
+        elif pd.notna(row["debit"]) and row["debit"] > 0:
             return "DR"
         return None
 
     df["type"] = df.apply(detect_type, axis=1)
 
-    final = df[["date", "amount", "type", "narration", "closing_balance"]].copy()
+    # Keep only canonical columns
+    final = df[
+        [
+            "date",
+            "amount",
+            "type",
+            "narration",
+            "closing_balance",
+        ]
+    ].copy()
+
+    # Remove completely invalid rows
     final = final.dropna(subset=["date"]).reset_index(drop=True)
+
     return final

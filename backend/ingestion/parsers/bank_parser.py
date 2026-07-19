@@ -3,7 +3,9 @@ from ingestion.universal_pipeline import UniversalParser
 from ingestion.universal_pipeline import parse_statement_summary
 import pandas as pd
 import logging
+import re
 
+_AMOUNT_CLEAN_RE = re.compile(r"[^\d.\-()]")
 logger = logging.getLogger("prism.extraction")
 
 MIN_TRANSACTIONS_REQUIRED = 2  # tune based on typical real statement periods
@@ -13,8 +15,63 @@ class BankParser(BaseParser):
     def __init__(self, ocr_engine=None):
         self.universal_parser = UniversalParser(ocr_engine)
 
+    def parse_amount(raw:str) -> float | None:
+        if raw is None:
+            return None 
+        s=raw.strip()
+        if not s or s in {"-","--","NA","N/A"}:
+            return None
+        negative = s.startswith("(") and s.endswith(")")
+        s=_AMOUNT_CLEAN_RE.sub("",s)
+        if not s or s in {".","-"}:
+            return None
+        
+        try:
+            value=float(s)
+        except ValueError:
+            return None
+        
+        return -value if negative else value 
+    
+    def reconcile_running_balance(df, debit_col, credit_col, balance_col, tolerance=1.0):
+        """
+    Recomputes the running balance from parsed debit/credit and compares it
+    row-by-row against the extracted balance column. If they diverge beyond
+    `tolerance`, extraction is wrong -- raise instead of silently scoring
+    garbage. This would have caught today's bug immediately, at ingestion
+    time, instead of surfacing three layers downstream as a score anomaly.
+    """
+        running = df[balance_col].iloc[0]
+        mismatches = []
+        for i in range(1, len(df)):
+            debit = df[debit_col].iloc[i] or 0.0
+            credit = df[credit_col].iloc[i] or 0.0
+            running = running - debit + credit
+            actual = df[balance_col].iloc[i]
+            if abs(running - actual) > tolerance:
+                mismatches.append({
+                "row": i, "expected": running, "actual": actual,
+                "diff": actual - running,})
+                running = actual  # resync so one bad row doesn't cascade
+
+            if mismatches:
+                raise ExtractionQualityError(
+            f"{len(mismatches)} row(s) failed balance reconciliation",
+            issues=mismatches,)
+
     def extract(self, file_path: str, password: str | None = None):
         doc_type, mapped_data, raw_text = self.universal_parser.process(file_path,password=password)
+        print("\n" + "="*80)
+        print("PRISM EXTRACTION DEBUG")
+        print("="*80)
+        print("\nDocument Type")
+        print(doc_type)
+        print("\nRows Extracted")
+        print(len(mapped_data))
+        print("\nColumns")
+        print(mapped_data.columns.tolist())
+        print("\nPreview")
+        print(mapped_data.head(10))
         summary = parse_statement_summary(raw_text)
         self._validate_extraction_quality(mapped_data,raw_text=raw_text,statement_summary=summary)
         print("BANK PARSER OUTPUT")

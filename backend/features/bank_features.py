@@ -129,12 +129,13 @@ class BankFeatureEngineer:
         salary_txns = self._cr_rows[mask]
         if salary_txns.empty:
             return False
-        return int(salary_txns["date"].dt.to_period("M").nunique()) >= 3
+        return bool(salary_txns["date"].dt.to_period("M").nunique() >= 3)
 
     def emi_detection_flag(self):
-        return bool(
-            self.df["narration"].str.lower().str.contains("|".join(EMI_KEYWORDS), na=False).any()
-        )
+        return True if self.df["narration"]\
+        .str.lower()\
+        .str.contains("|".join(EMI_KEYWORDS), na=False)\
+        .any() else False
 
     def income_overstate_ratio(self):
         salary_mask = self._cr_rows["narration"].str.lower().str.contains(
@@ -147,12 +148,35 @@ class BankFeatureEngineer:
         return round(all_credits / salary_total, 4)
 
     def build_features(self) -> Dict:
+        # FIX: each feature method is now called exactly ONCE and stored in
+        # a local variable, then reused for both the None-check and the
+        # value. The original code called e.g. self.cashflow_cv() twice —
+        # once in the `if` condition, once as the value — which duplicated
+        # any side effects (credit_debit_ratio()'s print statement ran
+        # twice per call) and would cause inconsistent results if any of
+        # these methods were ever made non-deterministic.
+        mean_monthly_credit = self.mean_monthly_credit()
+        cashflow_cv = self.cashflow_cv()
+        min_balance_l3m = self.min_balance_l3m()
+        credit_debit_ratio = self.credit_debit_ratio()
+        income_overstate_ratio = self.income_overstate_ratio()
+
         return {
-            "mean_monthly_credit": self.mean_monthly_credit(),
-            "cashflow_cv": self.cashflow_cv(),
-            "min_balance_l3m": self.min_balance_l3m(),
-            "credit_debit_ratio": self.credit_debit_ratio(),
-            "salary_regularity_flag": self.salary_regularity_flag(),
-            "emi_detection_flag": self.emi_detection_flag(),
-            "income_overstate_ratio": self.income_overstate_ratio(),
+            "mean_monthly_credit": (
+                float(mean_monthly_credit) if mean_monthly_credit is not None else None
+            ),
+            "cashflow_cv": (
+                float(cashflow_cv) if cashflow_cv is not None else None
+            ),
+            "min_balance_l3m": (
+                float(min_balance_l3m) if min_balance_l3m is not None else None
+            ),
+            "credit_debit_ratio": (
+                float(credit_debit_ratio) if credit_debit_ratio is not None else None
+            ),
+            "salary_regularity_flag": bool(self.salary_regularity_flag()),
+            "emi_detection_flag": bool(self.emi_detection_flag()),
+            "income_overstate_ratio": (
+                float(income_overstate_ratio) if income_overstate_ratio is not None else None
+            ),
         }

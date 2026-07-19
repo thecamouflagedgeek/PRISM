@@ -57,6 +57,12 @@ def validate_consistency(df: pd.DataFrame, raw_text: str) -> ConsistencyResult:
         return ConsistencyResult(passed=False, issues=["No transactions extracted at all."])
 
     summary = parse_statement_summary(raw_text)
+    print("\n========== SUMMARY ==========")
+    print(summary)
+    print("\n========== LAST 20 ROWS ==========")
+    print(df.tail(20))
+    print("\n========== LAST 1500 CHARACTERS ==========")
+    print(raw_text[-1500:])
 
     if summary.get("transaction_count") is not None:
         if len(df) != summary["transaction_count"]:
@@ -74,9 +80,9 @@ def validate_consistency(df: pd.DataFrame, raw_text: str) -> ConsistencyResult:
             )
 
     if summary.get("closing_balance") is not None:
-        sorted_df = df.dropna(subset=["closing_balance"]).sort_values("date")
-        if not sorted_df.empty:
-            extracted_final_balance = float(sorted_df["closing_balance"].iloc[-1])
+        valid_df = df.dropna(subset=["closing_balance"])
+        if not valid_df.empty:
+            extracted_final_balance = float(valid_df["closing_balance"].iloc[-1])
             if abs(extracted_final_balance - summary["closing_balance"]) > 1.0:
                 issues.append(
                     f"Extracted final balance {extracted_final_balance} does not match "

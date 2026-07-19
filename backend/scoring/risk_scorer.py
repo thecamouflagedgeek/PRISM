@@ -17,6 +17,9 @@ _ARTIFACTS = os.path.join(_BASE, "artifacts")
 _model          = None
 _binning_models = None
 
+models = joblib.load("scoring/artifacts/binning.pkl")
+print(models["cashflow_cv"].binning_table.build())
+
 def _load_artifacts():
     global _model, _binning_models
     if _model is None:
@@ -229,6 +232,26 @@ def compute_risk_score(
         pd_value = float(np.clip(_model.predict_proba(X_woe)[0][1], 1e-6, 1-1e-6))
 
     score = _to_score(log_odds)
+    confidence = _confidence(feature_dict, bank_features, salary_features,utility_features,pd_value)
+    doc_coverage = confidence["components"]["document_coverage"]
+    if doc_coverage < 0.4:
+        max_allowed_score=500
+    elif doc_coverage < 0.7:
+        max_allowed_score = 700
+    else:
+        max_allowed_score = 900
+    score_before_cap = score
+    score = min(score, max_allowed_score)
+    score_capped = score_before_cap > max_allowed_score
+
+    documents_needed = []
+    if salary_features is None:
+        documents_needed.append("salary_slip_or_itr")
+    if utility_features is None:
+        documents_needed.append("utility_bill")
+    if bank_features is None:
+        documents_needed.append("bank_statement")
+
 
     print("FEATURES")
     print(feature_dict)
@@ -250,8 +273,9 @@ def compute_risk_score(
         "risk_tier":              _risk_tier(pd_value),
         "log_odds":               round(log_odds, 4),
         "reason_codes":           _reason_codes(X_woe),
-        "confidence":             _confidence(feature_dict, bank_features,
-                                              salary_features, utility_features, pd_value),
+        "confidence":             confidence,
+        "documents_needed":       documents_needed,
+        "score_capped":           score_capped,
         "model_metadata": {
             "model_type":  "WoE_Logistic_Scorecard",
             "pdo":         _PDO,
