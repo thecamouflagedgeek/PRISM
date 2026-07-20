@@ -67,7 +67,40 @@ def fit_binning_models(
 
         ob.fit(X[col].values, y.values)
 
-        iv = ob.binning_table.build()["IV"].sum()
+        table = ob.binning_table.build()
+
+        iv = table["IV"].sum()
+
+        # ----------------------------
+        # Verify Missing/Special bin
+        # ----------------------------
+        # Only salary & utility derived features are expected to have
+        # document-level missingness.
+
+        if col in ["net_to_gross_ratio", "utility_stability"]:
+
+            missing_rows = table[
+                table["Bin"].astype(str).str.contains(
+                    "Missing|Special",
+                    case=False,
+                    na=False
+                )
+            ]
+
+            print(f"\nFeature: {col}")
+
+            if missing_rows.empty:
+                raise AssertionError(f"{col}: Missing/Special bin not created.")
+
+            count = int(missing_rows["Count"].sum())
+            missing_woe = None
+            if "WoE" in missing_rows.columns:
+                missing_woe = float(missing_rows.loc[missing_rows["Bin"].astype(str).str.contains("Missing", case=False, na=False), "WoE"].iloc[0])
+                if np.isnan(missing_woe):
+                    missing_woe = None
+
+            print(f"Missing Count : {count}")
+            print(f"Missing WoE   : {missing_woe}")
 
         if iv < IV_DROP_THRESHOLD:
             print(f"[WARN] {col}: IV={iv:.4f} (weak predictor)")
