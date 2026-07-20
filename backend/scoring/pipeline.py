@@ -34,6 +34,55 @@ FEATURES = [
 os.makedirs("artifacts", exist_ok=True)
 
 
+def inject_document_missingness(
+    df: pd.DataFrame,
+    seed: int = 42,
+    salary_missing_rate: float = 0.12,
+    utility_missing_rate: float = 0.22,
+    salary_features: list[str] | None = None,
+    utility_features: list[str] | None = None,
+) -> pd.DataFrame:
+    """Inject document-level missingness for salary and utility documents.
+
+    Bank statements remain mandatory in this pipeline, so they are not masked.
+    Missingness is applied at the document level by setting all features derived
+    from a missing salary/utility document to NaN together.
+    """
+    if salary_features is None:
+        salary_features = ["net_to_gross_ratio"]
+    if utility_features is None:
+        utility_features = ["utility_stability"]
+
+    df = df.copy()
+    rng = np.random.default_rng(seed)
+
+    if "default" in df.columns:
+        default_mask = df["default"].astype(int).to_numpy()
+        salary_prob = np.where(
+            default_mask == 1,
+            np.clip(salary_missing_rate + 0.08, 0.0, 1.0),
+            np.clip(salary_missing_rate - 0.03, 0.0, 1.0),
+        )
+        utility_prob = np.where(
+            default_mask == 1,
+            np.clip(utility_missing_rate + 0.08, 0.0, 1.0),
+            np.clip(utility_missing_rate - 0.03, 0.0, 1.0),
+        )
+    else:
+        salary_prob = np.full(len(df), salary_missing_rate)
+        utility_prob = np.full(len(df), utility_missing_rate)
+
+    salary_missing = rng.random(len(df)) < salary_prob
+    utility_missing = rng.random(len(df)) < utility_prob
+
+    if salary_features:
+        df.loc[salary_missing, salary_features] = np.nan
+    if utility_features:
+        df.loc[utility_missing, utility_features] = np.nan
+
+    return df
+
+
 def generate_data(N=10000):
     """Synthetic data stand-in for real parsed document output from Stage 1+2."""
     np.random.seed(42)
@@ -64,6 +113,19 @@ def main():
 
     # ── Data ─────────────────────────────────────────────────────────────────
     df = generate_data()
+    # ----------------------------------------------------------
+    # Stage 3: Document-level missingness injection
+    # ----------------------------------------------------------
+    # Real ingestion logs/datasets were not found in this workspace, so the
+    # training pipeline continues to use synthetic document-level masking.
+    df = inject_document_missingness(df, seed=42)
+
+    salary_missing = df["net_to_gross_ratio"].isna()
+    utility_missing = df["utility_stability"].isna()
+
+    print(f"\nSalary docs missing : {salary_missing.sum()} / {len(df)}")
+    print(f"Utility docs missing: {utility_missing.sum()} / {len(df)}")
+
     train, test = train_test_split(df, test_size=0.2, random_state=42)
     print(f"\nData: {len(train)} train  |  {len(test)} test  |  "
           f"Bad rate: {df['default'].mean():.2%}")
