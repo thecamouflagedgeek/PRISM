@@ -4,6 +4,14 @@ import tempfile, os, json
 from datetime import datetime
 import pandas as pd
 import numpy as np
+from sqlalchemy.orm import Session
+
+from database.db import get_db
+from database.crud import (
+    save_document,
+    update_document_status,
+    save_features,
+)
 
 from core.session_store import get_session
 from ingestion.parsers.salary_parser import SalaryParser, SalaryParsingError
@@ -170,6 +178,7 @@ async def assess(
     utility_password: str = Form(None),
     session_id: str = Header(...),
     ocr_engine=Depends(get_ocr_engine),
+    db: Session = Depends(get_db),
 ):
     session = get_session(session_id)
     if not session:
@@ -179,15 +188,44 @@ async def assess(
 
     # ---------------- BANK ----------------
     bank_path = await save_temp(bank_file)
+    document = save_document(
+    db=db,
+    application_id=session.application_id,
+    document_type="BANK_STATEMENT",
+    file_name=bank_file.filename,
+    storage_path=bank_path,
+)
     assert_valid_path(bank_path, "bank_file")
     try:
         pipeline = DocumentPipeline(ocr_engine=ocr_engine)
         try:
             pipeline_result = pipeline.process(bank_path, password=bank_password)
+            update_document_status(
+            db=db,
+            document_id=document.document_id,
+            status="OCR_COMPLETED"
+        )
         except DocumentProcessingError as e:
+
+            print("\n========== DOCUMENT PROCESSING ERROR ==========")
+            print("Error Code:", e.error_code)
+            print("Message:", e.message)
+            print("Issues:", e.issues)
+            print("=============================================\n")
+
+            update_document_status(
+                db=db,
+                document_id=document.document_id,
+                status="FAILED"
+            )
+
             raise HTTPException(
                 status_code=422,
-                detail={"error": e.error_code, "message": e.message, "issues": e.issues},
+                detail={
+                    "error": e.error_code,
+                    "message": e.message,
+                    "issues": e.issues,
+                },
             )
     finally:
         os.remove(bank_path)
@@ -217,36 +255,119 @@ async def assess(
         })
 
     bank_features = pipeline_result.features
+    save_features(
+    db=db,
+    application_id=session.application_id,
+    feature_source="BANK",
+    features=features_to_dict(bank_features)
+)
 
     # ---------------- SALARY ----------------
     salary_features = None
+
     if salary_file and session.consent_salary:
+
         salary_path = await save_temp(salary_file)
+
+        salary_document = save_document(
+            db=db,
+            application_id=session.application_id,
+            document_type="SALARY_SLIP",
+            file_name=salary_file.filename,
+            storage_path=salary_path,
+        )
+
         try:
+
             salary_parser = SalaryParser(ocr_engine)
+
             try:
                 salary_data = salary_parser.parse(salary_path)
+
             except SalaryParsingError as e:
+
+                update_document_status(
+                    db=db,
+                    document_id=salary_document.document_id,
+                    status="FAILED"
+                )
+
                 raise HTTPException(
                     status_code=422,
-                    detail={"error": "salary_parsing_failed", "message": str(e)},
+                    detail={
+                        "error": "salary_parsing_failed",
+                        "message": str(e)
+                    },
                 )
+
             engineer = SalaryFeatureEngineer(salary_data)
+
             salary_features = engineer.build_features()
+
+            update_document_status(
+                db=db,
+                document_id=salary_document.document_id,
+                status="OCR_COMPLETED"
+            )
+
+            save_features(
+                db=db,
+                application_id=session.application_id,
+                feature_source="SALARY",
+                features=features_to_dict(salary_features)
+            )
+
         finally:
             os.remove(salary_path)
 
-    # ---------------- UTILITY ----------------
+        # ---------------- UTILITY ----------------
     utility_features = None
+
     if utility_file and session.consent_utility:
+
         utility_path = await save_temp(utility_file)
+
+        utility_document = save_document(
+            db=db,
+            application_id=session.application_id,
+            document_type="UTILITY_BILL",
+            file_name=utility_file.filename,
+            storage_path=utility_path,
+        )
+
         assert_valid_path(utility_path, "utility_file")
+
         try:
+
             utility_features = process_doc(
                 UtilityParser(ocr_engine),
                 UtilityFeatureEngineer,
                 utility_path,
             )
+
+            update_document_status(
+                db=db,
+                document_id=utility_document.document_id,
+                status="OCR_COMPLETED"
+            )
+
+            save_features(
+                db=db,
+                application_id=session.application_id,
+                feature_source="UTILITY",
+                features=features_to_dict(utility_features)
+            )
+
+        except Exception:
+
+            update_document_status(
+                db=db,
+                document_id=utility_document.document_id,
+                status="FAILED"
+            )
+
+            raise
+
         finally:
             os.remove(utility_path)
 
