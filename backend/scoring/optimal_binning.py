@@ -62,7 +62,8 @@ def fit_binning_models(
             dtype="numerical",
             min_bin_size=MIN_BIN_SIZE,
             max_n_bins=MAX_N_BINS,
-            monotonic_trend=monotonic
+            monotonic_trend=monotonic,
+            special_codes=[np.nan] 
         )
 
         ob.fit(X[col].values, y.values)

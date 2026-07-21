@@ -92,9 +92,12 @@ def woe_for_single_record(
         raw_val = record.get(col)
 
         if raw_val is None or (isinstance(raw_val, float) and np.isnan(raw_val)):
-            # Literature approach: missing → Special bin WoE from OptimalBinning
-            # Fallback: 0.0 (neutral, log-odds contribution = 0)
-            woe_val = 0.0
+            ob= binning_models[col]
+            try:
+                woe_val = ob.transform(np.array([np.nan]), metric="woe")[0]
+            except Exception:
+                raise ValueError(f"No special/missing bin fitted for '{col}'. "
+            f"Refit binning_models['{col}'] with special_codes=[np.nan] in Stage 3.")
         else:
             woe_val = binning_models[col].transform(
                 np.array([raw_val]), metric="woe"
