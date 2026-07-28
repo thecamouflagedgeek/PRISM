@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+const BASE =
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 /* ── Mock data for standalone preview ── */
 const MOCK_RESULT = {
@@ -888,11 +890,16 @@ const WhatIfPanel = ({ session, baseResult }) => {
     setErr(null);
     setLoading(true);
     try {
-      const res = await fetch("/assess/whatif", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", session_id: session?.id ?? "" },
-        body: JSON.stringify({ overrides: Object.fromEntries(activeOverrides) }),
-      });
+      const res = await fetch(`${BASE}/assess/whatif`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "session-id": session.session_id,
+    },
+    body: JSON.stringify({
+        overrides: Object.fromEntries(activeOverrides),
+    }),
+});
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body?.detail?.message || body?.detail || "Simulation failed");

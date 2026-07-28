@@ -3,47 +3,57 @@ import { useState } from "react";
 import { Nav } from "../components/Nav";
 
 
-const API = import.meta.env.VITE_API_URL || "https://prism-backend-4mfu.onrender.com";
+const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
   
 
 export default function LoginPage({ go, setSession,setError}){
-  const [bid, setBid] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const handleContinue = async () => {
-    const borrowerId=bid.trim();
-    if(!borrowerId || loading)
-      return;
+  const phoneNumber = phone.trim();
 
-    setLoading(true);
-    try
-    {
-      const res=await fetch(`${API}/consent`,{
-        method:"POST",
-        headers:{"Content-Type":"application/json",Accept:"application/json"},body: JSON.stringify({borrower_id:borrowerId,}),
-      });
-      const data=await res.json();
-      if(!res.ok)
-      {
-        throw new Error(data.detail || data.message || "Failed to create session");
-      }
+  if (!phoneNumber || loading) return;
 
-      setSession({ borrowerId, id:data.session_id || data.sessionId || data.id,});
-      go("consent");
+  setLoading(true);
+
+  try {
+    const res = await fetch(`${API}/auth/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone_number: phoneNumber,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.detail?.message ||
+        data.message ||
+        "Failed to send OTP."
+        );
     }
-    catch(err)
-    {
-      console.error("Session creation failed",err);
-      if(setError)
-      {
-        setError(err.message);
-      }
-      alert(err.message ||"Unable to connect to server.");
-    }
-    finally 
-    {
-      setLoading(false);
-    }
-  };
+
+    // Store phone number temporarily
+    setSession({
+      phone_number: phoneNumber,
+    });
+
+    go("otp");
+
+  } catch (err) {
+    console.error(err);
+
+    if (setError) setError(err.message);
+
+    alert(err.message || "Unable to connect to server.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="dot-grid" style={{ minHeight: "100vh" }}>
@@ -65,31 +75,31 @@ export default function LoginPage({ go, setSession,setError}){
           </h1>
           <p className="fade-up-2" style={{ color: "var(--muted)", fontSize: 16, lineHeight: 1.65,
             fontWeight: 300, marginBottom: 40 }}>
-            Enter your Borrower ID to begin your credit assessment.
+            Enter your registered phone number to begin your credit assessment.
             Your session is encrypted and expires in 60 minutes.
           </p>
 
           <div className="fade-up-3" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
               <label style={{ fontSize: 13, fontWeight: 500, color: "var(--ink2)",
-                display: "block", marginBottom: 8 }}>Borrower ID</label>
+                display: "block", marginBottom: 8 }}>Phone Number</label>
               <input
                 className="input-field"
-                value={bid}
-                onChange={e => setBid(e.target.value)}
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && handleContinue()}
-                placeholder="e.g. BRW-2025-001"
+                placeholder="e.g. 9876543210"
                 style={{ fontFamily: "'Syne', sans-serif", letterSpacing: "0.02em" }}
               />
               <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>
-                Use any identifier — no account creation required.
+                An OTP will be sent to this number for verification.
               </div>
             </div>
 
             <button className="btn-primary btn-orange"
-              onClick={handleContinue} disabled={!bid.trim()}
+              onClick={handleContinue} disabled={!phone.trim()}
               style={{ padding: "14px 28px", fontSize: 15, alignSelf: "flex-start" }}>
-                {loading ? "Creating Session...":" Continue to Consent → "}
+                {loading ? "Sending OTP..." : "Continue →"}
             </button>
           </div>
 

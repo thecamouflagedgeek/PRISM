@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import ConsentPage from "./pages/ConsentPage";
 import UploadPage from "./pages/UploadPage";
 import ProcessingPage from "./pages/ProcessingPage";
+import OTPPage from "./pages/OTPPage";
 import ResultsPage from "./pages/ResultsPage";
 import "./index.css";
 
@@ -30,6 +31,7 @@ export default function App() {
     <div className="app-root">
       {page === "landing"    && <LandingPage    {...props} />}
       {page === "login"      && <LoginPage      {...props} />}
+      {page === "otp"        && <OTPPage        {...props} />}
       {page === "consent"    && <ConsentPage    {...props} />}
       {page === "upload"     && <UploadPage     {...props} />}
       {page === "processing" && <ProcessingPage {...props} />}

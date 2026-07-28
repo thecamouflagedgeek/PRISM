@@ -8,7 +8,8 @@ from database.models import (
     Application,
     Consent,
     Document,
-    ExtractedFeature
+    ExtractedFeature,
+    RiskScore
 )
 
 
@@ -122,7 +123,30 @@ def save_consent(
 
     return consent
 
+def save_risk_score(
+    db: Session,
+    application_id: int,
+    result: dict,
+):
+    confidence = result.get("confidence", {})
 
+    score = RiskScore(
+        application_id=application_id,
+        credit_score=result["risk_score"],
+        probability_default=result["probability_of_default"],
+        confidence_score=confidence.get("confidence_pct", 0),
+        risk_tier=result["risk_tier"],
+        generated_at=datetime.utcnow(),
+        model_name="WoE_Logistic_Scorecard",
+        model_version="v1.0",
+        score_status="ACTIVE",
+    )
+
+    db.add(score)
+    db.commit()
+    db.refresh(score)
+
+    return score
 # ==========================
 # DOCUMENTS
 # ==========================

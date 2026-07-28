@@ -2,7 +2,7 @@
 import { useRef } from "react";
 import { Nav } from "../components/Nav";
 
-const BASE = import.meta.env.VITE_API_URL || "https://prism-backend-4mfu.onrender.com";
+const BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 export default function UploadPage({ go, session, consents, files, setFiles, setResult, setError }) {
 
@@ -21,10 +21,9 @@ export default function UploadPage({ go, session, consents, files, setFiles, set
     go("processing");
     try
     {
-      if(!session?.id)
-      {
-        throw new Errow("Session not found. Please login again");
-      }
+      if (!session?.session_id) {
+    throw new Error("Session not found. Please login again.");
+}
       const form=new FormData();
       form.append("bank_file",files.bank);
       if(files.salary)
@@ -37,13 +36,17 @@ export default function UploadPage({ go, session, consents, files, setFiles, set
       }
 
       const res=await fetch(`${BASE}/assess`,{method:"POST",
-        headers:{"session-id":session.id,},
+        headers:{"session-id":session.session_id,},
         body:form,
       });
       const data=await res.json();
       if(!res.ok)
       {
-        throw new Error(data.detail || data.message || "Assessment failed");
+        throw new Error(
+        data.detail?.message ||
+        data.message ||
+        "Assessment failed"
+);
       }
       setResult(data);
       go("results");

@@ -18,28 +18,40 @@ const CONSENT_ITEMS = [
 
 export default function ConsentPage({ go, session, setSession, consents, setConsents, setError }) {
 
-  const handleConsent = async () => {
-    try {
-      const res = await fetch(`${BASE}/consent`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          borrower_id:     session.borrowerId,
-          consent_bank:    consents.bank,
-          consent_salary:  consents.salary,
-          consent_utility: consents.utility,
-          consent_bureau:  consents.bureau,
-          consent_dpdpa:   consents.dpdpa,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail?.message || "Consent failed");
-      setSession(s => ({ ...s, id: data.session_id }));
-      go("upload");
-    } catch (e) {
-      setError(e.message);
+const handleConsent = async () => {
+  try {
+    const res = await fetch(`${BASE}/consent`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        session_id: session.session_id,
+        consent_bank: consents.bank,
+        consent_salary: consents.salary,
+        consent_utility: consents.utility,
+        consent_dpdpa: consents.dpdpa,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data.detail?.message ||
+        data.message ||
+        "Consent failed"
+      );
     }
-  };
+
+    go("upload");
+
+  } catch (e) {
+    console.error(e);
+    setError(e.message);
+    alert(e.message);
+  }
+};
 
   const toggle = (key) => {
     const item = CONSENT_ITEMS.find(c => c.key === key);
@@ -67,7 +79,7 @@ export default function ConsentPage({ go, session, setSession, consents, setCons
           </h1>
           <p className="fade-up-2" style={{ color: "var(--muted)", fontSize: 15, lineHeight: 1.7,
             fontWeight: 300, marginBottom: 32 }}>
-            Hi <strong style={{ color: "var(--ink)" }}>{session?.borrowerId}</strong>.
+            Hi <strong style={{ color: "var(--ink)" }}>{session?.phone_number}</strong>.
             Select which data sources you consent to share.
             Mandatory items are required to proceed. Optional items improve your score accuracy.
           </p>

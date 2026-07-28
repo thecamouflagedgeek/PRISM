@@ -5,6 +5,7 @@ from sqlalchemy import (
     Boolean,
     TIMESTAMP,
     Text,
+    Numeric,
     ForeignKey
 )
 
@@ -122,3 +123,34 @@ class ExtractedFeature(Base):
     feature_source = Column(String)
 
     created_at = Column(TIMESTAMP)
+
+    # ==========================
+# RISK SCORES
+# ==========================
+
+class RiskScore(Base):
+    __tablename__ = "risk_scores"
+    __table_args__ = {"schema": "prism"}
+
+    score_id = Column(Integer, primary_key=True)
+
+    application_id = Column(
+        Integer,
+        ForeignKey("prism.applications.application_id")
+    )
+
+    credit_score = Column(Integer)
+
+    probability_default = Column(Numeric(5, 4))
+
+    confidence_score = Column(Numeric(5, 2))
+
+    risk_tier = Column(String(20))
+
+    generated_at = Column(TIMESTAMP)
+
+    model_name = Column(String(50))
+
+    model_version = Column(String(20))
+
+    score_status = Column(String(20))

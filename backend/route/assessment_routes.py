@@ -17,6 +17,7 @@ from database.crud import (
     save_document,
     update_document_status,
     save_features,
+    save_risk_score,
 )
 
 from core.session_store import get_session
@@ -402,6 +403,11 @@ async def assess(
 
     # ---------------- SCORING ----------------
     result = compute_risk_score(bank_features, salary_features, utility_features)
+    save_risk_score(
+    db=db,
+    application_id=session.application_id,
+    result=result,
+)
     session.assessment_result = result
 
     response_data = {
