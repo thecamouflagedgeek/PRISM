@@ -4,7 +4,7 @@ import tempfile, os, json
 from datetime import datetime
 import pandas as pd
 import numpy as np
-
+from pydantic import BaseModel
 from core.session_store import get_session
 from ingestion.parsers.salary_parser import SalaryParser, SalaryParsingError
 from ingestion.parsers.utility_parser import UtilityParser
@@ -22,6 +22,7 @@ from features.credit_card_features import CreditCardFeatureEngineer
 from ingestion.parsers.bank_parser import ExtractionQualityError
 from ingestion.parsers.bank_parser import ExtractionQualityError as BankExtractionQualityError
 from ingestion.parsers.utility_parser import ExtractionQualityError as UtilityExtractionQualityError
+from scoring.risk_scorer import compute_risk_score, simulate_whatif
 
 router = APIRouter(prefix="/assess", tags=["Assessment"])
 
@@ -42,6 +43,8 @@ router = APIRouter(prefix="/assess", tags=["Assessment"])
 # know how to serialize, with no way to skip one silently — if something is
 # still wrong, this raises a clear TypeError naming the exact bad object
 # instead of FastAPI's confusing double-exception.
+class WhatIfRequest(BaseModel):
+    overrides: dict[str, float]
 
 def _json_default(obj):
     # numpy scalars: bool_, int8..int64, float16..float64, etc. -- one check
@@ -267,3 +270,24 @@ async def assess(
     }
 
     return safe_response(response_data)
+
+@router.post("/whatif")
+async def whatif(payload: WhatIfRequest, session_id: str = Header(...)):
+    session = get_session(session_id)
+    if not session:
+        raise HTTPException(401, "Invalid session")
+    if not getattr(session, "assessment_result", None):
+        raise HTTPException(400, "Run /assess for this session before using /assess/whatif")
+
+    result = simulate_whatif(
+        getattr(session, "bank_features", None),
+        getattr(session, "salary_features", None),
+        getattr(session, "utility_features", None),
+        payload.overrides,
+    )
+
+    return safe_response({
+        "status": "success",
+        "session_id": session_id,
+        **result,
+    })

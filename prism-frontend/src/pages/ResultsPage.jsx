@@ -211,7 +211,7 @@ const TabBar = ({ active, onChange }) => (
 );
 
 /* ═══════════════════════════════════════
-   SCORE BREAKDOWN
+   SCORE BREAKDOWN + SHAP EXPLAINABILITY SIDEBAR
 ═══════════════════════════════════════ */
 const FACTOR_META = {
   credit_debit_ratio: { icon: "💳", label: "Credit / Debit Ratio",  desc: "How much you receive vs. spend" },
@@ -221,73 +221,244 @@ const FACTOR_META = {
   min_balance:        { icon: "🏦", label: "Minimum Balance",        desc: "Lowest balance in last 3 months" },
 };
 
-const ScorePanel = ({ reason_codes }) => {
+/* ── Pie chart primitive (pure SVG, no external chart lib needed) ── */
+const PieChart = ({ slices, size = 180 }) => {
+  const total = slices.reduce((s, x) => s + x.value, 0);
+  if (total <= 0) return null;
+  const R = size / 2;
+  const cx = R, cy = R;
+  let angle = -Math.PI / 2; // start at 12 o'clock
+
+  const paths = slices.map((s, i) => {
+    const frac = s.value / total;
+    const sweep = frac * 2 * Math.PI;
+    const x1 = cx + R * Math.cos(angle);
+    const y1 = cy + R * Math.sin(angle);
+    const endAngle = angle + sweep;
+    const x2 = cx + R * Math.cos(endAngle);
+    const y2 = cy + R * Math.sin(endAngle);
+    const largeArc = sweep > Math.PI ? 1 : 0;
+    const d = `M ${cx} ${cy} L ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+    angle = endAngle;
+    return <path key={i} d={d} fill={s.color} stroke="#fff" strokeWidth="2" />;
+  });
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {paths}
+      <circle cx={cx} cy={cy} r={R * 0.55} fill={T.white} />
+      <text x={cx} y={cy - 6} textAnchor="middle" style={{ fontSize: 20, fontWeight: 800, fill: T.ink }}>
+        {slices.length}
+      </text>
+      <text x={cx} y={cy + 13} textAnchor="middle" style={{ fontSize: 10, fill: T.muted }}>
+        factors
+      </text>
+    </svg>
+  );
+};
+
+const PIE_COLORS = [T.coral, T.purple, T.blue, T.green, T.amber];
+
+const ContributionPieCard = ({ reason_codes }) => {
+  const slices = reason_codes.map((r, i) => ({
+    key: r.factor,
+    value: Math.abs(r.score_contribution ?? 0),
+    signed: r.score_contribution ?? 0,
+    color: PIE_COLORS[i % PIE_COLORS.length],
+  }));
+  const total = slices.reduce((s, x) => s + x.value, 0);
+
+  return (
+    <Card>
+      <Eyebrow>Impact by factor</Eyebrow>
+      <h3 style={{ fontSize: 15, fontWeight: 800, color: T.ink, marginBottom: 14 }}>
+        Where your score points came from
+      </h3>
+      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+        <div style={{ flexShrink: 0 }}>
+          <PieChart slices={slices} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
+          {slices.map((s, i) => {
+            const fm = FACTOR_META[s.key] || { label: s.key };
+            const pct = total > 0 ? Math.round((s.value / total) * 100) : 0;
+            const isPos = s.signed >= 0;
+            return (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ width: 10, height: 10, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
+                <span style={{ fontSize: 12, color: T.ink, fontWeight: 600, flex: 1 }}>{fm.label}</span>
+                <span style={{ fontSize: 12, fontWeight: 800, color: isPos ? T.green : T.red }}>
+                  {isPos ? "+" : ""}{s.signed.toFixed(1)}
+                </span>
+                <span style={{ fontSize: 11, color: T.muted, width: 32, textAlign: "right" }}>{pct}%</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <p style={{ fontSize: 12, color: T.muted, lineHeight: 1.6, marginTop: 16 }}>
+        Slice size shows how much each factor swayed your score, regardless of direction.
+        Check the sign next to each factor to see whether it helped (green) or hurt (red) your final number.
+      </p>
+    </Card>
+  );
+};
+
+const ScorePanel = ({ result }) => {
+  const reason_codes = result?.reason_codes;
+  const meta = result?.model_metadata || {};
+  const logOdds = result?.log_odds;
+  const pd = result?.probability_of_default;
+
   if (!reason_codes?.length) return <Card><div style={{ color: T.muted }}>No reason codes available.</div></Card>;
   const maxAbs = Math.max(...reason_codes.map(r => Math.abs(r.score_contribution ?? 0)));
 
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <Card>
-        <Eyebrow>Model explainability · WoE logistic scorecard</Eyebrow>
-        <h3 style={{ fontSize: 20, fontWeight: 800, color: T.ink, marginBottom: 6 }}>Score breakdown</h3>
-        <p style={{ fontSize: 13, color: T.muted, marginBottom: 24, lineHeight: 1.7 }}>
-          Each factor either added or subtracted points from your final score.
-          Green bars helped your profile; red bars pulled it down.
-        </p>
-        {reason_codes.map((r, i) => {
-          const contrib = r.score_contribution ?? 0;
-          const isPos = contrib >= 0;
-          const barPct = maxAbs > 0 ? (Math.abs(contrib) / maxAbs) * 100 : 0;
-          const meta = FACTOR_META[r.factor] || { icon: "📌", label: r.factor, desc: "" };
-          return (
-            <div key={i} style={{ padding: "20px 0", borderBottom: i < reason_codes.length-1 ? `1px solid ${T.border}` : "none" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
-                <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-                  <div style={{ width: 42, height: 42, borderRadius: 12, fontSize: 18,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    background: isPos ? T.softGreen : T.softRed, flexShrink: 0 }}>
-                    {meta.icon}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: T.ink }}>{meta.label}</div>
-                    <div style={{ fontSize: 12, color: T.muted }}>{meta.desc}</div>
-                  </div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: isPos ? T.green : T.red }}>
-                    {contrib > 0 ? "+" : ""}{contrib.toFixed(1)} pts
-                  </div>
-                  <div style={{ fontSize: 11, color: T.muted }}>WoE {r.woe?.toFixed(3) ?? "—"}</div>
-                </div>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ flex: 1, height: 7, borderRadius: 100, background: T.bg, overflow: "hidden" }}>
-                  <div style={{ width: `${barPct}%`, height: "100%", borderRadius: 100,
-                    background: isPos ? T.green : T.red, transition: "width 0.8s ease" }} />
-                </div>
-                <Badge color={isPos ? T.green : T.red} bg={isPos ? T.softGreen : T.softRed}>
-                  {isPos ? "Positive" : "Negative"}
-                </Badge>
-              </div>
-            </div>
-          );
-        })}
-      </Card>
+  // Reconstruct the base log-odds component (φ₀) so the sidebar ledger sums to the
+  // actual score: total log-odds minus the sum of all shown contributions, rescaled
+  // back into score points via the same PDO factor used by the backend.
+  const factor = meta.factor ?? 72.13;
+  const sumContribPts = reason_codes.reduce((s, r) => s + (r.score_contribution ?? 0), 0);
+  const baseLogOddsPts = logOdds != null ? -factor * logOdds - sumContribPts : null;
 
-      {/* Methodology card */}
-      <Card style={{ background: T.softBlue, border: `1px solid #BFDBFE` }}>
-        <div style={{ display: "flex", gap: 18, alignItems: "flex-start" }}>
-          <div style={{ fontSize: 30, flexShrink: 0 }}>🔬</div>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.ink, marginBottom: 6 }}>How PRISM calculates your score</div>
-            <div style={{ fontSize: 13, color: "#1E40AF", lineHeight: 1.7 }}>
-              PRISM uses a <strong>Weight of Evidence (WoE) Logistic Scorecard</strong> — the same methodology used by Indian banks and NBFCs.
-              Each feature is binned into risk bands, assigned a WoE value based on default rates, then multiplied by a logistic regression
-              coefficient. The final log-odds are converted to a 300–900 score using PDO scaling (50 points to double the odds, anchored at 600).
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 20, alignItems: "start" }}>
+
+      {/* ── LEFT: factor list ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <Card>
+          <Eyebrow>Model explainability · WoE logistic scorecard</Eyebrow>
+          <h3 style={{ fontSize: 20, fontWeight: 800, color: T.ink, marginBottom: 6 }}>Score breakdown</h3>
+          <p style={{ fontSize: 13, color: T.muted, marginBottom: 24, lineHeight: 1.7 }}>
+            Each factor either added or subtracted points from your final score.
+            Green bars helped your profile; red bars pulled it down.
+          </p>
+          {reason_codes.map((r, i) => {
+            const contrib = r.score_contribution ?? 0;
+            const isPos = contrib >= 0;
+            const barPct = maxAbs > 0 ? (Math.abs(contrib) / maxAbs) * 100 : 0;
+            const fm = FACTOR_META[r.factor] || { icon: "📌", label: r.factor, desc: "" };
+            return (
+              <div key={i} style={{ padding: "20px 0", borderBottom: i < reason_codes.length-1 ? `1px solid ${T.border}` : "none" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+                  <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+                    <div style={{ width: 42, height: 42, borderRadius: 12, fontSize: 18,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      background: isPos ? T.softGreen : T.softRed, flexShrink: 0 }}>
+                      {fm.icon}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: T.ink }}>{fm.label}</div>
+                      <div style={{ fontSize: 12, color: T.muted }}>{fm.desc}</div>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: isPos ? T.green : T.red }}>
+                      {contrib > 0 ? "+" : ""}{contrib.toFixed(1)} pts
+                    </div>
+                    <div style={{ fontSize: 11, color: T.muted }}>WoE {r.woe?.toFixed(3) ?? "—"}</div>
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ flex: 1, height: 7, borderRadius: 100, background: T.bg, overflow: "hidden" }}>
+                    <div style={{ width: `${barPct}%`, height: "100%", borderRadius: 100,
+                      background: isPos ? T.green : T.red, transition: "width 0.8s ease" }} />
+                  </div>
+                  <Badge color={isPos ? T.green : T.red} bg={isPos ? T.softGreen : T.softRed}>
+                    {isPos ? "Positive" : "Negative"}
+                  </Badge>
+                </div>
+              </div>
+            );
+          })}
+        </Card>
+
+        {/* Methodology card */}
+        <Card style={{ background: T.softBlue, border: `1px solid #BFDBFE` }}>
+          <div style={{ display: "flex", gap: 18, alignItems: "flex-start" }}>
+            <div style={{ fontSize: 30, flexShrink: 0 }}>🔬</div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: T.ink, marginBottom: 6 }}>How PRISM calculates your score</div>
+              <div style={{ fontSize: 13, color: "#1E40AF", lineHeight: 1.7 }}>
+                PRISM uses a <strong>Weight of Evidence (WoE) Logistic Scorecard</strong> — the same methodology used by Indian banks and NBFCs.
+                Each feature is binned into risk bands, assigned a WoE value based on default rates, then multiplied by a logistic regression
+                coefficient. The final log-odds are converted to a 300–900 score using PDO scaling ({meta.pdo ?? 50} points to double the odds, anchored at {meta.base_score ?? 600}).
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
+
+      {/* ── RIGHT: explainability sidebar ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 16, position: "sticky", top: 80 }}>
+        <ContributionPieCard reason_codes={reason_codes} />
+
+        <Card>
+          <Eyebrow>Step-by-step</Eyebrow>
+          <h3 style={{ fontSize: 15, fontWeight: 800, color: T.ink, marginBottom: 14 }}>Walking through your score</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {[
+              { n: 1, text: "Each raw value (e.g. your credit-debit ratio) is placed into a risk bin, and converted to a Weight of Evidence (WoE) number." },
+              { n: 2, text: "Each WoE value is compared to the population average for that same feature — the difference is what actually moves your score." },
+              { n: 3, text: "That difference is multiplied by the model's learned coefficient (βᵢ) for the feature, giving its exact contribution in log-odds." },
+              { n: 4, text: "All contributions plus a base rate are summed into total log-odds, then linearly rescaled into your 300–900 score." },
+            ].map(({ n, text }) => (
+              <div key={n} style={{ display: "flex", gap: 10 }}>
+                <div style={{ width: 22, height: 22, borderRadius: "50%", flexShrink: 0, background: T.softPurple,
+                  color: T.purple, fontSize: 11, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {n}
+                </div>
+                <div style={{ fontSize: 12.5, color: "#374151", lineHeight: 1.6 }}>{text}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card>
+          <Eyebrow>The math, using your numbers</Eyebrow>
+          <h3 style={{ fontSize: 15, fontWeight: 800, color: T.ink, marginBottom: 12 }}>Your contribution ledger</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+            {reason_codes.map((r, i) => {
+              const fm = FACTOR_META[r.factor] || { label: r.factor };
+              return (
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
+                  fontSize: 12, padding: "8px 10px", borderRadius: 8, background: T.bg }}>
+                  <span style={{ color: T.muted, fontWeight: 600 }}>{fm.label}</span>
+                  <span style={{ fontWeight: 800, color: r.score_contribution >= 0 ? T.green : T.red }}>
+                    {r.score_contribution >= 0 ? "+" : ""}{r.score_contribution.toFixed(1)}
+                  </span>
+                </div>
+              );
+            })}
+            {baseLogOddsPts != null && (
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
+                fontSize: 12, padding: "8px 10px", borderRadius: 8, background: T.softAmber }}>
+                <span style={{ color: "#92400E", fontWeight: 700 }}>Base rate (φ₀)</span>
+                <span style={{ fontWeight: 800, color: "#92400E" }}>
+                  {baseLogOddsPts >= 0 ? "+" : ""}{baseLogOddsPts.toFixed(1)}
+                </span>
+              </div>
+            )}
+          </div>
+          <div style={{ borderTop: `1px dashed ${T.border}`, paddingTop: 10, display: "flex",
+            justifyContent: "space-between", fontSize: 13 }}>
+            <span style={{ fontWeight: 700, color: T.ink }}>Final score</span>
+            <span style={{ fontWeight: 800, color: T.ink }}>{result?.risk_score}</span>
+          </div>
+          {logOdds != null && (
+            <div style={{ fontSize: 11, color: T.muted, marginTop: 8, lineHeight: 1.6 }}>
+              Total log-odds: <strong>{logOdds.toFixed(4)}</strong> · Probability of default: <strong>{(pd * 100).toFixed(1)}%</strong>
+            </div>
+          )}
+        </Card>
+
+        <Card style={{ background: T.softGreen, border: "1px solid #BBF7D0" }}>
+          <div style={{ fontSize: 12, color: "#166534", lineHeight: 1.65 }}>
+            <strong>Why this matters:</strong> under ECOA / RBI Fair Practices Code, any adverse
+            credit decision must come with specific, traceable reasons — not just a number.
+            This breakdown is exact, not estimated, because the scorecard is linear.
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };
@@ -690,26 +861,71 @@ const FraudPanel = ({ fraud_flags }) => (
 
 /* ═══════════════════════════════════════
    WHAT-IF
+   Now wired to the real POST /assess/whatif backend endpoint instead
+   of a fake timer. Requires the backend session to have already run
+   /assess at least once (session.assessment_result must be set).
 ═══════════════════════════════════════ */
-const WhatIfPanel = ({ session }) => {
+const WhatIfPanel = ({ session, baseResult }) => {
   const [overrides, setOverrides] = useState({});
   const [whatIf, setWhatIf] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const simulate = async () => {
-    setLoading(true);
-    await new Promise(r => setTimeout(r, 1200));
-    const delta = Math.round((Object.values(overrides).reduce((a, v) => a + (v || 0), 0) - 1.5) * 28);
-    setWhatIf({ base_score: 634, new_score: Math.min(900, Math.max(300, 634 + delta)), delta });
-    setLoading(false);
-  };
+  const [err, setErr] = useState(null);
 
   const FIELDS = [
-    { key: "cashflow_cv",        label: "Cashflow CV",         icon: "📊", step: "0.1",  min: 0, max: 3,   ph: "e.g. 0.4"   },
-    { key: "credit_debit_ratio", label: "Credit / Debit ratio",icon: "💳", step: "0.1",  min: 0, max: 5,   ph: "e.g. 2.5"   },
-    { key: "net_to_gross_ratio", label: "Net / Gross ratio",   icon: "💼", step: "0.01", min: 0, max: 1,   ph: "e.g. 0.85"  },
-    { key: "min_balance_l3m",    label: "Min balance (₹)",     icon: "🏦", step: "500",  min: 0, max: 1e6, ph: "e.g. 25000" },
+    { key: "cashflow_cv",        label: "Cashflow CV",          icon: "📊", step: "0.1",  min: 0, max: 3,   ph: "e.g. 0.4"   },
+    { key: "credit_debit_ratio", label: "Credit / Debit ratio", icon: "💳", step: "0.1",  min: 0, max: 5,   ph: "e.g. 2.5"   },
+    { key: "net_to_gross_ratio", label: "Net / Gross ratio",    icon: "💼", step: "0.01", min: 0, max: 1,   ph: "e.g. 0.85"  },
+    { key: "min_balance",        label: "Min balance (₹)",      icon: "🏦", step: "500",  min: 0, max: 1e6, ph: "e.g. 25000" },
   ];
+
+  const activeOverrides = Object.entries(overrides).filter(([, v]) => v !== undefined && !Number.isNaN(v));
+
+  const simulate = async () => {
+    if (activeOverrides.length === 0) {
+      setErr("Enter at least one value to simulate.");
+      return;
+    }
+    setErr(null);
+    setLoading(true);
+    try {
+      const res = await fetch("/assess/whatif", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", session_id: session?.id ?? "" },
+        body: JSON.stringify({ overrides: Object.fromEntries(activeOverrides) }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.detail?.message || body?.detail || "Simulation failed");
+      }
+      const data = await res.json();
+      setWhatIf(data);
+    } catch (e) {
+      setErr(e.message || "Something went wrong running the simulation.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const baseScore = baseResult?.risk_score ?? null;
+  const delta = whatIf && baseScore !== null ? whatIf.simulated_score - baseScore : null;
+  const improved = delta !== null && delta > 0;
+  const unchanged = delta !== null && delta === 0;
+
+  // Build a plain-language narrative from the response
+  const narrative = () => {
+    if (!whatIf) return null;
+    const changedLabels = activeOverrides
+      .map(([k]) => FACTOR_META[k]?.label || k)
+      .join(", ");
+    if (unchanged) {
+      return `Changing ${changedLabels} on their own wasn't enough to move your score — try a larger adjustment or combine it with another factor.`;
+    }
+    return `If you improve ${changedLabels}, your score would shift from ${baseScore} to ${whatIf.simulated_score} (${improved ? "+" : ""}${delta} pts), moving your risk tier ${
+      whatIf.simulated_risk_tier !== baseResult?.risk_tier
+        ? `from ${baseResult?.risk_tier} to ${whatIf.simulated_risk_tier}`
+        : `— you'd remain in ${whatIf.simulated_risk_tier}`
+    }.`;
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -717,9 +933,10 @@ const WhatIfPanel = ({ session }) => {
         <Eyebrow>Scenario simulation</Eyebrow>
         <h3 style={{ fontSize: 20, fontWeight: 800, color: T.ink, marginBottom: 6 }}>What-if analysis</h3>
         <p style={{ fontSize: 13, color: T.muted, marginBottom: 24, lineHeight: 1.7 }}>
-          Adjust any feature value below to simulate how your score would change. This runs the full scoring model with your overrides applied.
+          Adjust one or more values below to see exactly how your score would change.
+          This re-runs the full scoring model with your overrides applied — not an estimate.
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
           {FIELDS.map(({ key, label, icon, step, min, max, ph }) => (
             <div key={key}>
               <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13,
@@ -730,40 +947,113 @@ const WhatIfPanel = ({ session }) => {
                 style={{ width: "100%", padding: "12px 16px", boxSizing: "border-box",
                   border: `1.5px solid ${T.border}`, borderRadius: 12, fontSize: 14,
                   color: T.ink, background: T.bg, outline: "none", fontFamily: "inherit" }}
-                onChange={e => setOverrides(o => ({ ...o, [key]: parseFloat(e.target.value) || undefined }))} />
+                onChange={e => {
+                  const v = e.target.value === "" ? undefined : parseFloat(e.target.value);
+                  setOverrides(o => ({ ...o, [key]: v }));
+                }} />
             </div>
           ))}
         </div>
+
+        {err && (
+          <div style={{ marginBottom: 16, padding: "12px 16px", borderRadius: 12,
+            background: T.softRed, color: T.red, fontSize: 13, fontWeight: 600 }}>
+            {err}
+          </div>
+        )}
+
         <button onClick={simulate} disabled={loading} style={{
           padding: "13px 32px",
           background: loading ? T.muted : `linear-gradient(135deg, ${T.coral}, ${T.purple})`,
           color: "#fff", border: "none", borderRadius: 12, fontSize: 14, fontWeight: 700,
           cursor: loading ? "default" : "pointer",
         }}>
-          {loading ? "Simulating…" : "Run simulation →"}
+          {loading ? "Running simulation…" : "Run simulation →"}
         </button>
       </Card>
 
       {whatIf && (
-        <Card style={{
-          background: whatIf.delta >= 0 ? T.softGreen : T.softRed,
-          border: `1px solid ${whatIf.delta >= 0 ? "#86EFAC" : "#FCA5A5"}`,
-        }}>
-          <div style={{ display: "flex", gap: 48, alignItems: "center", flexWrap: "wrap" }}>
-            {[
-              { label: "Base score", val: whatIf.base_score, color: T.ink },
-              { label: "→",          val: null },
-              { label: "New score",  val: whatIf.new_score, color: whatIf.delta >= 0 ? T.green : T.red },
-              { label: "Change",     val: `${whatIf.delta >= 0 ? "+" : ""}${whatIf.delta} pts`, color: whatIf.delta >= 0 ? T.green : T.red },
-            ].map(({ label, val, color }, i) => (
-              <div key={i}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: T.muted, textTransform: "uppercase",
-                  letterSpacing: "0.1em", marginBottom: 4 }}>{label}</div>
-                {val !== null && <div style={{ fontSize: 38, fontWeight: 800, color: color ?? T.ink, lineHeight: 1 }}>{val}</div>}
+        <>
+          {/* Headline result */}
+          <Card style={{
+            background: unchanged ? T.softAmber : improved ? T.softGreen : T.softRed,
+            border: `1px solid ${unchanged ? "#FDE68A" : improved ? "#86EFAC" : "#FCA5A5"}`,
+          }}>
+            <div style={{ display: "flex", gap: 48, alignItems: "center", flexWrap: "wrap", marginBottom: 16 }}>
+              {[
+                { label: "Current score", val: baseScore, color: T.ink },
+                { label: "→", val: null },
+                { label: "Simulated score", val: whatIf.simulated_score,
+                  color: unchanged ? T.amber : improved ? T.green : T.red },
+                { label: "Change", val: `${delta >= 0 ? "+" : ""}${delta} pts`,
+                  color: unchanged ? T.amber : improved ? T.green : T.red },
+              ].map(({ label, val, color }, i) => (
+                <div key={i}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: T.muted, textTransform: "uppercase",
+                    letterSpacing: "0.1em", marginBottom: 4 }}>{label}</div>
+                  {val !== null && <div style={{ fontSize: 38, fontWeight: 800, color: color ?? T.ink, lineHeight: 1 }}>{val}</div>}
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: 14, color: T.ink, lineHeight: 1.7, fontWeight: 500 }}>
+              {narrative()}
+            </p>
+          </Card>
+
+          {/* Feature-level breakdown */}
+          <Card>
+            <Eyebrow>Factor breakdown</Eyebrow>
+            <h3 style={{ fontSize: 17, fontWeight: 800, color: T.ink, marginBottom: 14 }}>What changed, and why it matters</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {Object.entries(whatIf.overrides_applied || {}).map(([key, val], i) => {
+                const meta = FACTOR_META[key] || { icon: "📌", label: key, desc: "" };
+                const woe = whatIf.feature_woe_values?.[key];
+                return (
+                  <div key={i} style={{ display: "flex", gap: 14, alignItems: "flex-start",
+                    padding: "14px 16px", borderRadius: 14, background: T.bg, border: `1px solid ${T.border}` }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 10, fontSize: 16, flexShrink: 0,
+                      display: "flex", alignItems: "center", justifyContent: "center", background: T.softPurple }}>
+                      {meta.icon}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: T.ink }}>{meta.label}</div>
+                      <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
+                        You entered <strong style={{ color: T.ink }}>{val}</strong>
+                        {woe !== undefined && <> → new WoE value of <strong style={{ color: T.ink }}>{woe}</strong></>}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              {whatIf.ignored_keys?.length > 0 && (
+                <div style={{ fontSize: 12, color: T.muted, fontStyle: "italic", marginTop: 4 }}>
+                  Note: {whatIf.ignored_keys.join(", ")} {whatIf.ignored_keys.length > 1 ? "aren't" : "isn't"} used by the scoring model and {whatIf.ignored_keys.length > 1 ? "were" : "was"} ignored.
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Takeaway bullets */}
+          <Card style={{ background: T.softBlue, border: "1px solid #BFDBFE" }}>
+            <div style={{ display: "flex", gap: 18, alignItems: "flex-start" }}>
+              <div style={{ fontSize: 30, flexShrink: 0 }}>💡</div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: T.ink, marginBottom: 10 }}>Key takeaways</div>
+                <ul style={{ margin: 0, paddingLeft: 18, display: "flex", flexDirection: "column", gap: 6 }}>
+                  <li style={{ fontSize: 13, color: "#1E40AF", lineHeight: 1.7 }}>
+                    Your simulated risk tier is <strong>{whatIf.simulated_risk_tier}</strong>, compared to <strong>{baseResult?.risk_tier}</strong> today.
+                  </li>
+                  <li style={{ fontSize: 13, color: "#1E40AF", lineHeight: 1.7 }}>
+                    Simulated probability of default: <strong>{(whatIf.simulated_pd * 100).toFixed(1)}%</strong>.
+                  </li>
+                  <li style={{ fontSize: 13, color: "#1E40AF", lineHeight: 1.7 }}>
+                    This is a projection based on the values you entered — it doesn't submit new documents or change your actual score.
+                  </li>
+                </ul>
               </div>
-            ))}
-          </div>
-        </Card>
+            </div>
+          </Card>
+        </>
       )}
     </div>
   );
@@ -838,12 +1128,12 @@ export default function ResultsPage({ go, session, result, setError }) {
         <ScoreHero result={data} tier={tier} score={score} />
         <TabBar active={tab} onChange={setTab} />
 
-        {tab === "score"    && <ScorePanel    reason_codes={data.reason_codes} />}
+        {tab === "score"    && <ScorePanel    result={data} />}
         {tab === "features" && <FeaturesPanel features={data.features} />}
         {tab === "improve"  && <ImprovePanel  result={data} />}
         {tab === "learn"    && <Credit101Panel />}
         {tab === "fraud"    && <FraudPanel    fraud_flags={data.fraud_flags} />}
-        {tab === "whatif"   && <WhatIfPanel   session={sess} />}
+        {tab === "whatif"   && <WhatIfPanel   session={sess} baseResult={data} />}
 
         {/* Warnings */}
         {data.warnings?.length > 0 && (
