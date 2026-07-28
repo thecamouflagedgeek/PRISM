@@ -1,18 +1,20 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
+import { useTranslation } from "react-i18next";
 
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState("en");
+  const { i18n } = useTranslation();
 
   const toggleLanguage = () => {
-    setLanguage(prev => (prev === "en" ? "hi" : "en"));
+    const next = i18n.language === "en" ? "hi" : "en";
+    i18n.changeLanguage(next);
   };
 
   return (
     <LanguageContext.Provider
       value={{
-        language,
+        language: i18n.language,
         toggleLanguage,
       }}
     >
@@ -21,6 +23,4 @@ export const LanguageProvider = ({ children }) => {
   );
 };
 
-export const useLanguage = () => {
-  return useContext(LanguageContext);
-};
+export const useLanguage = () => useContext(LanguageContext);

@@ -17,15 +17,11 @@ _ARTIFACTS = os.path.join(_BASE, "artifacts")
 _model          = None
 _binning_models = None
 
-models = joblib.load("scoring/artifacts/binning.pkl")
-print(models["cashflow_cv"].binning_table.build())
-
 def _load_artifacts():
     global _model, _binning_models
     if _model is None:
         _model          = joblib.load(os.path.join(_ARTIFACTS, "lr_model.pkl"))
         _binning_models = joblib.load(os.path.join(_ARTIFACTS, "binning.pkl"))
-
 # ── Feature order (must match training) ───────────────────────
 _FEATURES = [
     "credit_debit_ratio",
@@ -205,6 +201,36 @@ def apply_platt_calibration(calibrator) -> None:
     global _platt_calibrator
     _platt_calibrator = calibrator
 
+def simulate_whatif(
+    bank_features: Optional[dict],
+    salary_features: Optional[dict],
+    utility_features: Optional[dict],
+    overrides: dict,
+) -> dict:
+    """
+    Recompute score/PD with one or more mapped feature values overridden.
+    Keys in `overrides` must match names in _FEATURES; unknown keys ignored.
+    """
+    _load_artifacts()
+
+    base_dict = _map_features(bank_features, salary_features, utility_features)
+    sim_dict  = {**base_dict, **{k: v for k, v in overrides.items() if k in _FEATURES}}
+
+    X_woe    = _woe_transform(sim_dict)
+    log_odds = float(_model.decision_function(X_woe)[0])
+    pd_value = float(np.clip(_model.predict_proba(X_woe)[0][1], 1e-6, 1-1e-6))
+    score    = _to_score(log_odds)
+
+    return {
+        "simulated_score": score,
+        "simulated_pd": round(pd_value, 4),
+        "simulated_risk_tier": _risk_tier(pd_value),
+        "overrides_applied": {k: v for k, v in overrides.items() if k in _FEATURES},
+        "ignored_keys": [k for k in overrides if k not in _FEATURES],
+        "feature_woe_values": {
+            col: round(float(X_woe[col].iloc[0]), 4) for col in _FEATURES
+        },
+    }
 
 # ─────────────────────────────────────────────────────────────
 # MAIN ENTRYPOINT  (public API — schema unchanged)

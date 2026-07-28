@@ -1,10 +1,16 @@
 from fastapi import APIRouter, UploadFile, File, Header, HTTPException, Depends, Form
 from fastapi.responses import JSONResponse
-import tempfile, os, json
+
+import tempfile
+import os
+import json
 from datetime import datetime
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 from database.db import get_db
 from database.crud import (
@@ -14,22 +20,43 @@ from database.crud import (
 )
 
 from core.session_store import get_session
-from ingestion.parsers.salary_parser import SalaryParser, SalaryParsingError
-from ingestion.parsers.utility_parser import UtilityParser
+
 from services.ocr_service import get_ocr_engine
-from features.bank_features import BankFeatureEngineer
-from features.salary_features import SalaryFeatureEngineer
-from features.utility_features import UtilityFeatureEngineer
-from scoring.risk_scorer import compute_risk_score
-from ingestion.bank_transaction_pipeline import BankTransactionPipeline, BankTransactionPipelineError
+
+from ingestion.bank_transaction_pipeline import (
+    BankTransactionPipeline,
+    BankTransactionPipelineError,
+)
+from ingestion.document_pipeline import (
+    DocumentPipeline,
+    DocumentProcessingError,
+)
 from ingestion.document.classifier import is_credit_card_statement
 from ingestion.extractors.credit_card_summary import extract_credit_card_summary
 from ingestion.extractors.table import parse_credit_card_transactions
-from ingestion.document_pipeline import DocumentPipeline, DocumentProcessingError
+
+from ingestion.parsers.salary_parser import (
+    SalaryParser,
+    SalaryParsingError,
+)
+from ingestion.parsers.utility_parser import (
+    UtilityParser,
+    ExtractionQualityError as UtilityExtractionQualityError,
+)
+from ingestion.parsers.bank_parser import (
+    ExtractionQualityError,
+    ExtractionQualityError as BankExtractionQualityError,
+)
+
+from features.bank_features import BankFeatureEngineer
+from features.salary_features import SalaryFeatureEngineer
+from features.utility_features import UtilityFeatureEngineer
 from features.credit_card_features import CreditCardFeatureEngineer
-from ingestion.parsers.bank_parser import ExtractionQualityError
-from ingestion.parsers.bank_parser import ExtractionQualityError as BankExtractionQualityError
-from ingestion.parsers.utility_parser import ExtractionQualityError as UtilityExtractionQualityError
+
+from scoring.risk_scorer import (
+    compute_risk_score,
+    simulate_whatif,
+)
 
 router = APIRouter(prefix="/assess", tags=["Assessment"])
 
@@ -50,6 +77,8 @@ router = APIRouter(prefix="/assess", tags=["Assessment"])
 # know how to serialize, with no way to skip one silently — if something is
 # still wrong, this raises a clear TypeError naming the exact bad object
 # instead of FastAPI's confusing double-exception.
+class WhatIfRequest(BaseModel):
+    overrides: dict[str, float]
 
 def _json_default(obj):
     # numpy scalars: bool_, int8..int64, float16..float64, etc. -- one check
@@ -388,3 +417,24 @@ async def assess(
     }
 
     return safe_response(response_data)
+
+@router.post("/whatif")
+async def whatif(payload: WhatIfRequest, session_id: str = Header(...)):
+    session = get_session(session_id)
+    if not session:
+        raise HTTPException(401, "Invalid session")
+    if not getattr(session, "assessment_result", None):
+        raise HTTPException(400, "Run /assess for this session before using /assess/whatif")
+
+    result = simulate_whatif(
+        getattr(session, "bank_features", None),
+        getattr(session, "salary_features", None),
+        getattr(session, "utility_features", None),
+        payload.overrides,
+    )
+
+    return safe_response({
+        "status": "success",
+        "session_id": session_id,
+        **result,
+    })
