@@ -154,3 +154,34 @@ class RiskScore(Base):
     model_version = Column(String(20))
 
     score_status = Column(String(20))
+
+# ==========================
+# SHAP EXPLANATIONS
+# ==========================
+
+class SHAPExplanation(Base):
+    __tablename__ = "shap_explanations"
+    __table_args__ = {"schema": "prism"}
+
+    explanation_id = Column(Integer, primary_key=True)
+
+    score_id = Column(
+        Integer,
+        ForeignKey("prism.risk_scores.score_id")
+    )
+
+    feature_name = Column(String(100))
+
+    # Exact SHAP value in log-odds space
+    shap_value = Column(Numeric(10, 6))
+
+    # Effect on credit score in score points
+    score_contribution = Column(Numeric(10, 2))
+
+    contribution_type = Column(String(20))
+
+    feature_rank = Column(Integer)
+
+    generated_reason = Column(Text)
+
+    created_at = Column(TIMESTAMP)

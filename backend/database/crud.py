@@ -9,6 +9,7 @@ from database.models import (
     Consent,
     Document,
     ExtractedFeature,
+    SHAPExplanation,
     RiskScore
 )
 
@@ -147,6 +148,39 @@ def save_risk_score(
     db.refresh(score)
 
     return score
+def save_shap_explanations(
+    db: Session,
+    score_id: int,
+    explanations: list,
+):
+    """
+    Persist feature-level SHAP explanations for a specific risk score.
+    Each explanation remains linked to the score that generated it.
+    """
+
+    saved_explanations = []
+
+    for explanation in explanations:
+        record = SHAPExplanation(
+        score_id=score_id,
+        feature_name=explanation["feature_name"],
+        shap_value=explanation["shap_value"],
+        score_contribution=explanation["score_contribution"],
+        contribution_type=explanation["contribution_type"],
+        feature_rank=explanation["feature_rank"],
+        generated_reason=explanation["generated_reason"],
+        created_at=datetime.utcnow(),
+    )
+
+        db.add(record)
+        saved_explanations.append(record)
+
+    db.commit()
+
+    for record in saved_explanations:
+        db.refresh(record)
+
+    return saved_explanations
 # ==========================
 # DOCUMENTS
 # ==========================

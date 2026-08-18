@@ -18,6 +18,7 @@ from database.crud import (
     update_document_status,
     save_features,
     save_risk_score,
+    save_shap_explanations,
 )
 
 from core.session_store import get_session
@@ -402,12 +403,24 @@ async def assess(
             os.remove(utility_path)
 
     # ---------------- SCORING ----------------
-    result = compute_risk_score(bank_features, salary_features, utility_features)
-    save_risk_score(
-    db=db,
-    application_id=session.application_id,
-    result=result,
+    result = compute_risk_score(
+    bank_features,
+    salary_features,
+    utility_features
 )
+
+    score = save_risk_score(
+        db=db,
+        application_id=session.application_id,
+        result=result,
+    )
+
+    save_shap_explanations(
+        db=db,
+        score_id=score.score_id,
+        explanations=result["shap_explanations"],
+    )
+
     session.assessment_result = result
 
     response_data = {

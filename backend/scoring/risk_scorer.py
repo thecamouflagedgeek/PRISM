@@ -138,21 +138,76 @@ def _risk_tier(pd_value: float) -> str:
 # Negative = hurts score.  Sorted by |contribution| desc.
 # ─────────────────────────────────────────────────────────────
 
-def _reason_codes(X_woe_df: pd.DataFrame) -> list:
-    coefs     = _model.coef_[0]
-    woe_vals  = X_woe_df.values[0]
-    reasons   = []
-    for i, col in enumerate(_FEATURES):
-        score_contrib = -_FACTOR * coefs[i] * woe_vals[i]
-        reasons.append({
-            "factor":             col,
-            "woe":                round(float(woe_vals[i]), 4),
-            "coefficient":        round(float(coefs[i]), 4),
-            "score_contribution": round(float(score_contrib), 2),
-            "impact":             "positive" if score_contrib > 0 else "negative",
+def _reason_codes(X_woe: pd.DataFrame) -> list:
+    """
+    Generate reason codes directly from the current borrower's
+    WoE values and the trained logistic regression coefficients.
+
+    No dependency on woe_datasets.pkl.
+    """
+
+    factor_labels = {
+        "credit_debit_ratio": "Credit-Debit Ratio",
+        "cashflow_cv": "Cashflow Volatility",
+        "net_to_gross_ratio": "Income Stability",
+        "utility_stability": "Utility Payment Discipline",
+        "min_balance": "Average Balance",
+    }
+
+    coefs = np.asarray(_model.coef_[0], dtype=float)
+
+    current_woe = (
+        X_woe[_FEATURES]
+        .apply(pd.to_numeric, errors="coerce")
+        .replace([np.inf, -np.inf], np.nan)
+        .fillna(0.0)
+        .iloc[0]
+        .to_numpy(dtype=float)
+    )
+
+    reason_codes = []
+
+    for i, feature in enumerate(_FEATURES):
+
+        woe_value = float(current_woe[i])
+        coefficient = float(coefs[i])
+
+        # Same scorecard convention used elsewhere.
+        score_contribution = (
+            -_FACTOR * coefficient * woe_value
+        )
+
+        if score_contribution > 0.01:
+            impact = "positive"
+
+        elif score_contribution < -0.01:
+            impact = "negative"
+
+        else:
+            impact = "neutral"
+
+        reason_codes.append({
+            "factor": feature,
+            "woe": round(woe_value, 4),
+            "coefficient": round(coefficient, 4),
+            "score_contribution": round(score_contribution, 2),
+            "impact": impact,
         })
-    reasons.sort(key=lambda x: abs(x["score_contribution"]), reverse=True)
-    return reasons[:4]
+
+    # Strongest factors first
+    reason_codes.sort(
+        key=lambda x: abs(x["score_contribution"]),
+        reverse=True
+    )
+
+    # Keep only factors that actually contribute.
+    # If you want all five displayed, remove this filter.
+    reason_codes = [
+        r for r in reason_codes
+        if abs(r["score_contribution"]) > 0.01
+    ]
+
+    return reason_codes
 
 
 # ─────────────────────────────────────────────────────────────
@@ -235,6 +290,104 @@ def simulate_whatif(
 # ─────────────────────────────────────────────────────────────
 # MAIN ENTRYPOINT  (public API — schema unchanged)
 # ─────────────────────────────────────────────────────────────
+def _build_shap_explanations(X_woe: pd.DataFrame) -> list:
+    """
+    Generate feature-level scorecard explanations for the current borrower.
+
+    For the WoE + Logistic Regression scorecard:
+
+        score_contribution_i = -FACTOR * beta_i * WoE_i
+
+    Positive contribution -> improves credit score.
+    Negative contribution -> reduces credit score.
+
+    Does NOT load woe_datasets.pkl.
+    """
+
+    feature_labels = {
+        "credit_debit_ratio": "Credit-Debit Ratio",
+        "cashflow_cv": "Cashflow Volatility",
+        "net_to_gross_ratio": "Income Stability",
+        "utility_stability": "Utility Payment Discipline",
+        "min_balance": "Average Balance",
+    }
+
+    # ---------------------------------------------------------
+    # MODEL COEFFICIENTS
+    # ---------------------------------------------------------
+    coefs = np.asarray(_model.coef_[0], dtype=float)
+
+    # ---------------------------------------------------------
+    # CURRENT BORROWER WOE VALUES
+    # ---------------------------------------------------------
+    current_woe = (
+        X_woe[_FEATURES]
+        .apply(pd.to_numeric, errors="coerce")
+        .replace([np.inf, -np.inf], np.nan)
+        .fillna(0.0)
+        .iloc[0]
+        .to_numpy(dtype=float)
+    )
+
+    # ---------------------------------------------------------
+    # SCORE CONTRIBUTIONS
+    # ---------------------------------------------------------
+    contributions = -_FACTOR * coefs * current_woe
+
+    # ---------------------------------------------------------
+    # BUILD EXPLANATIONS
+    # ---------------------------------------------------------
+    explanations = []
+
+    for i, feature in enumerate(_FEATURES):
+
+        contribution = float(contributions[i])
+        label = feature_labels.get(feature, feature)
+
+        if contribution > 0.01:
+            contribution_type = "Positive"
+            reason = (
+                f"{label} improved the borrower's credit score."
+            )
+
+        elif contribution < -0.01:
+            contribution_type = "Negative"
+            reason = (
+                f"{label} increased repayment risk "
+                f"and reduced the credit score."
+            )
+
+        else:
+            contribution_type = "Neutral"
+            reason = (
+                f"{label} had no significant impact "
+                f"on the credit score."
+            )
+
+        explanations.append({
+            # Existing API/frontend fields
+            "feature_name": label,
+            "shap_value": round(contribution, 6),
+            "contribution_type": contribution_type,
+            "feature_rank": 0,
+            "generated_reason": reason,
+
+            # REQUIRED BY database.crud.save_shap_explanations()
+            "score_contribution": round(contribution, 6),
+        })
+
+    # ---------------------------------------------------------
+    # RANK BY ABSOLUTE IMPACT
+    # ---------------------------------------------------------
+    explanations.sort(
+        key=lambda x: abs(x["score_contribution"]),
+        reverse=True
+    )
+
+    for rank, explanation in enumerate(explanations, start=1):
+        explanation["feature_rank"] = rank
+
+    return explanations
 
 def compute_risk_score(
     bank_features:    Optional[dict],
@@ -259,6 +412,7 @@ def compute_risk_score(
 
     score = _to_score(log_odds)
     confidence = _confidence(feature_dict, bank_features, salary_features,utility_features,pd_value)
+    shap_explanations = _build_shap_explanations(X_woe)
     doc_coverage = confidence["components"]["document_coverage"]
     if doc_coverage < 0.4:
         max_allowed_score=500
@@ -300,6 +454,7 @@ def compute_risk_score(
         "log_odds":               round(log_odds, 4),
         "reason_codes":           _reason_codes(X_woe),
         "confidence":             confidence,
+        "shap_explanations": shap_explanations,
         "documents_needed":       documents_needed,
         "score_capped":           score_capped,
         "model_metadata": {
