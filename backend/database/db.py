@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-DATABASE_URL = "postgresql://postgres:prism@localhost:5433/prism_db"
+DATABASE_URL = "postgresql://postgres:sirius*@localhost:5432/prism_db"
 
 engine = create_engine(
     DATABASE_URL,
