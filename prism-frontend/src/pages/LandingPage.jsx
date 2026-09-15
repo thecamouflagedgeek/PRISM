@@ -57,15 +57,36 @@ export default function LandingPage({ go }) {
   {t('landing.heroDesc')}
 </p>
 
-          <div className="fade-up-3" style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <button className="btn-primary btn-orange" onClick={() => go("login")}
-              style={{ padding: "13px 28px", fontSize: 15 }}>
-              {t('landing.getStarted')} →
-            </button>
-            <button className="btn-outline" style={{ padding: "12px 22px" }}>
-              {t('landing.viewDemo')}
-            </button>
-          </div>
+          <div className="fade-up-3" style={{ marginTop: 4 }}>
+  <div
+    style={{
+      fontSize: 13,
+      color: "var(--muted)",
+      marginBottom: 12,
+      fontWeight: 400,
+    }}
+  >
+    Get started with PRISM
+  </div>
+
+  <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+    <button
+      className="btn-primary btn-orange"
+      onClick={() => go("login")}
+      style={{ padding: "13px 24px", fontSize: 14 }}
+    >
+      I'm a Borrower →
+    </button>
+
+    <button
+      className="btn-primary btn-orange"
+      onClick={() => go("lenderLogin")}
+      style={{ padding: "12px 24px", fontSize: 14 }}
+    >
+      I'm a Lender →
+    </button>
+  </div>
+</div>
 
           {/* Stat row */}
           <div className="fade-up-4" style={{ display: "flex", gap: 32, marginTop: 48,
@@ -204,10 +225,21 @@ export default function LandingPage({ go }) {
                 fontWeight: 300 }}>
                 {t('landing.howItWorks.desc')}
               </p>
-              <button className="btn-primary btn-orange" onClick={() => go("login")}
-                style={{ marginTop: 28 }}>
-                {t('landing.assessmentBtn')}
-              </button>
+              <div style={{ display: "flex", gap: 12, marginTop: 28 }}>
+  <button
+    className="btn-primary btn-orange"
+    onClick={() => go("login")}
+  >
+    I'm a Borrower →
+  </button>
+
+  <button
+    className="btn-primary btn-orange"
+    onClick={() => go("lenderLogin")}
+  >
+    I'm a Lender →
+  </button>
+</div>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, flex: 1, minWidth: 320 }}>
               {[
@@ -245,17 +277,19 @@ export default function LandingPage({ go }) {
       </section>
 
       {/* ── Footer ── */}
-      <footer style={{ borderTop: "1px solid var(--border)", padding: "28px 48px",
-        display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ fontSize: 12, color: "var(--muted)" }}>
-          {t('landing.footer.copy')}
-        </div>
-        <div style={{ display: "flex", gap: 20 }}>
-          {[t('landing.footer.privacy'), t('landing.footer.terms')].map(l => (
-            <span key={l} style={{ fontSize: 12, color: "var(--muted)", cursor: "pointer" }}>{l}</span>
-          ))}
-        </div>
-      </footer>
+    <footer style={{ borderTop: "1px solid var(--border)", padding: "28px 48px",
+  display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+  <div style={{ fontSize: 12, color: "var(--muted)" }}>
+    {t('landing.footer.copy')}
+  </div>
+  <div style={{ display: "flex", gap: 20 }}>
+    {[t('landing.footer.privacy'), t('landing.footer.terms')].map(l => (
+      <span key={l} style={{ fontSize: 12, color: "var(--muted)", cursor: "pointer" }}>
+        {l}
+      </span>
+    ))}
+  </div>
+</footer>
     </PageShell>
   );
 }

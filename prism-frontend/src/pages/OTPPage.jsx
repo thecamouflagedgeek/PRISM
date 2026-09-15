@@ -3,7 +3,14 @@ import { Nav } from "../components/Nav";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-export default function OTPPage({ go, session, setSession, setError }) {
+export default function OTPPage({
+  go,
+  session,
+  setSession,
+  setError,
+  lenderSession,
+  setLenderSession,
+}) {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -13,13 +20,25 @@ export default function OTPPage({ go, session, setSession, setError }) {
     setLoading(true);
 
     try {
+      // Determine whether this is borrower or lender flow
+      const phoneNumber =
+        lenderSession?.role === "lender"
+          ? lenderSession.phone_number
+          : session?.phone_number;
+
+      if (!phoneNumber) {
+        throw new Error(
+          "Phone number not found. Please go back and try again."
+        );
+      }
+
       const res = await fetch(`${API}/auth/verify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phone_number: session.phone_number,
+          phone_number: phoneNumber,
           otp: otp.trim(),
         }),
       });
@@ -28,12 +47,28 @@ export default function OTPPage({ go, session, setSession, setError }) {
 
       if (!res.ok) {
         throw new Error(
-        data.detail?.message ||
-        data.message ||
-        "OTP verification failed"
+          data.detail?.message ||
+          data.message ||
+          "OTP verification failed"
         );
       }
 
+      // ---------------------------------
+      // LENDER FLOW
+      // ---------------------------------
+      if (lenderSession?.role === "lender") {
+        setLenderSession({
+          ...lenderSession,
+          session_id: data.session_id,
+        });
+
+        go("lenderDashboard");
+        return;
+      }
+
+      // ---------------------------------
+      // BORROWER FLOW
+      // ---------------------------------
       setSession({
         ...session,
         session_id: data.session_id,
@@ -41,10 +76,13 @@ export default function OTPPage({ go, session, setSession, setError }) {
       });
 
       go("consent");
+
     } catch (err) {
       console.error(err);
 
-      if (setError) setError(err.message);
+      if (setError) {
+        setError(err.message);
+      }
 
       alert(err.message || "OTP verification failed.");
     } finally {
@@ -54,7 +92,10 @@ export default function OTPPage({ go, session, setSession, setError }) {
 
   return (
     <div className="dot-grid" style={{ minHeight: "100vh" }}>
-      <Nav currentPage="login" onLogoClick={() => go("landing")} />
+      <Nav
+        currentPage="login"
+        onLogoClick={() => go("landing")}
+      />
 
       <div
         style={{
@@ -96,7 +137,12 @@ export default function OTPPage({ go, session, setSession, setError }) {
         >
           Enter the OTP sent to
           <br />
-          <strong>{session?.phone_number}</strong>
+
+          <strong>
+            {lenderSession?.role === "lender"
+              ? lenderSession.phone_number
+              : session?.phone_number}
+          </strong>
         </p>
 
         <label
@@ -114,7 +160,9 @@ export default function OTPPage({ go, session, setSession, setError }) {
           className="input-field"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && verifyOTP()}
+          onKeyDown={(e) =>
+            e.key === "Enter" && verifyOTP()
+          }
           placeholder="Enter 6-digit OTP"
         />
 

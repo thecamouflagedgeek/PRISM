@@ -213,7 +213,12 @@ const TabBar = ({ active, onChange }) => (
 );
 
 /* ═══════════════════════════════════════
-   SCORE BREAKDOWN + SHAP EXPLAINABILITY SIDEBAR
+   SCORE BREAKDOWN — decision-driver explainability
+   Built around three questions:
+     1. Why did I get this score?        → ScoreStory + ImpactSpread
+     2. What exactly influenced it?      → FactorLedger (ranked, expandable)
+     3. How can I act on this?           → ActionBridge (links to Improve / What-if)
+   Plus a compact "how this score was derived" process trace.
 ═══════════════════════════════════════ */
 const FACTOR_META = {
   credit_debit_ratio: { icon: "💳", label: "Credit / Debit Ratio",  desc: "How much you receive vs. spend" },
@@ -223,244 +228,418 @@ const FACTOR_META = {
   min_balance:        { icon: "🏦", label: "Minimum Balance",        desc: "Lowest balance in last 3 months" },
 };
 
-/* ── Pie chart primitive (pure SVG, no external chart lib needed) ── */
-const PieChart = ({ slices, size = 180 }) => {
-  const total = slices.reduce((s, x) => s + x.value, 0);
-  if (total <= 0) return null;
-  const R = size / 2;
-  const cx = R, cy = R;
-  let angle = -Math.PI / 2; // start at 12 o'clock
+/* Direction styling — a factor is only positive/negative when it actually
+   moved the score. A zero contribution is always neutral (fixes the bug
+   where 0-pt factors were previously rendered as "Positive"). */
+const DIRECTION = {
+  positive: { color: T.green, soft: T.softGreen, label: "Strength"  },
+  negative: { color: T.red,   soft: T.softRed,   label: "Pressure"  },
+  neutral:  { color: T.muted, soft: T.bg,        label: "No effect" },
+};
 
-  const paths = slices.map((s, i) => {
-    const frac = s.value / total;
-    const sweep = frac * 2 * Math.PI;
-    const x1 = cx + R * Math.cos(angle);
-    const y1 = cy + R * Math.sin(angle);
-    const endAngle = angle + sweep;
-    const x2 = cx + R * Math.cos(endAngle);
-    const y2 = cy + R * Math.sin(endAngle);
-    const largeArc = sweep > Math.PI ? 1 : 0;
-    const d = `M ${cx} ${cy} L ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-    angle = endAngle;
-    return <path key={i} d={d} fill={s.color} stroke="#fff" strokeWidth="2" />;
+const resolveDirection = (contribution, contribution_type) => {
+  if (!contribution) return "neutral"; // covers 0, null, undefined
+  if (contribution_type === "positive" || contribution_type === "negative") return contribution_type;
+  return contribution > 0 ? "positive" : "negative";
+};
+
+/* Normalises shap_explanations (or the legacy reason_codes shape) into a
+   single item shape, and derives an importance rank from feature_rank when
+   the backend supplies it, falling back to magnitude order otherwise. */
+const buildDriverItems = (explanations) => {
+  const base = explanations.map((r, i) => {
+    const contribution = r.score_contribution ?? 0;
+    return {
+      key: r.feature_name || r.factor || `factor-${i}`,
+      name: r.feature_name || FACTOR_META[r.factor]?.label || r.factor || "Unknown factor",
+      reason: r.generated_reason || FACTOR_META[r.factor]?.desc || "",
+      contribution,
+      direction: resolveDirection(contribution, r.contribution_type),
+      woe: r.woe,
+      shap_value: r.shap_value,
+      feature_rank: r.feature_rank,
+    };
   });
+  const byMagnitude = [...base].sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
+  return byMagnitude.map((item, i) => ({ ...item, rank: item.feature_rank ?? i + 1 }));
+};
+
+/* Diverging strip: everything pulling the score down on the left of the
+   centre line, everything pushing it up on the right, each segment sized
+   by its own share of that side's total magnitude. This is the "relative
+   impact" answer to question 1, at a glance, before reading a single row. */
+const ImpactSpread = ({ items }) => {
+  const negatives = items.filter(i => i.direction === "negative").sort((a, b) => Math.abs(a.contribution) - Math.abs(b.contribution));
+  const positives = items.filter(i => i.direction === "positive").sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
+  const negSum = negatives.reduce((s, x) => s + Math.abs(x.contribution), 0) || 1;
+  const posSum = positives.reduce((s, x) => s + Math.abs(x.contribution), 0) || 1;
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {paths}
-      <circle cx={cx} cy={cy} r={R * 0.55} fill={T.white} />
-      <text x={cx} y={cy - 6} textAnchor="middle" style={{ fontSize: 20, fontWeight: 800, fill: T.ink }}>
-        {slices.length}
-      </text>
-      <text x={cx} y={cy + 13} textAnchor="middle" style={{ fontSize: 10, fill: T.muted }}>
-        factors
-      </text>
-    </svg>
+    <div>
+      <div style={{ display: "flex", height: 16, borderRadius: 8, overflow: "hidden",
+        background: T.bg, border: `1px solid ${T.border}` }}>
+        <div style={{ width: "50%", display: "flex", justifyContent: "flex-end" }}>
+          {negatives.map((it, i) => (
+            <div key={it.key} title={`${it.name}: ${it.contribution.toFixed(1)} pts`}
+              style={{
+                width: `${(Math.abs(it.contribution) / negSum) * 100}%`,
+                background: T.red,
+                opacity: 0.5 + 0.5 * (Math.abs(it.contribution) / negSum),
+                borderRight: i < negatives.length - 1 ? "1px solid rgba(255,255,255,0.55)" : "none",
+              }} />
+          ))}
+        </div>
+        <div style={{ width: 2, background: T.ink, opacity: 0.18 }} />
+        <div style={{ width: "50%", display: "flex" }}>
+          {positives.map((it, i) => (
+            <div key={it.key} title={`${it.name}: +${it.contribution.toFixed(1)} pts`}
+              style={{
+                width: `${(Math.abs(it.contribution) / posSum) * 100}%`,
+                background: T.green,
+                opacity: 0.5 + 0.5 * (Math.abs(it.contribution) / posSum),
+                borderRight: i < positives.length - 1 ? "1px solid rgba(255,255,255,0.55)" : "none",
+              }} />
+          ))}
+        </div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5,
+        fontWeight: 600, color: T.muted, marginTop: 8 }}>
+        <span>Pulling the score down</span>
+        <span>Pushing the score up</span>
+      </div>
+    </div>
   );
 };
 
-const PIE_COLORS = [T.coral, T.purple, T.blue, T.green, T.amber];
-
-const ContributionPieCard = ({ reason_codes }) => {
-  const slices = reason_codes.map((r, i) => ({
-    key: r.factor,
-    value: Math.abs(r.score_contribution ?? 0),
-    signed: r.score_contribution ?? 0,
-    color: PIE_COLORS[i % PIE_COLORS.length],
-  }));
-  const total = slices.reduce((s, x) => s + x.value, 0);
+/* Question 1 — the headline story: the single biggest drag, the single
+   biggest support, and the overall balance between them. */
+const ScoreStory = ({ items, result }) => {
+  const negatives = items.filter(i => i.direction === "negative").sort((a, b) => a.contribution - b.contribution);
+  const positives = items.filter(i => i.direction === "positive").sort((a, b) => b.contribution - a.contribution);
+  const topNegative = negatives[0];
+  const topPositive = positives[0];
 
   return (
     <Card>
-      <Eyebrow>Impact by factor</Eyebrow>
-      <h3 style={{ fontSize: 15, fontWeight: 800, color: T.ink, marginBottom: 14 }}>
-        Where your score points came from
+      <Eyebrow>Why this score</Eyebrow>
+      <h3 style={{ fontSize: 20, fontWeight: 800, color: T.ink, marginBottom: 4 }}>
+        What shaped your {result?.risk_score ?? ""} points
       </h3>
-      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        <div style={{ flexShrink: 0 }}>
-          <PieChart slices={slices} />
+      <p style={{ fontSize: 13, color: T.muted, marginBottom: 22, lineHeight: 1.7, maxWidth: 620 }}>
+        Every point on this score traces back to a specific piece of financial evidence.
+        Here is the single largest factor working against you, the single largest working
+        in your favour, and how the rest weigh up between them.
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
+        <div style={{ padding: "18px 20px", borderRadius: 14, background: T.softRed, border: "1px solid #FECACA" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.red, marginBottom: 10 }}>Largest pressure</div>
+          {topNegative ? (
+            <>
+              <div style={{ fontSize: 15, fontWeight: 800, color: T.ink, marginBottom: 5 }}>{topNegative.name}</div>
+              {topNegative.reason && (
+                <div style={{ fontSize: 12.5, color: "#7F1D1D", lineHeight: 1.6, marginBottom: 10 }}>{topNegative.reason}</div>
+              )}
+              <div style={{ fontSize: 24, fontWeight: 800, color: T.red }}>{topNegative.contribution.toFixed(1)} pts</div>
+            </>
+          ) : (
+            <div style={{ fontSize: 13, color: "#7F1D1D" }}>Nothing worked against this score.</div>
+          )}
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
-          {slices.map((s, i) => {
-            const fm = FACTOR_META[s.key] || { label: s.key };
-            const pct = total > 0 ? Math.round((s.value / total) * 100) : 0;
-            const isPos = s.signed >= 0;
-            return (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ width: 10, height: 10, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
-                <span style={{ fontSize: 12, color: T.ink, fontWeight: 600, flex: 1 }}>{fm.label}</span>
-                <span style={{ fontSize: 12, fontWeight: 800, color: isPos ? T.green : T.red }}>
-                  {isPos ? "+" : ""}{s.signed.toFixed(1)}
-                </span>
-                <span style={{ fontSize: 11, color: T.muted, width: 32, textAlign: "right" }}>{pct}%</span>
-              </div>
-            );
-          })}
+        <div style={{ padding: "18px 20px", borderRadius: 14, background: T.softGreen, border: "1px solid #BBF7D0" }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.green, marginBottom: 10 }}>Largest support</div>
+          {topPositive ? (
+            <>
+              <div style={{ fontSize: 15, fontWeight: 800, color: T.ink, marginBottom: 5 }}>{topPositive.name}</div>
+              {topPositive.reason && (
+                <div style={{ fontSize: 12.5, color: "#14532D", lineHeight: 1.6, marginBottom: 10 }}>{topPositive.reason}</div>
+              )}
+              <div style={{ fontSize: 24, fontWeight: 800, color: T.green }}>+{topPositive.contribution.toFixed(1)} pts</div>
+            </>
+          ) : (
+            <div style={{ fontSize: 13, color: "#14532D" }}>No factor is currently supporting this score.</div>
+          )}
         </div>
       </div>
-      <p style={{ fontSize: 12, color: T.muted, lineHeight: 1.6, marginTop: 16 }}>
-        Slice size shows how much each factor swayed your score, regardless of direction.
-        Check the sign next to each factor to see whether it helped (green) or hurt (red) your final number.
-      </p>
+
+      <ImpactSpread items={items} />
     </Card>
   );
 };
 
-const ScorePanel = ({ result }) => {
+/* Question 2 — one expandable row per factor. Collapsed, it shows the
+   ranked headline; expanded, it exposes the full technical trail
+   (generated_reason, WoE, raw SHAP value, contribution type). */
+const FactorRow = ({ item, expanded, onToggle, maxAbs }) => {
+  const dir = DIRECTION[item.direction];
+  const barPct = maxAbs > 0 ? (Math.abs(item.contribution) / maxAbs) * 100 : 0;
+
+  return (
+    <div style={{ borderBottom: `1px solid ${T.border}` }}>
+      <button onClick={onToggle} style={{
+        width: "100%", display: "flex", alignItems: "center", gap: 16, padding: "18px 4px",
+        background: "none", border: "none", cursor: "pointer", textAlign: "left", fontFamily: "inherit",
+      }}>
+        <div style={{ width: 26, height: 26, borderRadius: 8, flexShrink: 0, background: T.bg,
+          border: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 11, fontWeight: 800, color: T.muted }}>{item.rank}</div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: T.ink }}>{item.name}</div>
+          {!expanded && item.reason && (
+            <div style={{ fontSize: 12, color: T.muted, marginTop: 2, overflow: "hidden",
+              textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.reason}</div>
+          )}
+        </div>
+
+        <div style={{ width: 96, flexShrink: 0 }}>
+          <div style={{ height: 6, borderRadius: 100, background: T.bg, overflow: "hidden" }}>
+            <div style={{ width: `${barPct}%`, height: "100%", background: dir.color, borderRadius: 100 }} />
+          </div>
+        </div>
+
+        <div style={{ width: 84, textAlign: "right", flexShrink: 0, fontSize: 15, fontWeight: 800, color: dir.color }}>
+          {item.contribution > 0 ? "+" : ""}{item.contribution.toFixed(1)}
+        </div>
+
+        <div style={{ width: 14, flexShrink: 0, color: T.muted, fontSize: 12,
+          transform: expanded ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>▾</div>
+      </button>
+
+      {expanded && (
+        <div style={{ padding: "0 4px 20px 46px", display: "flex", flexDirection: "column", gap: 12 }}>
+          {item.reason && (
+            <div style={{ fontSize: 13, color: "#374151", lineHeight: 1.7 }}>{item.reason}</div>
+          )}
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <Badge color={dir.color} bg={dir.soft}>{dir.label}</Badge>
+            <span style={{ fontSize: 11, color: T.muted, padding: "5px 12px", borderRadius: 100,
+              background: T.bg, border: `1px solid ${T.border}`, fontWeight: 600 }}>
+              Rank #{item.rank} by importance
+            </span>
+            {item.woe !== undefined && item.woe !== null && (
+              <span style={{ fontSize: 11, color: T.muted, padding: "5px 12px", borderRadius: 100,
+                background: T.bg, border: `1px solid ${T.border}`, fontWeight: 600 }}>
+                WoE {typeof item.woe === "number" ? item.woe.toFixed(3) : item.woe}
+              </span>
+            )}
+            {item.shap_value !== undefined && item.shap_value !== null && (
+              <span style={{ fontSize: 11, color: T.muted, padding: "5px 12px", borderRadius: 100,
+                background: T.bg, border: `1px solid ${T.border}`, fontWeight: 600 }}>
+                SHAP {Number(item.shap_value).toFixed(3)}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const FactorLedger = ({ items, baseLogOddsPts, result }) => {
+  const [expandedKey, setExpandedKey] = useState(null);
+  const sorted = [...items].sort((a, b) => a.rank - b.rank);
+  const maxAbs = Math.max(1, ...items.map(x => Math.abs(x.contribution)));
+
+  return (
+    <Card>
+      <Eyebrow>What influenced this decision</Eyebrow>
+      <h3 style={{ fontSize: 18, fontWeight: 800, color: T.ink, marginBottom: 4 }}>Factor by factor</h3>
+      <p style={{ fontSize: 13, color: T.muted, marginBottom: 6, lineHeight: 1.7 }}>
+        Ranked by how much each one moved the score. Select a row for the full reasoning.
+      </p>
+
+      {baseLogOddsPts != null && (
+        <div style={{ display: "flex", alignItems: "center", gap: 16, padding: "14px 4px",
+          borderBottom: `1px dashed ${T.border}` }}>
+          <div style={{ width: 26, height: 26, borderRadius: 8, flexShrink: 0, border: `1px dashed ${T.border}`,
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: T.muted }}>–</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.muted }}>Model baseline</div>
+            <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
+              Population average, before any of this borrower's data is applied
+            </div>
+          </div>
+          <div style={{ width: 84, textAlign: "right", fontSize: 14, fontWeight: 700, color: T.muted }}>
+            {baseLogOddsPts >= 0 ? "+" : ""}{baseLogOddsPts.toFixed(1)}
+          </div>
+        </div>
+      )}
+
+      {sorted.map((item) => (
+        <FactorRow key={item.key} item={item} maxAbs={maxAbs}
+          expanded={expandedKey === item.key}
+          onToggle={() => setExpandedKey(k => (k === item.key ? null : item.key))} />
+      ))}
+
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: "16px 4px 0", marginTop: 8, borderTop: `1px solid ${T.border}` }}>
+        <span style={{ fontSize: 13, fontWeight: 700, color: T.ink }}>Final score</span>
+        <span style={{ fontSize: 18, fontWeight: 800, color: T.ink }}>{result?.risk_score}</span>
+      </div>
+      {result?.log_odds != null && result?.probability_of_default != null && (
+        <div style={{ fontSize: 11, color: T.muted, marginTop: 6, textAlign: "right" }}>
+          Total log-odds {result.log_odds.toFixed(4)} · probability of default {(result.probability_of_default * 100).toFixed(1)}%
+        </div>
+      )}
+    </Card>
+  );
+};
+
+/* "How this score was derived" — a compact, genuinely sequential process
+   trace from raw documents to the final number, standing in for a wall of
+   methodology prose. */
+const DERIVATION_STEPS = [
+  { title: "Documents",              desc: "Bank statements, salary slips and utility bills are parsed." },
+  { title: "Financial features",     desc: "Ratios and stability metrics are computed from the raw data." },
+  { title: "WoE binning",            desc: "Each feature is placed into a risk band and scored against default rates." },
+  { title: "Logistic scorecard",     desc: "Bands are weighted by the model's learned coefficients." },
+  { title: "Feature contributions",  desc: "Each weighted difference becomes the signed point value shown on the left." },
+  { title: "Final score",            desc: "Contributions plus the baseline are rescaled to the 300–900 range." },
+];
+
+const DerivationFlow = ({ meta }) => (
+  <Card>
+    <Eyebrow color={T.purple}>How this score was derived</Eyebrow>
+    <h3 style={{ fontSize: 15, fontWeight: 800, color: T.ink, marginBottom: 16 }}>From documents to decision</h3>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      {DERIVATION_STEPS.map((step, i) => (
+        <div key={step.title} style={{ display: "flex", gap: 12 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+            <div style={{ width: 22, height: 22, borderRadius: "50%", background: T.softPurple, color: T.purple,
+              fontSize: 11, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {i + 1}
+            </div>
+            {i < DERIVATION_STEPS.length - 1 && (
+              <div style={{ width: 1, flex: 1, minHeight: 20, background: T.border }} />
+            )}
+          </div>
+          <div style={{ paddingBottom: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.ink }}>{step.title}</div>
+            <div style={{ fontSize: 12, color: T.muted, marginTop: 2, lineHeight: 1.6 }}>{step.desc}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+    <div style={{ fontSize: 11, color: T.muted, marginTop: 2, paddingTop: 12,
+      borderTop: `1px solid ${T.border}`, lineHeight: 1.6 }}>
+      PDO of {meta.pdo ?? 50} points to double the odds, anchored at a base score of {meta.base_score ?? 600}.
+    </div>
+  </Card>
+);
+
+/* Question 3 — connects the explanation to action, without inventing any
+   new advice: negative factors are framed as opportunities (and map onto
+   the existing "How to improve" tab), positive ones as strengths worth
+   protecting, and a direct path into "What-if" to test changes. */
+const ActionBridge = ({ items, onNavigate }) => {
+  const opportunities = items.filter(i => i.direction === "negative").sort((a, b) => a.contribution - b.contribution);
+  const strengths = items.filter(i => i.direction === "positive").sort((a, b) => b.contribution - a.contribution);
+  const neutral = items.filter(i => i.direction === "neutral");
+
+  return (
+    <Card>
+      <Eyebrow>Acting on it</Eyebrow>
+      <h3 style={{ fontSize: 18, fontWeight: 800, color: T.ink, marginBottom: 4 }}>Where to focus next</h3>
+      <p style={{ fontSize: 13, color: T.muted, marginBottom: 22, lineHeight: 1.7, maxWidth: 660 }}>
+        Factors that pulled the score down are opportunities, closing them recovers the most points.
+        Factors that supported it are strengths worth protecting as-is.
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: neutral.length ? 18 : 4 }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.red, marginBottom: 10 }}>Opportunities</div>
+          {opportunities.length ? opportunities.map(it => (
+            <div key={it.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "10px 14px", borderRadius: 10, background: T.bg, marginBottom: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>{it.name}</span>
+              <span style={{ fontSize: 13, fontWeight: 800, color: T.red }}>{it.contribution.toFixed(1)}</span>
+            </div>
+          )) : (
+            <div style={{ fontSize: 13, color: T.muted }}>Nothing worked against this score.</div>
+          )}
+        </div>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: T.green, marginBottom: 10 }}>Strengths</div>
+          {strengths.length ? strengths.map(it => (
+            <div key={it.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "10px 14px", borderRadius: 10, background: T.bg, marginBottom: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>{it.name}</span>
+              <span style={{ fontSize: 13, fontWeight: 800, color: T.green }}>+{it.contribution.toFixed(1)}</span>
+            </div>
+          )) : (
+            <div style={{ fontSize: 13, color: T.muted }}>No factor is currently supporting this score.</div>
+          )}
+        </div>
+      </div>
+
+      {neutral.length > 0 && (
+        <div style={{ fontSize: 12, color: T.muted, marginBottom: 20 }}>
+          {neutral.map(n => n.name).join(", ")} had no measurable effect on this decision.
+        </div>
+      )}
+
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+        <button onClick={() => onNavigate?.("improve")} style={{
+          padding: "12px 22px", borderRadius: 12, border: "none", cursor: "pointer",
+          background: T.ink, color: "#fff", fontSize: 13, fontWeight: 700,
+        }}>
+          See how to improve
+        </button>
+        <button onClick={() => onNavigate?.("whatif")} style={{
+          padding: "12px 22px", borderRadius: 12, cursor: "pointer",
+          background: T.white, color: T.ink, fontSize: 13, fontWeight: 700, border: `1.5px solid ${T.border}`,
+        }}>
+          Run a what-if scenario
+        </button>
+      </div>
+    </Card>
+  );
+};
+
+const ScorePanel = ({ result, onNavigate }) => {
+  // Use SHAP explanations if available, fall back to reason_codes for backward compatibility
+  const shap_explanations = result?.shap_explanations;
   const reason_codes = result?.reason_codes;
+  const explanations = shap_explanations ?? reason_codes;
+
   const meta = result?.model_metadata || {};
   const logOdds = result?.log_odds;
-  const pd = result?.probability_of_default;
 
-  if (!reason_codes?.length) return <Card><div style={{ color: T.muted }}>No reason codes available.</div></Card>;
-  const maxAbs = Math.max(...reason_codes.map(r => Math.abs(r.score_contribution ?? 0)));
+  if (!explanations?.length) return <Card><div style={{ color: T.muted }}>No explanation data available.</div></Card>;
 
-  // Reconstruct the base log-odds component (φ₀) so the sidebar ledger sums to the
-  // actual score: total log-odds minus the sum of all shown contributions, rescaled
-  // back into score points via the same PDO factor used by the backend.
+  const items = buildDriverItems(explanations);
+
+  // Reconstruct the base log-odds component (φ₀) so the ledger sums to the
+  // actual score: total log-odds minus the sum of all shown contributions,
+  // rescaled back into score points via the same PDO factor used by the backend.
   const factor = meta.factor ?? 72.13;
-  const sumContribPts = reason_codes.reduce((s, r) => s + (r.score_contribution ?? 0), 0);
+  const sumContribPts = items.reduce((s, r) => s + r.contribution, 0);
   const baseLogOddsPts = logOdds != null ? -factor * logOdds - sumContribPts : null;
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 20, alignItems: "start" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      {/* Q1 — why this score, as a headline story */}
+      <ScoreStory items={items} result={result} />
 
-      {/* ── LEFT: factor list ── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-        <Card>
-          <Eyebrow>Model explainability · WoE logistic scorecard</Eyebrow>
-          <h3 style={{ fontSize: 20, fontWeight: 800, color: T.ink, marginBottom: 6 }}>Score breakdown</h3>
-          <p style={{ fontSize: 13, color: T.muted, marginBottom: 24, lineHeight: 1.7 }}>
-            Each factor either added or subtracted points from your final score.
-            Green bars helped your profile; red bars pulled it down.
-          </p>
-          {reason_codes.map((r, i) => {
-            const contrib = r.score_contribution ?? 0;
-            const isPos = contrib >= 0;
-            const barPct = maxAbs > 0 ? (Math.abs(contrib) / maxAbs) * 100 : 0;
-            const fm = FACTOR_META[r.factor] || { icon: "📌", label: r.factor, desc: "" };
-            return (
-              <div key={i} style={{ padding: "20px 0", borderBottom: i < reason_codes.length-1 ? `1px solid ${T.border}` : "none" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
-                  <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-                    <div style={{ width: 42, height: 42, borderRadius: 12, fontSize: 18,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      background: isPos ? T.softGreen : T.softRed, flexShrink: 0 }}>
-                      {fm.icon}
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: T.ink }}>{fm.label}</div>
-                      <div style={{ fontSize: 12, color: T.muted }}>{fm.desc}</div>
-                    </div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: isPos ? T.green : T.red }}>
-                      {contrib > 0 ? "+" : ""}{contrib.toFixed(1)} pts
-                    </div>
-                    <div style={{ fontSize: 11, color: T.muted }}>WoE {r.woe?.toFixed(3) ?? "—"}</div>
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ flex: 1, height: 7, borderRadius: 100, background: T.bg, overflow: "hidden" }}>
-                    <div style={{ width: `${barPct}%`, height: "100%", borderRadius: 100,
-                      background: isPos ? T.green : T.red, transition: "width 0.8s ease" }} />
-                  </div>
-                  <Badge color={isPos ? T.green : T.red} bg={isPos ? T.softGreen : T.softRed}>
-                    {isPos ? "Positive" : "Negative"}
-                  </Badge>
-                </div>
-              </div>
-            );
-          })}
-        </Card>
+      {/* Q2 — the full, traceable, expandable factor list */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 20, alignItems: "start" }}>
+  <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+    <FactorLedger items={items} baseLogOddsPts={baseLogOddsPts} result={result} />
 
-        {/* Methodology card */}
-        <Card style={{ background: T.softBlue, border: `1px solid #BFDBFE` }}>
-          <div style={{ display: "flex", gap: 18, alignItems: "flex-start" }}>
-            <div style={{ fontSize: 30, flexShrink: 0 }}>🔬</div>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: T.ink, marginBottom: 6 }}>How PRISM calculates your score</div>
-              <div style={{ fontSize: 13, color: "#1E40AF", lineHeight: 1.7 }}>
-                PRISM uses a <strong>Weight of Evidence (WoE) Logistic Scorecard</strong> — the same methodology used by Indian banks and NBFCs.
-                Each feature is binned into risk bands, assigned a WoE value based on default rates, then multiplied by a logistic regression
-                coefficient. The final log-odds are converted to a 300–900 score using PDO scaling ({meta.pdo ?? 50} points to double the odds, anchored at {meta.base_score ?? 600}).
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
+    {/* Q3 — how to act on it */}
+    <ActionBridge items={items} onNavigate={onNavigate} />
+  </div>
 
-      {/* ── RIGHT: explainability sidebar ── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 16, position: "sticky", top: 80 }}>
-        <ContributionPieCard reason_codes={reason_codes} />
-
-        <Card>
-          <Eyebrow>Step-by-step</Eyebrow>
-          <h3 style={{ fontSize: 15, fontWeight: 800, color: T.ink, marginBottom: 14 }}>Walking through your score</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {[
-              { n: 1, text: "Each raw value (e.g. your credit-debit ratio) is placed into a risk bin, and converted to a Weight of Evidence (WoE) number." },
-              { n: 2, text: "Each WoE value is compared to the population average for that same feature — the difference is what actually moves your score." },
-              { n: 3, text: "That difference is multiplied by the model's learned coefficient (βᵢ) for the feature, giving its exact contribution in log-odds." },
-              { n: 4, text: "All contributions plus a base rate are summed into total log-odds, then linearly rescaled into your 300–900 score." },
-            ].map(({ n, text }) => (
-              <div key={n} style={{ display: "flex", gap: 10 }}>
-                <div style={{ width: 22, height: 22, borderRadius: "50%", flexShrink: 0, background: T.softPurple,
-                  color: T.purple, fontSize: 11, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {n}
-                </div>
-                <div style={{ fontSize: 12.5, color: "#374151", lineHeight: 1.6 }}>{text}</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card>
-          <Eyebrow>The math, using your numbers</Eyebrow>
-          <h3 style={{ fontSize: 15, fontWeight: 800, color: T.ink, marginBottom: 12 }}>Your contribution ledger</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
-            {reason_codes.map((r, i) => {
-              const fm = FACTOR_META[r.factor] || { label: r.factor };
-              return (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
-                  fontSize: 12, padding: "8px 10px", borderRadius: 8, background: T.bg }}>
-                  <span style={{ color: T.muted, fontWeight: 600 }}>{fm.label}</span>
-                  <span style={{ fontWeight: 800, color: r.score_contribution >= 0 ? T.green : T.red }}>
-                    {r.score_contribution >= 0 ? "+" : ""}{r.score_contribution.toFixed(1)}
-                  </span>
-                </div>
-              );
-            })}
-            {baseLogOddsPts != null && (
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
-                fontSize: 12, padding: "8px 10px", borderRadius: 8, background: T.softAmber }}>
-                <span style={{ color: "#92400E", fontWeight: 700 }}>Base rate (φ₀)</span>
-                <span style={{ fontWeight: 800, color: "#92400E" }}>
-                  {baseLogOddsPts >= 0 ? "+" : ""}{baseLogOddsPts.toFixed(1)}
-                </span>
-              </div>
-            )}
-          </div>
-          <div style={{ borderTop: `1px dashed ${T.border}`, paddingTop: 10, display: "flex",
-            justifyContent: "space-between", fontSize: 13 }}>
-            <span style={{ fontWeight: 700, color: T.ink }}>Final score</span>
-            <span style={{ fontWeight: 800, color: T.ink }}>{result?.risk_score}</span>
-          </div>
-          {logOdds != null && (
-            <div style={{ fontSize: 11, color: T.muted, marginTop: 8, lineHeight: 1.6 }}>
-              Total log-odds: <strong>{logOdds.toFixed(4)}</strong> · Probability of default: <strong>{(pd * 100).toFixed(1)}%</strong>
-            </div>
-          )}
-        </Card>
-
-        <Card style={{ background: T.softGreen, border: "1px solid #BBF7D0" }}>
-          <div style={{ fontSize: 12, color: "#166534", lineHeight: 1.65 }}>
-            <strong>Why this matters:</strong> under ECOA / RBI Fair Practices Code, any adverse
-            credit decision must come with specific, traceable reasons — not just a number.
-            This breakdown is exact, not estimated, because the scorecard is linear.
-          </div>
-        </Card>
-      </div>
+  <div style={{ display: "flex", flexDirection: "column", gap: 16, position: "sticky", top: 80 }}>
+    <DerivationFlow meta={meta} />
+    <div style={{ fontSize: 11.5, color: T.muted, lineHeight: 1.7, padding: "0 4px" }}>
+      Under ECOA and the RBI Fair Practices Code, any adverse credit decision must come with
+      specific, traceable reasons not just a number. This breakdown is exact, not estimated,
+      because the underlying scorecard is linear.
+    </div>
+  </div>
+</div>
     </div>
   );
 };
@@ -1135,7 +1314,7 @@ export default function ResultsPage({ go, session, result, setError }) {
         <ScoreHero result={data} tier={tier} score={score} />
         <TabBar active={tab} onChange={setTab} />
 
-        {tab === "score"    && <ScorePanel    result={data} />}
+        {tab === "score"    && <ScorePanel    result={data} onNavigate={setTab} />}
         {tab === "features" && <FeaturesPanel features={data.features} />}
         {tab === "improve"  && <ImprovePanel  result={data} />}
         {tab === "learn"    && <Credit101Panel />}
