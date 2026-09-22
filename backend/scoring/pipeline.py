@@ -19,7 +19,13 @@ from .optimal_binning  import fit_binning_models, summarise_binning, save_binnin
 from .woe import apply_woe_transform, validate_woe_monotonicity
 from .log_reg import (fit_logistic_regression, coefficient_table,
                                          compute_vif, evaluate_model, print_report)
-from .pod import compute_pd, compute_log_odds, pd_validation_report
+from .pod import (
+    compute_pd,
+    compute_log_odds,
+    fit_pd_calibrator,
+    compute_calibrated_pd_from_model,
+    pd_validation_report,
+)
 from .score_scaling import log_odds_to_score, scorecard_table, score_distribution_report
 from explain.explainability import compute_shap_values, population_shap_summary
 
@@ -45,38 +51,32 @@ def inject_document_missingness(
     """Inject document-level missingness for salary and utility documents.
 
     Bank statements remain mandatory in this pipeline, so they are not masked.
-    Missingness is applied at the document level by setting all features derived
-    from a missing salary/utility document to NaN together.
+    Missingness is applied independently of the default target to avoid
+    target leakage.
+
+    Salary and utility documents are missing at fixed rates across the
+    dataset. All features derived from a missing document are set to NaN.
     """
     if salary_features is None:
         salary_features = ["net_to_gross_ratio"]
+
     if utility_features is None:
         utility_features = ["utility_stability"]
 
     df = df.copy()
     rng = np.random.default_rng(seed)
 
-    if "default" in df.columns:
-        default_mask = df["default"].astype(int).to_numpy()
-        salary_prob = np.where(
-            default_mask == 1,
-            np.clip(salary_missing_rate + 0.08, 0.0, 1.0),
-            np.clip(salary_missing_rate - 0.03, 0.0, 1.0),
-        )
-        utility_prob = np.where(
-            default_mask == 1,
-            np.clip(utility_missing_rate + 0.08, 0.0, 1.0),
-            np.clip(utility_missing_rate - 0.03, 0.0, 1.0),
-        )
-    else:
-        salary_prob = np.full(len(df), salary_missing_rate)
-        utility_prob = np.full(len(df), utility_missing_rate)
+    # Document missingness must NOT depend on the target variable.
+    # This prevents target leakage during model training.
+    salary_prob = np.full(len(df), salary_missing_rate)
+    utility_prob = np.full(len(df), utility_missing_rate)
 
     salary_missing = rng.random(len(df)) < salary_prob
     utility_missing = rng.random(len(df)) < utility_prob
 
     if salary_features:
         df.loc[salary_missing, salary_features] = np.nan
+
     if utility_features:
         df.loc[utility_missing, utility_features] = np.nan
 
@@ -175,44 +175,123 @@ def main():
 
     joblib.dump(model, "artifacts/lr_model.pkl")
 
-    # ── STAGE 6: PROBABILITY OF DEFAULT ──────────────────────────────────────
-    print("\n" + "─"*65)
-    print("STAGE 6 — Probability of Default")
-    print("─"*65)
-    log_odds_test = compute_log_odds(model, X_test_woe.values)
-    pd_test       = compute_pd(model, X_test_woe.values)
+    # STAGE 6 — PROBABILITY OF DEFAULT (PD) + CALIBRATION
+    print("\n" + "=" * 70)
+    print("STAGE 6 — Probability of Default + Calibration")
+    print("=" * 70)
+    train_log_odds = compute_log_odds(model,X_train_woe)
+    test_log_odds = compute_log_odds(model,X_test_woe)
+    print("\n[1] Raw Log-Odds")
+    print("-" * 70)
+    print(f"Train:")
+    print(f"  Min  : {train_log_odds.min():.4f}")
+    print(f"  Max  : {train_log_odds.max():.4f}")
+    print(f"  Mean : {train_log_odds.mean():.4f}")
+    print(f"\nTest:")
+    print(f"  Min  : {test_log_odds.min():.4f}")
+    print(f"  Max  : {test_log_odds.max():.4f}")
+    print(f"  Mean : {test_log_odds.mean():.4f}")
 
-    print(f"\n  PD stats  →  mean: {pd_test.mean():.4f}  "
-          f"min: {pd_test.min():.4f}  max: {pd_test.max():.4f}")
+    raw_train_pd = compute_pd(model,X_train_woe)
+    raw_test_pd = compute_pd(model,X_test_woe)
+    print("\n[2] Raw PD")
+    print("-" * 70)
+    print(f"  Train mean : {raw_train_pd.mean():.4f}")
+    print(f"  Test mean  : {raw_test_pd.mean():.4f}")
+    print(f"  Test min   : {raw_test_pd.min():.4f}")
+    print(f"  Test max   : {raw_test_pd.max():.4f}")
 
-    print("\n  PD Calibration Report:")
-    cal = pd_validation_report(y_test.values, pd_test)
-    print(cal.to_string(index=False))
+    print("\n[3] Fitting PD calibration layer...")
+    print("-" * 70)
+    pd_calibrator = fit_pd_calibrator(
+    model,
+    X_train_woe,
+    y_train)
+    (
+    train_raw_log_odds,
+    train_calibrated_log_odds,
+    train_raw_pd,
+    calibrated_train_pd,
+) = compute_calibrated_pd_from_model(
+    model,
+    pd_calibrator,
+    X_train_woe)
 
-    joblib.dump({"log_odds": log_odds_test, "pd_values": pd_test},
-                "artifacts/pd_output.pkl")
+    (
+    test_raw_log_odds,
+    test_calibrated_log_odds,
+    test_raw_pd,
+    calibrated_test_pd,) = compute_calibrated_pd_from_model(
+    model,
+    pd_calibrator,
+    X_test_woe)
 
-    # ── STAGE 7: SCORE SCALING ────────────────────────────────────────────────
-    print("\n" + "─"*65)
-    print("STAGE 7 — PDO Score Scaling")
-    print("─"*65)
-    scores = log_odds_to_score(log_odds_test)
 
-    print(f"\n  Score stats  →  mean: {scores.mean():.1f}  "
-          f"min: {scores.min()}  max: {scores.max()}")
+    print("\n[4] Calibrated PD")
+    print("-" * 70)
+    print(f"  Train mean : {calibrated_train_pd.mean():.4f}")
+    print(f"  Test mean  : {calibrated_test_pd.mean():.4f}")
+    print(f"  Test min   : {calibrated_test_pd.min():.4f}")
+    print(f"  Test max   : {calibrated_test_pd.max():.4f}")
+    actual_default_rate = float(np.mean(y_test))
+    raw_pd_gap = (float(raw_test_pd.mean()) - actual_default_rate)
+    calibrated_pd_gap = (float(calibrated_test_pd.mean())- actual_default_rate)
+    print("\n[5] PD Calibration Comparison")
+    print("-" * 70)
+    print("\nRaw PD:")
+    print(f"  Train mean : {train_raw_pd.mean():.4f}")
+    print(f"  Test mean  : {test_raw_pd.mean():.4f}")
+    print("\nCalibrated PD:")
+    print(f"  Train mean : {calibrated_train_pd.mean():.4f}")
+    print(f"  Test mean  : {calibrated_test_pd.mean():.4f}")
+    actual_test_default_rate = float(np.mean(y_test))
+    raw_pd_gap = abs(float(test_raw_pd.mean()) - actual_test_default_rate)
+    calibrated_pd_gap = (float(calibrated_test_pd.mean()) - actual_test_default_rate)
+    print("\nPD Calibration:")
+    print(f"  Actual test default rate : {actual_test_default_rate:.4f}")
+    print(f"  Raw PD gap               : {raw_pd_gap:.4f}")
+    print(f"  Calibrated PD gap        : {calibrated_pd_gap:.4f}")
+    print("\nCalibration parameters:")
+    print(f"  Intercept : {pd_calibrator.intercept_[0]:.6f}")
+    print(f"  Slope     : {pd_calibrator.coef_[0][0]:.6f}")
 
-    print("\n  Score Band Distribution:")
-    band_rep = score_distribution_report(scores, pd_test)
-    print(band_rep.to_string(index=False))
+    print("\n" + "=" * 70)
+    print("STAGE 7 — Credit Score")
+    print("=" * 70)
+    scores = log_odds_to_score(test_calibrated_log_odds)
+    print("\n[1] Score Statistics")
+    print("-" * 70)
+    print(f"  Min  : {scores.min():.0f}")
+    print(f"  Max  : {scores.max():.0f}")
+    print(f"  Mean : {scores.mean():.2f}")
+    print(f"  Std  : {scores.std():.2f}")
+    print("\n[2] Score Distribution")
+    print("-" * 70)
+    score_report = score_distribution_report(
+    scores,calibrated_test_pd)
+    print(score_report.to_string(index=False))
+    print("\n[3] Scorecard Scaling")
+    print("-" * 70)
 
-    print("\n  Full Scorecard Table:")
-    sc_tbl = scorecard_table(model, binning_models)
-    print(sc_tbl.to_string(index=False))
+    try:
+        score_table = scorecard_table(model,binning_models)
+        print(score_table.to_string(index=False))
+    except Exception as exc:
+        print(f"  Scorecard table unavailable: {exc}")
 
-    joblib.dump({
-        "scores": scores, "pd_values": pd_test,
-        "log_odds": log_odds_test, "X_test_woe": X_test_woe.values
-    }, "artifacts/scored_output.pkl")
+    score_output = {
+    "scores": scores,
+    "calibrated_pd": calibrated_test_pd,
+    "calibrated_log_odds": test_calibrated_log_odds,
+    "y_true": y_test,
+}
+
+    scored_output_path = os.path.join("artifacts", "scored_output.pkl")
+    print("\n[4] Final scored output saved:")
+    print(f"  {scored_output_path}")
+    print("\n" + "=" * 70)
+    print("STAGE 6 + STAGE 7 COMPLETE")
+    print("=" * 70)
 
     # ── STAGE 8: EXPLAINABILITY ───────────────────────────────────────────────
     print("\n" + "─"*65)

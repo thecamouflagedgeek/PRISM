@@ -46,6 +46,7 @@ from ingestion.parsers.utility_parser import (
     ExtractionQualityError as UtilityExtractionQualityError,
 )
 from ingestion.parsers.bank_parser import (
+    BankParser,
     ExtractionQualityError,
     ExtractionQualityError as BankExtractionQualityError,
 )
@@ -56,9 +57,9 @@ from features.utility_features import UtilityFeatureEngineer
 from features.credit_card_features import CreditCardFeatureEngineer
 
 from scoring.risk_scorer import (
-    compute_risk_score,
     simulate_whatif,
 )
+from services.assessment_service import assess_borrower
 
 router = APIRouter(prefix="/assess", tags=["Assessment"])
 
@@ -76,11 +77,12 @@ router = APIRouter(prefix="/assess", tags=["Assessment"])
 # silently returns unrecognized types unchanged if you miss a branch (this is
 # exactly what happened before: sets and raw np.bool_ inside them slipped
 # through). json.dumps calls `default` on *every* value it doesn't already
-# know how to serialize, with no way to skip one silently — if something is
+# know how to serialize, with no way to skip one silently -- if something is
 # still wrong, this raises a clear TypeError naming the exact bad object
 # instead of FastAPI's confusing double-exception.
 class WhatIfRequest(BaseModel):
     overrides: dict[str, float]
+
 
 def _json_default(obj):
     # numpy scalars: bool_, int8..int64, float16..float64, etc. -- one check
@@ -152,10 +154,21 @@ async def save_temp(file: UploadFile):
 
 def assert_valid_path(path, name="file"):
     if not path:
-        raise ValueError(f"{name} path is missing (None received)")
+        raise ValueError(
+            f"{name} path is missing (None received)"
+        )
 
 
-def process_doc(parser, engineer_cls, path, password=None):
+def process_doc(parser, engineer_cls, path, password=None, return_raw=False):
+    """
+    Shared extract -> transform -> validate -> engineer flow.
+
+    return_raw=True also returns the transformed, validated structured
+    DataFrame (pre-feature-engineering) alongside the engineered features.
+    This is needed wherever downstream fraud / document-consistency checks
+    need the raw structured document rather than just the scorecard
+    features (e.g. utility bill line items, bank transactions).
+    """
     try:
         raw = parser.extract(path, password=password)
     except (BankExtractionQualityError, UtilityExtractionQualityError) as e:
@@ -177,7 +190,27 @@ def process_doc(parser, engineer_cls, path, password=None):
                 "issues": str(e),
             },
         )
+    if return_raw:
+        return features, df
     return features
+
+
+def process_bank_doc(path):
+    """
+    Canonical bank-document path: this is what produces the raw structured
+    transaction DataFrame the fraud engine / document-consistency layer
+    need. DocumentPipeline (used below for OCR quality gating + is_scoreable)
+    does NOT expose this DataFrame on PipelineResult -- only `features` and
+    `raw_summary` -- so this function is called separately for its
+    (features, transactions) pair rather than trying to pull transactions
+    off pipeline_result.
+    """
+    parser = BankParser()
+    raw = parser.extract(path)
+    transactions = parser.transform(raw)
+    parser.validate(transactions)
+    features = BankFeatureEngineer(transactions).build_features()
+    return features, transactions
 
 
 def features_to_dict(features):
@@ -212,44 +245,39 @@ async def assess(
     db: Session = Depends(get_db),
 ):
     session = get_session(session_id)
+
     if not session:
         raise HTTPException(401, "Invalid session")
+
     if not session.consent_bank:
         raise HTTPException(403, "Bank consent required")
 
     # ---------------- BANK ----------------
     bank_path = await save_temp(bank_file)
     document = save_document(
-    db=db,
-    application_id=session.application_id,
-    document_type="BANK_STATEMENT",
-    file_name=bank_file.filename,
-    storage_path=bank_path,
-)
+        db=db,
+        application_id=session.application_id,
+        document_type="BANK_STATEMENT",
+        file_name=bank_file.filename,
+        storage_path=bank_path,
+    )
     assert_valid_path(bank_path, "bank_file")
+
     try:
         pipeline = DocumentPipeline(ocr_engine=ocr_engine)
         try:
             pipeline_result = pipeline.process(bank_path, password=bank_password)
             update_document_status(
-            db=db,
-            document_id=document.document_id,
-            status="OCR_COMPLETED"
-        )
+                db=db,
+                document_id=document.document_id,
+                status="OCR_COMPLETED",
+            )
         except DocumentProcessingError as e:
-
-            print("\n========== DOCUMENT PROCESSING ERROR ==========")
-            print("Error Code:", e.error_code)
-            print("Message:", e.message)
-            print("Issues:", e.issues)
-            print("=============================================\n")
-
             update_document_status(
                 db=db,
                 document_id=document.document_id,
-                status="FAILED"
+                status="FAILED",
             )
-
             raise HTTPException(
                 status_code=422,
                 detail={
@@ -258,46 +286,60 @@ async def assess(
                     "issues": e.issues,
                 },
             )
+
+        if not pipeline_result.is_scoreable:
+            return safe_response({
+                "status": "success",
+                "assessed_at": datetime.utcnow().isoformat(),
+                "session_id": session_id,
+                "document_type": pipeline_result.document_type,
+                "scoreable": False,
+                "note": (
+                    f"This is a {pipeline_result.document_type.replace('_', ' ')}. "
+                    "PRISM's credit scorecard is currently calibrated for savings/current "
+                    "account statements only. Extracted features are provided for reference, "
+                    "but no risk_score is generated for this document type yet."
+                ),
+                "features": {
+                    "bank": features_to_dict(pipeline_result.features),
+                    "salary": None,
+                    "utility": None,
+                },
+            })
+
+        # `pipeline_result` confirms this is a scoreable savings/current
+        # account statement, but PipelineResult only exposes `features` and
+        # `raw_summary` -- not the raw transaction DataFrame the fraud
+        # engine / document-consistency layer need. process_bank_doc() is
+        # the confirmed, existing source of the canonical
+        # (bank_features, bank_transactions) pair, so that's used here
+        # instead of pipeline_result.features.
+        #
+        # TRADE-OFF: this re-parses the bank statement a second time
+        # (DocumentPipeline already walked it internally for the OCR
+        # quality/scoreability check). That duplication is inherent to
+        # PipelineResult's current shape -- it doesn't expose transactions
+        # -- and isn't something this router can avoid on its own. The real
+        # fix is adding a `transactions` field to PipelineResult in
+        # ingestion/document_pipeline.py so this second pass isn't needed;
+        # flagging that as a follow-up rather than changing that module here.
+        bank_features, bank_transactions = process_bank_doc(bank_path)
+
+        save_features(
+            db=db,
+            application_id=session.application_id,
+            feature_source="BANK",
+            features=features_to_dict(bank_features),
+        )
     finally:
-        os.remove(bank_path)
-
-    if not pipeline_result.is_scoreable:
-        # NOTE: this branch previously returned pipeline_result.features raw,
-        # bypassing all cleaning. That's the most likely source of the
-        # numpy.bool_ crash. It now goes through safe_response like every
-        # other return in this function.
-        return safe_response({
-            "status": "success",
-            "assessed_at": datetime.utcnow().isoformat(),
-            "session_id": session_id,
-            "document_type": pipeline_result.document_type,
-            "scoreable": False,
-            "note": (
-                f"This is a {pipeline_result.document_type.replace('_', ' ')}. "
-                "PRISM's credit scorecard is currently calibrated for savings/current "
-                "account statements only. Extracted features are provided for reference, "
-                "but no risk_score is generated for this document type yet."
-            ),
-            "features": {
-                "bank": features_to_dict(pipeline_result.features),
-                "salary": None,
-                "utility": None,
-            },
-        })
-
-    bank_features = pipeline_result.features
-    save_features(
-    db=db,
-    application_id=session.application_id,
-    feature_source="BANK",
-    features=features_to_dict(bank_features)
-)
+        if os.path.exists(bank_path):
+            os.remove(bank_path)
 
     # ---------------- SALARY ----------------
     salary_features = None
+    salary_data = None
 
     if salary_file and session.consent_salary:
-
         salary_path = await save_temp(salary_file)
 
         salary_document = save_document(
@@ -309,53 +351,46 @@ async def assess(
         )
 
         try:
-
             salary_parser = SalaryParser(ocr_engine)
 
             try:
                 salary_data = salary_parser.parse(salary_path)
-
             except SalaryParsingError as e:
-
                 update_document_status(
                     db=db,
                     document_id=salary_document.document_id,
-                    status="FAILED"
+                    status="FAILED",
                 )
-
                 raise HTTPException(
                     status_code=422,
-                    detail={
-                        "error": "salary_parsing_failed",
-                        "message": str(e)
-                    },
+                    detail={"error": "salary_parsing_failed", "message": str(e)},
                 )
 
             engineer = SalaryFeatureEngineer(salary_data)
-
             salary_features = engineer.build_features()
 
             update_document_status(
                 db=db,
                 document_id=salary_document.document_id,
-                status="OCR_COMPLETED"
+                status="OCR_COMPLETED",
             )
 
             save_features(
                 db=db,
                 application_id=session.application_id,
                 feature_source="SALARY",
-                features=features_to_dict(salary_features)
+                features=features_to_dict(salary_features),
             )
 
         finally:
-            os.remove(salary_path)
+            if os.path.exists(salary_path):
+                os.remove(salary_path)
 
-        # ---------------- UTILITY ----------------
+    # ---------------- UTILITY ----------------
     utility_features = None
+    utility_data = None
 
     if utility_file and session.consent_utility:
-
         utility_path = await save_temp(utility_file)
 
         utility_document = save_document(
@@ -369,45 +404,60 @@ async def assess(
         assert_valid_path(utility_path, "utility_file")
 
         try:
-
-            utility_features = process_doc(
+            utility_features, utility_data = process_doc(
                 UtilityParser(ocr_engine),
                 UtilityFeatureEngineer,
                 utility_path,
+                password=utility_password,
+                return_raw=True,
             )
 
             update_document_status(
                 db=db,
                 document_id=utility_document.document_id,
-                status="OCR_COMPLETED"
+                status="OCR_COMPLETED",
             )
 
             save_features(
                 db=db,
                 application_id=session.application_id,
                 feature_source="UTILITY",
-                features=features_to_dict(utility_features)
+                features=features_to_dict(utility_features),
             )
 
         except Exception:
-
             update_document_status(
                 db=db,
                 document_id=utility_document.document_id,
-                status="FAILED"
+                status="FAILED",
             )
-
             raise
 
         finally:
-            os.remove(utility_path)
+            if os.path.exists(utility_path):
+                os.remove(utility_path)
 
     # ---------------- SCORING ----------------
-    result = compute_risk_score(
-    bank_features,
-    salary_features,
-    utility_features
-)
+    # assess_borrower folds in Credit Risk + Fraud Risk + Document
+    # Consistency Risk: the engineered features drive the credit scorecard,
+    # while the raw structured documents (transactions / salary / utility)
+    # drive the fraud engine and document-consistency layer independently.
+    #
+    # NOTE / ASSUMPTION: this upload-only endpoint has no borrower
+    # identity/history available, so application / application_history are
+    # passed empty, matching prior behaviour. Do NOT use session_id as
+    # borrower identity.
+    result = assess_borrower(
+        bank=bank_features,
+        salary=salary_features,
+        utility=utility_features,
+        application={},
+        application_history=[],
+        transactions=bank_transactions,
+        bank_document=bank_transactions,
+        salary_document=salary_data,
+        utility_document=utility_data,
+    )
 
     score = save_risk_score(
         db=db,
@@ -418,10 +468,16 @@ async def assess(
     save_shap_explanations(
         db=db,
         score_id=score.score_id,
-        explanations=result["shap_explanations"],
+        explanations=result.get("shap_explanations", {}),
     )
 
     session.assessment_result = result
+    session.bank_features = bank_features
+    session.salary_features = salary_features
+    session.utility_features = utility_features
+    session.bank_transactions = bank_transactions
+    session.salary_document = salary_data
+    session.utility_document = utility_data
 
     response_data = {
         "status": "success",
@@ -436,6 +492,7 @@ async def assess(
     }
 
     return safe_response(response_data)
+
 
 @router.post("/whatif")
 async def whatif(payload: WhatIfRequest, session_id: str = Header(...)):
