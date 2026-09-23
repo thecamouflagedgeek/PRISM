@@ -1,73 +1,64 @@
+import { useEffect, useState } from "react";
 import { Nav } from "../components/Nav";
+import { api } from "../services/api";
 
-export default function ApplicationsPage({ go, lenderSession }) {
-  // --------------------------------------------------
-  // MOCK DATA
-  // Replace with lender applications API later
-  // --------------------------------------------------
-  const applications = [
-    {
-      id: "PR-1024",
-      borrower: "BR-0042",
-      score: 742,
-      pd: "12.4%",
-      risk: "Low Risk",
-      status: "New",
-      documents: "3 / 3",
-      date: "16 Sep 2026",
-    },
-    {
-      id: "PR-1023",
-      borrower: "BR-0039",
-      score: 581,
-      pd: "34.8%",
-      risk: "Medium Risk",
-      status: "Under Review",
-      documents: "3 / 3",
-      date: "16 Sep 2026",
-    },
-    {
-      id: "PR-1022",
-      borrower: "BR-0037",
-      score: 364,
-      pd: "57.9%",
-      risk: "High Risk",
-      status: "New",
-      documents: "2 / 3",
-      date: "15 Sep 2026",
-    },
-    {
-      id: "PR-1021",
-      borrower: "BR-0034",
-      score: 691,
-      pd: "18.6%",
-      risk: "Medium Risk",
-      status: "Reviewed",
-      documents: "3 / 3",
-      date: "15 Sep 2026",
-    },
-    {
-      id: "PR-1020",
-      borrower: "BR-0031",
-      score: 817,
-      pd: "6.2%",
-      risk: "Low Risk",
-      status: "Reviewed",
-      documents: "3 / 3",
-      date: "14 Sep 2026",
-    },
-    {
-      id: "PR-1019",
-      borrower: "BR-0028",
-      score: 432,
-      pd: "49.3%",
-      risk: "High Risk",
-      status: "Under Review",
-      documents: "3 / 3",
-      date: "14 Sep 2026",
-    },
-  ];
+export default function ApplicationsPage({ go, lenderSession, setLenderAssessment }) {
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [activeFilter, setActiveFilter] = useState("All");
 
+  useEffect(() => {
+    let active = true;
+    api.lenderApplications()
+      .then(({ applications: rows }) => {
+        if (!active) return;
+        setApplications(rows.map((item) => ({
+          id: item.application_id,
+          borrower: item.borrower_phone ?? "Not available",
+          score: item.risk_score ?? "—",
+          pd: item.probability_of_default == null ? "—" : `${(Number(item.probability_of_default) * 100).toFixed(1)}%`,
+          risk: item.risk_tier ?? "Not assessed",
+          status: item.application_status ?? "IN_PROGRESS",
+          documents: String(item.document_count ?? 0),
+          date: item.application_date ? new Date(item.application_date).toLocaleDateString("en-IN") : "—",
+        })));
+      })
+      .catch((requestError) => active && setError(requestError.message))
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
+  }, []);
+
+  const openAssessment = async (applicationId) => {
+    setError("");
+    try {
+      const assessment = await api.lenderApplication(applicationId);
+      setLenderAssessment(assessment);
+      go("assessment");
+    } catch (requestError) {
+      setError(requestError.message);
+    }
+  };
+
+  const filteredApplications = applications.filter((application) => {
+  if (activeFilter === "All") {
+    return true;
+  }
+
+  if (activeFilter === "New") {
+    return String(application.status || "").toUpperCase() === "NEW";
+  }
+
+  if (activeFilter === "Under Review") {
+    return String(application.status || "").toUpperCase() === "IN_PROGRESS";
+  }
+
+  if (activeFilter === "Reviewed") {
+    return String(application.status || "").toUpperCase() === "ASSESSED";
+  }
+
+  return true;
+});
   const getRiskStyle = (risk) => {
     if (risk === "Low Risk") {
       return {
@@ -206,7 +197,7 @@ export default function ApplicationsPage({ go, lenderSession }) {
               paddingBottom: 5,
             }}
           >
-            {applications.length} active applications
+            {loading ? "Loading applications…" : `${applications.length} applications`}
           </div>
         </div>
 
@@ -230,25 +221,30 @@ export default function ApplicationsPage({ go, lenderSession }) {
               flexWrap: "wrap",
             }}
           >
-            {["All", "New", "Under Review", "Reviewed"].map(
-              (filter, index) => (
-                <button
-                  key={filter}
-                  className={index === 0 ? "btn-primary btn-orange" : "btn-outline"}
-                  style={{
-                    padding: "9px 15px",
-                    fontSize: 11,
-                  }}
-                >
-                  {filter}
-                </button>
-              )
-            )}
+            {["All", "New", "Under Review", "Reviewed"].map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={
+                activeFilter === filter
+                  ? "btn-primary btn-orange"
+                  : "btn-outline"
+              }
+              style={{
+                padding: "9px 15px",
+                fontSize: 11,
+              }}
+            >
+              {filter}
+            </button>
+          ))}
           </div>
 
           <input
             className="input-field"
             placeholder="Search application or borrower..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)} 
             style={{
               width: 270,
               padding: "10px 13px",
@@ -296,7 +292,19 @@ export default function ApplicationsPage({ go, lenderSession }) {
           </div>
 
           {/* Rows */}
-          {applications.map((application) => (
+          {error && <div style={{ padding: "18px 22px", color: "#b33a3a", fontSize: 12 }}>{error}</div>}
+          {!loading && !error && filteredApplications.length === 0 && (
+  <div
+    style={{
+      padding: "18px 22px",
+      color: "var(--muted)",
+      fontSize: 12,
+    }}
+  >
+    No applications match this filter.
+  </div>
+)}
+{filteredApplications.map((application) => (
             <div
               key={application.id}
               style={{
@@ -407,7 +415,7 @@ export default function ApplicationsPage({ go, lenderSession }) {
 
               {/* Action */}
               <button
-                onClick={() => go("assessment")}
+                onClick={() => openAssessment(application.id)}
                 style={{
                   border: "none",
                   background: "transparent",

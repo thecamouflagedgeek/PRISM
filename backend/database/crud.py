@@ -10,7 +10,8 @@ from database.models import (
     Document,
     ExtractedFeature,
     SHAPExplanation,
-    RiskScore
+    RiskScore,
+    AssessmentDetail,
 )
 
 
@@ -181,6 +182,37 @@ def save_shap_explanations(
         db.refresh(record)
 
     return saved_explanations
+
+
+def save_assessment_details(
+    db: Session,
+    application_id: int,
+    score_id: int,
+    fraud_risk: dict,
+    document_risk: dict,
+):
+    """Persist outputs already calculated by assess_borrower; never recompute them."""
+    details = AssessmentDetail(
+        application_id=application_id,
+        score_id=score_id,
+        fraud_risk=fraud_risk,
+        document_risk=document_risk,
+        created_at=datetime.utcnow(),
+    )
+    db.add(details)
+    db.commit()
+    db.refresh(details)
+    return details
+
+
+def mark_application_assessed(db: Session, application_id: int):
+    application = db.query(Application).filter(Application.application_id == application_id).first()
+    if application is None:
+        return None
+    application.application_status = "ASSESSED"
+    db.commit()
+    db.refresh(application)
+    return application
 # ==========================
 # DOCUMENTS
 # ==========================

@@ -2,9 +2,7 @@
 import { useRef } from "react";
 import { Nav } from "../components/Nav";
 
-const BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
-
-export default function UploadPage({ go, session, consents, files, setFiles, setResult, setError }) {
+export default function UploadPage({ go, session, consents, files, setFiles, setAssessmentInput, setError }) {
 
   const slots = [
     { key: "bank",    label: "Bank Statement",required: true,  enabled: consents.bank,
@@ -17,46 +15,10 @@ export default function UploadPage({ go, session, consents, files, setFiles, set
 
   const canProceed = files.bank !== null;
 
-  const handleSubmit=async() => {
+  const handleSubmit = () => {
+    if (!session?.session_id) { setError("Session not found. Please log in again."); return; }
+    setAssessmentInput({ sessionId: session.session_id, files });
     go("processing");
-    try
-    {
-      if (!session?.session_id) {
-    throw new Error("Session not found. Please login again.");
-}
-      const form=new FormData();
-      form.append("bank_file",files.bank);
-      if(files.salary)
-      {
-        form.append("salary_file",files.salary);
-      }
-      if(files.utility)
-      {
-        form.append("utility_file",files.utility);
-      }
-
-      const res=await fetch(`${BASE}/assess`,{method:"POST",
-        headers:{"session-id":session.session_id,},
-        body:form,
-      });
-      const data=await res.json();
-      if(!res.ok)
-      {
-        throw new Error(
-        data.detail?.message ||
-        data.message ||
-        "Assessment failed"
-);
-      }
-      setResult(data);
-      go("results");
-    }
-    catch(e) 
-    {
-      console.error("Assessment error",e);
-      setError(e.message);
-      go("upload");
-    }
   };
 
   return (
@@ -143,7 +105,7 @@ export default function UploadPage({ go, session, consents, files, setFiles, set
   );
 }
 
-function DropZone({ key: _, label, icon, required, enabled, desc, file, onFile }) {
+function DropZone({ label, icon, required, enabled, desc, file, onFile }) {
   const ref = useRef();
   const hasFile = file !== null;
 

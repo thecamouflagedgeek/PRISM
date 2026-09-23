@@ -1,52 +1,114 @@
+import { useEffect, useState } from "react";
 import { Nav } from "../components/Nav";
+import { api } from "../services/api";
 
 export default function LenderDashboard({ go, lenderSession }) {
-  // --------------------------------------------------
-  // MOCK DATA
-  // Replace with backend API data later
-  // --------------------------------------------------
-  const applications = [
-    {
-      id: "PR-1024",
-      borrower: "BR-0042",
-      score: 742,
-      risk: "Low Risk",
-      status: "New",
-      date: "16 Sep 2026",
-    },
-    {
-      id: "PR-1023",
-      borrower: "BR-0039",
-      score: 581,
-      risk: "Medium Risk",
-      status: "Under Review",
-      date: "16 Sep 2026",
-    },
-    {
-      id: "PR-1022",
-      borrower: "BR-0037",
-      score: 364,
-      risk: "High Risk",
-      status: "New",
-      date: "15 Sep 2026",
-    },
-    {
-      id: "PR-1021",
-      borrower: "BR-0034",
-      score: 691,
-      risk: "Medium Risk",
-      status: "Reviewed",
-      date: "15 Sep 2026",
-    },
-    {
-      id: "PR-1020",
-      borrower: "BR-0031",
-      score: 817,
-      risk: "Low Risk",
-      status: "Reviewed",
-      date: "14 Sep 2026",
-    },
-  ];
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadApplications() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await api.lenderApplications();
+
+        const rows = Array.isArray(response)
+          ? response
+          : Array.isArray(response?.applications)
+            ? response.applications
+            : [];
+
+        if (!cancelled) {
+          setApplications(rows);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(
+            err?.message || "Unable to load lender applications."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadApplications();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const assessedApplications = applications.filter(
+    (application) =>
+      application?.risk_score !== null &&
+      application?.risk_score !== undefined
+  );
+
+  const pendingApplications = applications.filter(
+    (application) =>
+      application?.risk_score === null ||
+      application?.risk_score === undefined
+  );
+
+  const highRiskApplications = assessedApplications.filter(
+    (application) =>
+      String(application?.risk_tier || "").toLowerCase() === "high risk"
+  );
+
+  const lowRiskApplications = assessedApplications.filter(
+    (application) =>
+      String(application?.risk_tier || "").toLowerCase() === "low risk"
+  );
+
+  const mediumRiskApplications = assessedApplications.filter(
+    (application) =>
+      String(application?.risk_tier || "").toLowerCase() === "medium risk"
+  );
+
+  const riskTotal = assessedApplications.length;
+
+  const lowRiskPercentage = riskTotal
+    ? Math.round((lowRiskApplications.length / riskTotal) * 100)
+    : 0;
+
+  const mediumRiskPercentage = riskTotal
+    ? Math.round((mediumRiskApplications.length / riskTotal) * 100)
+    : 0;
+
+  const highRiskPercentage = riskTotal
+    ? Math.round((highRiskApplications.length / riskTotal) * 100)
+    : 0;
+
+  const formatDate = (value) => {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return "—";
+
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const formatStatus = (value) => {
+    if (!value) return "Pending";
+
+    return String(value)
+      .toLowerCase()
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   // --------------------------------------------------
   // Helpers
@@ -66,9 +128,16 @@ export default function LenderDashboard({ go, lenderSession }) {
       };
     }
 
+    if (risk === "High Risk") {
+      return {
+        background: "rgba(220, 70, 70, 0.10)",
+        color: "#b33a3a",
+      };
+    }
+
     return {
-      background: "rgba(220, 70, 70, 0.10)",
-      color: "#b33a3a",
+      background: "rgba(100, 100, 100, 0.08)",
+      color: "var(--muted)",
     };
   };
 
@@ -261,7 +330,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                 fontFamily: "'Syne', sans-serif",
               }}
             >
-              24
+              {applications.length}
             </div>
 
             <div
@@ -302,7 +371,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                 fontFamily: "'Syne', sans-serif",
               }}
             >
-              8
+              {pendingApplications.length}
             </div>
 
             <div
@@ -343,7 +412,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                 fontFamily: "'Syne', sans-serif",
               }}
             >
-              5
+              {highRiskApplications.length}
             </div>
 
             <div
@@ -384,7 +453,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                 fontFamily: "'Syne', sans-serif",
               }}
             >
-              11
+              {assessedApplications.length}
             </div>
 
             <div
@@ -491,7 +560,7 @@ export default function LenderDashboard({ go, lenderSession }) {
             {/* Application rows */}
             {applications.map((application) => (
               <div
-                key={application.id}
+                key={application.application_id}
                 style={{
                   display: "grid",
                   gridTemplateColumns:
@@ -510,7 +579,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                       color: "var(--ink)",
                     }}
                   >
-                    {application.id}
+                    {application.application_id}
                   </div>
 
                   <div
@@ -520,7 +589,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                       marginTop: 3,
                     }}
                   >
-                    {application.date}
+                    {formatDate(application.application_date)}
                   </div>
                 </div>
 
@@ -530,7 +599,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                     fontWeight: 500,
                   }}
                 >
-                  {application.borrower}
+                  {application.borrower_phone}
                 </span>
 
                 <span
@@ -541,7 +610,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                     color: "var(--ink)",
                   }}
                 >
-                  {application.score}
+                  {application.risk_score ?? "—"}
                 </span>
 
                 <span
@@ -555,7 +624,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                     fontWeight: 600,
                   }}
                 >
-                  {application.risk}
+                  {application.risk_tier || "Pending"}
                 </span>
 
                 <span
@@ -569,7 +638,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                     fontWeight: 600,
                   }}
                 >
-                  {application.status}
+                  {formatStatus(application.application_status)}
                 </span>
 
                 <button
@@ -648,7 +717,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                     color: "var(--ink)",
                   }}
                 >
-                  11
+                  {lowRiskApplications.length}
                 </span>
               </div>
 
@@ -662,7 +731,7 @@ export default function LenderDashboard({ go, lenderSession }) {
               >
                 <div
                   style={{
-                    width: "46%",
+                    width: `${lowRiskPercentage}%`,
                     height: "100%",
                     background: "#287a3d",
                     borderRadius: 10,
@@ -696,7 +765,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                     color: "var(--ink)",
                   }}
                 >
-                  8
+                  {mediumRiskApplications.length}
                 </span>
               </div>
 
@@ -710,7 +779,7 @@ export default function LenderDashboard({ go, lenderSession }) {
               >
                 <div
                   style={{
-                    width: "33%",
+                    width: `${mediumRiskPercentage}%`,
                     height: "100%",
                     background: "#a96c00",
                     borderRadius: 10,
@@ -744,7 +813,7 @@ export default function LenderDashboard({ go, lenderSession }) {
                     color: "var(--ink)",
                   }}
                 >
-                  5
+                  {highRiskApplications.length}
                 </span>
               </div>
 
@@ -758,7 +827,7 @@ export default function LenderDashboard({ go, lenderSession }) {
               >
                 <div
                   style={{
-                    width: "21%",
+                    width: `${highRiskPercentage}%`,
                     height: "100%",
                     background: "#b33a3a",
                     borderRadius: 10,

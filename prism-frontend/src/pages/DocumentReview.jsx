@@ -1,7 +1,7 @@
 import { Nav } from "../components/Nav";
 
-export default function DocumentReview({ go, lenderSession }) {
-  const documents = [
+export default function DocumentReview({ go, lenderSession, result, lenderAssessment }) {
+  const mockDocuments = [
     {
       type: "Bank Statement",
       file: "bank_statement.pdf",
@@ -31,7 +31,7 @@ export default function DocumentReview({ go, lenderSession }) {
     },
   ];
 
-  const extractedFields = [
+  const mockExtractedFields = [
     {
       field: "Monthly Income",
       value: "₹58,400",
@@ -63,6 +63,33 @@ export default function DocumentReview({ go, lenderSession }) {
       status: "Review",
     },
   ];
+
+  const assessmentResult = lenderAssessment ?? result;
+  const documentRisk = assessmentResult?.document_risk ?? {};
+  const features = assessmentResult?.features ?? {};
+  const reviewStatus = documentRisk.status === "CONSISTENT" ? "Verified" : "Review";
+  const documents = Array.isArray(assessmentResult?.documents) ? assessmentResult.documents.map((document) => ({
+    type: document.document_type?.replaceAll("_", " ") ?? "Document",
+    file: document.file_name ?? "Submitted document",
+    period: document.upload_timestamp ? new Date(document.upload_timestamp).toLocaleDateString("en-IN") : "Assessment session",
+    status: document.processing_status === "OCR_COMPLETED" ? reviewStatus : document.processing_status ?? reviewStatus,
+    extraction: document.processing_status === "OCR_COMPLETED" ? "Complete" : "Review Required",
+    fields: 0,
+    confidence: "Not reported",
+  })) : assessmentResult ? Object.entries(features).filter(([, value]) => value).map(([source, values]) => ({
+    type: source === "bank" ? "Bank Statement" : source === "salary" ? "Salary Slip" : "Utility Bill",
+    file: "Submitted document", period: "Assessment session", status: reviewStatus,
+    extraction: "Complete", fields: Object.keys(values ?? {}).length, confidence: "Not reported",
+  })) : mockDocuments;
+  const extractedFields = Array.isArray(features) ? features.map((feature) => ({
+    field: feature.feature_name?.replaceAll("_", " ") ?? "Feature",
+    value: feature.feature_value ?? "Not available",
+    source: feature.feature_source ?? "Document",
+    status: reviewStatus,
+  })) : assessmentResult ? Object.entries(features).flatMap(([source, values]) => Object.entries(values ?? {}).slice(0, 8).map(([field, value]) => ({
+    field: field.replaceAll("_", " "), value: value == null ? "Not available" : String(value),
+    source: source === "bank" ? "Bank Statement" : source === "salary" ? "Salary Slip" : "Utility Bill", status: reviewStatus,
+  }))) : mockExtractedFields;
 
   const getStatusStyle = (status) => {
     if (status === "Verified") {

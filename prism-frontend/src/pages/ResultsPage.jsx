@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
+import { api } from "../services/api";
 const BASE =
   import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
@@ -1069,21 +1070,7 @@ const WhatIfPanel = ({ session, baseResult }) => {
     setErr(null);
     setLoading(true);
     try {
-      const res = await fetch(`${BASE}/assess/whatif`, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        "session-id": session.session_id,
-    },
-    body: JSON.stringify({
-        overrides: Object.fromEntries(activeOverrides),
-    }),
-});
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body?.detail?.message || body?.detail || "Simulation failed");
-      }
-      const data = await res.json();
+      const data = await api.whatIf(session.session_id, Object.fromEntries(activeOverrides));
       setWhatIf(data);
     } catch (e) {
       setErr(e.message || "Something went wrong running the simulation.");
@@ -1248,16 +1235,15 @@ const WhatIfPanel = ({ session, baseResult }) => {
 /* ═══════════════════════════════════════
    MAIN PAGE
 ═══════════════════════════════════════ */
-export default function ResultsPage({ go, session, result, setError }) {
+export default function ResultsPage({ go, session, result }) {
   const [tab, setTab] = useState("score");
 
-  // Use mock data when rendered standalone
-  const data    = result  ?? MOCK_RESULT;
-  const sess    = session ?? MOCK_SESSION;
+  const data = result;
+  const sess = session;
   const tier    = TIER_CONFIG[data?.risk_tier] ?? TIER_CONFIG["Medium Risk"];
   const score   = data?.risk_score ?? 0;
 
-  if (!data) return null;
+  if (!data) return <div className="dot-grid" style={{ minHeight: "100vh", padding: 48 }}>No assessment is available. Start a new assessment to view results.</div>;
 
   return (
     <div style={{ minHeight: "100vh", ...DOT_BG, fontFamily: "'Inter', sans-serif" }}>
@@ -1318,7 +1304,7 @@ export default function ResultsPage({ go, session, result, setError }) {
         {tab === "features" && <FeaturesPanel features={data.features} />}
         {tab === "improve"  && <ImprovePanel  result={data} />}
         {tab === "learn"    && <Credit101Panel />}
-        {tab === "fraud"    && <FraudPanel    fraud_flags={data.fraud_flags} />}
+        {tab === "fraud"    && <FraudPanel fraud_flags={data.fraud_risk?.flags ?? data.fraud_flags ?? []} />}
         {tab === "whatif"   && <WhatIfPanel   session={sess} baseResult={data} />}
 
         {/* Warnings */}

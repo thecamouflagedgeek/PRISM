@@ -41,11 +41,13 @@ export default function App() {
 
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [assessmentInput, setAssessmentInput] = useState(null);
 
   // -----------------------------
   // LENDER FLOW
   // -----------------------------
   const [lenderSession, setLenderSession] = useState(null);
+  const [lenderAssessment, setLenderAssessment] = useState(null);
 
   const go = (p) => {
     setError(null);
@@ -67,6 +69,8 @@ export default function App() {
 
     result,
     setResult,
+    assessmentInput,
+    setAssessmentInput,
 
     error,
     setError,
@@ -75,6 +79,8 @@ export default function App() {
 
     lenderSession,
     setLenderSession,
+    lenderAssessment,
+    setLenderAssessment,
   };
 
   return (

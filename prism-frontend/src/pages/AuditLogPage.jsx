@@ -1,87 +1,77 @@
+import { useEffect, useMemo, useState } from "react";
 import { Nav } from "../components/Nav";
+import { api } from "../services/api";
 
 export default function AuditLogPage({ go, lenderSession }) {
-  const auditLogs = [
-    {
-      audit_id: "AUD-00871",
-      application_id: "PR-1022",
-      action: "Assessment Viewed",
-      entity: "Risk Score",
-      performed_by: "Lender",
-      timestamp: "16 Sep 2026, 10:42 AM",
-      status: "Success",
-    },
-    {
-      audit_id: "AUD-00870",
-      application_id: "PR-1022",
-      action: "Document Review",
-      entity: "Documents",
-      performed_by: "Lender",
-      timestamp: "16 Sep 2026, 10:38 AM",
-      status: "Success",
-    },
-    {
-      audit_id: "AUD-00869",
-      application_id: "PR-1023",
-      action: "Assessment Viewed",
-      entity: "Risk Score",
-      performed_by: "Lender",
-      timestamp: "16 Sep 2026, 10:21 AM",
-      status: "Success",
-    },
-    {
-      audit_id: "AUD-00868",
-      application_id: "PR-1021",
-      action: "Application Reviewed",
-      entity: "Application",
-      performed_by: "Lender",
-      timestamp: "16 Sep 2026, 09:57 AM",
-      status: "Success",
-    },
-    {
-      audit_id: "AUD-00867",
-      application_id: "PR-1022",
-      action: "Fraud Intelligence Viewed",
-      entity: "Fraud Check",
-      performed_by: "Lender",
-      timestamp: "16 Sep 2026, 09:44 AM",
-      status: "Success",
-    },
-    {
-      audit_id: "AUD-00866",
-      application_id: "PR-1024",
-      action: "Assessment Viewed",
-      entity: "Risk Score",
-      performed_by: "Lender",
-      timestamp: "16 Sep 2026, 09:32 AM",
-      status: "Success",
-    },
-    {
-      audit_id: "AUD-00865",
-      application_id: "PR-1023",
-      action: "Document Review",
-      entity: "Documents",
-      performed_by: "Lender",
-      timestamp: "16 Sep 2026, 09:18 AM",
-      status: "Success",
-    },
-    {
-      audit_id: "AUD-00864",
-      application_id: "PR-1020",
-      action: "Application Reviewed",
-      entity: "Application",
-      performed_by: "Lender",
-      timestamp: "16 Sep 2026, 08:56 AM",
-      status: "Success",
-    },
-  ];
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [activeFilter, setActiveFilter] = useState("All");
 
-  const successCount = auditLogs.filter(
-    (log) => log.status === "Success"
+  useEffect(() => {
+    let active = true;
+
+    api.lenderAuditEvents()
+      .then((response) => {
+        if (!active) return;
+
+        const rows = Array.isArray(response)
+          ? response
+          : Array.isArray(response?.events)
+            ? response.events
+            : Array.isArray(response?.audit_events)
+              ? response.audit_events
+              : [];
+
+        setAuditLogs(rows);
+      })
+      .catch((requestError) => {
+        if (active) {
+          setError(requestError.message);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const filteredAuditLogs = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    return auditLogs.filter((log) => {
+      const matchesSearch =
+        !query ||
+        String(log.application_id || "").toLowerCase().includes(query) ||
+        String(log.action || "").toLowerCase().includes(query) ||
+        String(log.entity || "").toLowerCase().includes(query);
+
+      const status = String(log.status || "").toLowerCase();
+
+      const matchesFilter =
+        activeFilter === "All" ||
+        (activeFilter === "Success" && status === "success") ||
+        (activeFilter === "Pending" && status === "pending") ||
+        (activeFilter === "Failed" && status === "failed");
+
+      return matchesSearch && matchesFilter;
+    });
+  }, [auditLogs, search, activeFilter]);
+
+  const totalEvents = auditLogs.length;
+
+  const successfulEvents = auditLogs.filter(
+    (log) => String(log.status || "").toLowerCase() === "success"
   ).length;
 
-  const pendingCount = auditLogs.filter(
-    (log) => log.status === "Pending"
+  const pendingEvents = auditLogs.filter(
+    (log) => String(log.status || "").toLowerCase() === "pending"
   ).length;
 
   return (
@@ -196,7 +186,7 @@ export default function AuditLogPage({ go, lenderSession }) {
                 fontWeight: 600,
               }}
             >
-              42
+              {totalEvents}
             </div>
 
             <div
@@ -239,7 +229,7 @@ export default function AuditLogPage({ go, lenderSession }) {
                 color: "#287a3d",
               }}
             >
-              38
+              {successfulEvents}
             </div>
 
             <div
@@ -281,7 +271,7 @@ export default function AuditLogPage({ go, lenderSession }) {
                 fontWeight: 600,
               }}
             >
-              4
+              {pendingEvents}
             </div>
 
             <div
@@ -308,6 +298,8 @@ export default function AuditLogPage({ go, lenderSession }) {
           <input
             type="text"
             placeholder="Search application or action..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
             style={{
               flex: 1,
               maxWidth: 420,
@@ -321,15 +313,25 @@ export default function AuditLogPage({ go, lenderSession }) {
             }}
           />
 
-          <button
-            className="btn-outline"
-            style={{
-              padding: "10px 16px",
-              fontSize: 12,
-            }}
-          >
-            All Events ▾
-          </button>
+<div style={{ display: "flex", gap: 8 }}>
+  {["All", "Success", "Pending", "Failed"].map((filter) => (
+    <button
+      key={filter}
+      onClick={() => setActiveFilter(filter)}
+      className={
+        activeFilter === filter
+          ? "btn-primary btn-orange"
+          : "btn-outline"
+      }
+      style={{
+        padding: "10px 14px",
+        fontSize: 11,
+      }}
+    >
+      {filter}
+    </button>
+  ))}
+</div>
         </div>
 
         {/* Audit Table */}
@@ -410,7 +412,45 @@ export default function AuditLogPage({ go, lenderSession }) {
               </thead>
 
               <tbody>
-                {auditLogs.map((log) => (
+                {loading && (
+  <div
+    style={{
+      padding: "30px 22px",
+      color: "var(--muted)",
+      fontSize: 12,
+      textAlign: "center",
+    }}
+  >
+    Loading audit events…
+  </div>
+)}
+
+{error && !loading && (
+  <div
+    style={{
+      padding: "30px 22px",
+      color: "#b33a3a",
+      fontSize: 12,
+      textAlign: "center",
+    }}
+  >
+    {error}
+  </div>
+)}
+
+{!loading && !error && filteredAuditLogs.length === 0 && (
+  <div
+    style={{
+      padding: "30px 22px",
+      color: "var(--muted)",
+      fontSize: 12,
+      textAlign: "center",
+    }}
+  >
+    No audit events found.
+  </div>
+)}
+                {filteredAuditLogs.map((log) => (
                   <tr
                     key={log.audit_id}
                     style={{
@@ -514,8 +554,13 @@ export default function AuditLogPage({ go, lenderSession }) {
               color: "var(--muted)",
             }}
           >
-            <span>Showing recent audit events</span>
-            <span>Prototype data</span>
+           <span>
+  Showing {filteredAuditLogs.length} of {auditLogs.length} audit events
+</span>
+
+<span>
+  {loading ? "Loading…" : "Live audit data"}
+</span>
           </div>
         </div>
 
@@ -546,11 +591,6 @@ export default function AuditLogPage({ go, lenderSession }) {
               lineHeight: 1.6,
             }}
           >
-            PRISM records application-level actions to support traceability
-            across document review, risk assessment, fraud checks and
-            explainability workflows. The displayed entries are prototype
-            audit records and will be connected to the backend audit-log
-            store during integration.
           </div>
         </div>
 

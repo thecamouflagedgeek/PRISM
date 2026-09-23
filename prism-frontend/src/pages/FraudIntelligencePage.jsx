@@ -1,39 +1,29 @@
 import { Nav } from "../components/Nav";
 
-export default function FraudIntelligencePage({ go, lenderSession }) {
-  const fraudSummary = {
-    application_id: "PR-1022",
-    borrower_id: "BR-0037",
-    fraud_flags: 0,
-    overall_status: "No Flags Detected",
+export default function FraudIntelligencePage({ go, lenderSession, result, lenderAssessment }) {
+  const assessmentResult = lenderAssessment ?? result;
+  const fraud = assessmentResult?.fraud_risk && typeof assessmentResult.fraud_risk === "object"
+    ? assessmentResult.fraud_risk
+    : {};
+  const flags = Array.isArray(fraud.flags) ? fraud.flags.filter((flag) => flag && typeof flag === "object") : [];
+  const formatEvidence = (evidence, fallback) => {
+    if (evidence == null) return fallback ?? "No evidence was provided.";
+    if (typeof evidence === "string" || typeof evidence === "number" || typeof evidence === "boolean") return String(evidence);
+    try { return JSON.stringify(evidence); }
+    catch { return fallback ?? "Evidence is unavailable."; }
   };
-
-  const checks = [
-    {
-      check: "Document Integrity",
-      status: "Passed",
-      severity: "None",
-      evidence: "Document structure and extracted content are consistent.",
-    },
-    {
-      check: "Cross-Document Consistency",
-      status: "Passed",
-      severity: "None",
-      evidence: "Key borrower information is consistent across submitted documents.",
-    },
-    {
-      check: "Transaction Anomaly Check",
-      status: "Passed",
-      severity: "None",
-      evidence: "No significant transaction pattern anomalies identified.",
-    },
-    {
-      check: "Income Consistency",
-      status: "Passed",
-      severity: "None",
-      evidence: "Reported income is consistent with extracted financial records.",
-    },
-  ];
+  const fraudSummary = {
+    application_id: assessmentResult?.application_id ?? lenderSession?.application_id ?? "Current session",
+    borrower_id: assessmentResult?.application?.borrower_phone ?? lenderSession?.phone_number ?? "Borrower",
+    fraud_flags: fraud.rule_count ?? flags.length,
+    overall_status: fraud.fraud_status ?? "Unavailable",
+  };
+  const checks = flags.map((flag) => ({
+    check: flag.rule ?? "Fraud rule",
+    status: flag.severity === "HIGH" ? "Review" : "Passed",
+    severity: flag.severity ?? flag.category ?? "Unspecified",
+    evidence: formatEvidence(flag.evidence, flag.message),
+  }));
 
   const getStatusStyle = (status) => {
     if (status === "Passed") {
@@ -216,8 +206,7 @@ export default function FraudIntelligencePage({ go, lenderSession }) {
                   margin: "8px 0 0",
                 }}
               >
-                No fraud or anomaly flags are currently associated with this
-                assessment.
+                {flags.length ? "Backend fraud rules identified the checks below." : "No fraud or anomaly flags are currently associated with this assessment."}
               </p>
             </div>
 
@@ -230,7 +219,7 @@ export default function FraudIntelligencePage({ go, lenderSession }) {
                 fontWeight: 700,
               }}
             >
-              0 Flags
+              {fraudSummary.fraud_flags} Flags
             </div>
           </div>
         </div>
@@ -287,7 +276,7 @@ export default function FraudIntelligencePage({ go, lenderSession }) {
               </thead>
 
               <tbody>
-                {checks.map((item) => (
+                {checks.length ? checks.map((item) => (
                   <tr key={item.check}>
                     <td className="table-cell">
                       <strong>{item.check}</strong>
@@ -323,7 +312,7 @@ export default function FraudIntelligencePage({ go, lenderSession }) {
                       {item.evidence}
                     </td>
                   </tr>
-                ))}
+                )) : <tr><td className="table-cell" colSpan="4">No fraud flags reported by the assessment.</td></tr>}
               </tbody>
             </table>
           </div>
@@ -343,10 +332,9 @@ export default function FraudIntelligencePage({ go, lenderSession }) {
           }}
         >
           <strong style={{ color: "var(--text)" }}>
-            Prototype data:
+            Assessment metadata:
           </strong>{" "}
-          Fraud intelligence results shown here are placeholder assessment
-          outputs pending integration with the backend fraud/anomaly engine.
+          Engine {fraud.engine_version ?? "not reported"} · {fraud.score_semantics ?? "Fraud score is independent of credit risk."}
         </div>
 
         {/* Navigation */}

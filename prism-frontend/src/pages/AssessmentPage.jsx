@@ -1,65 +1,28 @@
 import { Nav } from "../components/Nav";
 
-export default function AssessmentPage({ go, lenderSession }) {
-  // --------------------------------------------------
-  // MOCK ASSESSMENT DATA
-  // Replace with lender-side API response later
-  // --------------------------------------------------
+export default function AssessmentPage({ go, lenderSession, result, lenderAssessment }) {
+  const assessmentResult = lenderAssessment ?? result;
+  const credit = assessmentResult?.credit_risk ?? assessmentResult ?? {};
+  const fraud = assessmentResult?.fraud_risk ?? {};
+  const explanations = Array.isArray(credit.shap_explanations) ? credit.shap_explanations : [];
   const assessment = {
-    application_id: "PR-1022",
-    borrower_id: "BR-0037",
-
-    risk_score: 364,
-    probability_of_default: 57.9,
-    risk_tier: "High Risk",
-    confidence: 68.7,
-
-    documents: {
-      bank_statement: "Verified",
-      salary_slip: "Verified",
-      utility_bill: "Pending",
-    },
-
-    fraud_flags: 0,
-
-    factor_contributions: [
-      {
-        feature: "Utility Payment Discipline",
-        contribution: -56.7,
-        direction: "Negative",
-        evidence: "Frequent payment delays",
-      },
-      {
-        feature: "Cashflow Volatility",
-        contribution: 20.4,
-        direction: "Positive",
-        evidence: "Moderate monthly variation",
-      },
-      {
-        feature: "Income Stability",
-        contribution: 6.8,
-        direction: "Positive",
-        evidence: "Consistent salary credits",
-      },
-      {
-        feature: "Average Balance",
-        contribution: 4.9,
-        direction: "Positive",
-        evidence: "Stable average balance",
-      },
-      {
-        feature: "Credit-Debit Ratio",
-        contribution: 0.0,
-        direction: "Neutral",
-        evidence: "No significant impact",
-      },
-    ],
-
-    reason_codes: [
-      "Utility payment delays",
-      "Elevated probability of default",
-      "Moderate cashflow volatility",
-    ],
+    application_id: assessmentResult?.application_id ?? lenderSession?.application_id ?? "Current session",
+    borrower_id: assessmentResult?.application?.borrower_phone ?? lenderSession?.phone_number ?? "Borrower",
+    risk_score: credit.risk_score ?? "—",
+    probability_of_default: credit.probability_of_default == null ? "—" : `${(Number(credit.probability_of_default) * 100).toFixed(1)}`,
+    risk_tier: credit.risk_tier ?? "Unavailable",
+    confidence: credit.confidence?.confidence_pct ?? credit.confidence ?? "—",
+    documents: Array.isArray(assessmentResult?.documents)
+      ? Object.fromEntries(assessmentResult.documents.map((document) => [document.document_type, document.processing_status]))
+      : Object.fromEntries(Object.keys(assessmentResult?.features ?? {}).map((key) => [key, assessmentResult?.features?.[key] ? "Processed" : "Not submitted"])),
+    fraud_flags: fraud.rule_count ?? fraud.flags?.length ?? 0,
+    factor_contributions: explanations.map((item) => ({
+      feature: item.feature_name ?? item.factor ?? "Feature",
+      contribution: Number(item.score_contribution ?? 0),
+      direction: item.contribution_type ?? (Number(item.score_contribution) === 0 ? "Neutral" : Number(item.score_contribution) > 0 ? "Positive" : "Negative"),
+      evidence: item.generated_reason ?? item.reason ?? "Backend-provided score contribution",
+    })),
+    reason_codes: (credit.reason_codes ?? []).map((reason) => typeof reason === "string" ? reason : reason.message ?? reason.reason ?? reason.factor ?? "Assessment factor"),
   };
 
   // --------------------------------------------------
@@ -269,7 +232,7 @@ export default function AssessmentPage({ go, lenderSession }) {
             >
               <div
                 style={{
-                  width: `${(assessment.risk_score / 900) * 100}%`,
+                  width: `${Number.isFinite(Number(assessment.risk_score)) ? (Number(assessment.risk_score) / 900) * 100 : 0}%`,
                   height: "100%",
                   background: "#b33a3a",
                   borderRadius: 10,

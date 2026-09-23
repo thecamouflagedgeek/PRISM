@@ -1,9 +1,7 @@
 // src/pages/LoginPage.jsx
 import { useState } from "react";
 import { Nav } from "../components/Nav";
-
-
-const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { api } from "../services/api";
   
 
 export default function LoginPage({ go, setSession,setError}){
@@ -17,25 +15,7 @@ export default function LoginPage({ go, setSession,setError}){
   setLoading(true);
 
   try {
-    const res = await fetch(`${API}/auth/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        phone_number: phoneNumber,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(
-        data.detail?.message ||
-        data.message ||
-        "Failed to send OTP."
-        );
-    }
+    await api.signup(phoneNumber);
 
     // Store phone number temporarily
     setSession({

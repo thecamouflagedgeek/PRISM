@@ -45,6 +45,7 @@ class PipelineResult:
     is_scoreable: bool          # True only if a calibrated model exists for this type
     features: Dict[str, Any]
     raw_summary: Dict[str, Any]
+    transactions: Optional[pd.DataFrame] = None
 
 
 class DocumentPipeline:
@@ -104,6 +105,7 @@ class DocumentPipeline:
             is_scoreable=True,   # calibrated WoE/LR scorecard exists for this type
             features=features,
             raw_summary=result.summary,
+            transactions=df,
         )
 
     def _process_credit_card(self, raw_text: str) -> PipelineResult:
@@ -125,4 +127,5 @@ class DocumentPipeline:
             is_scoreable=False,  # NO calibrated model exists yet — see note below
             features=features,
             raw_summary=summary,
+            transactions=df,
         )

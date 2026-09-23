@@ -1,52 +1,19 @@
 import { Nav } from "../components/Nav";
 
-export default function ExplainabilityPage({ go, lenderSession }) {
+export default function ExplainabilityPage({ go, lenderSession, result, lenderAssessment }) {
+  const credit = lenderAssessment?.credit_risk ?? result?.credit_risk ?? result ?? {};
   const assessment = {
-    application_id: "PR-1022",
-    borrower_id: "BR-0037",
-    risk_score: 364,
-    probability_of_default: 57.9,
-    risk_tier: "High Risk",
-    confidence: 68.7,
-
-    factor_contributions: [
-      {
-        feature: "Utility Payment Discipline",
-        contribution: -56.7,
-        direction: "Negative",
-        evidence: "Frequent payment delays",
-      },
-      {
-        feature: "Cashflow Volatility",
-        contribution: 20.4,
-        direction: "Positive",
-        evidence: "Moderate monthly variation",
-      },
-      {
-        feature: "Income Stability",
-        contribution: 6.8,
-        direction: "Positive",
-        evidence: "Consistent salary credits",
-      },
-      {
-        feature: "Average Balance",
-        contribution: 4.9,
-        direction: "Positive",
-        evidence: "Stable average balance",
-      },
-      {
-        feature: "Credit-Debit Ratio",
-        contribution: 0.0,
-        direction: "Neutral",
-        evidence: "No significant impact",
-      },
-    ],
-
-    reason_codes: [
-      "Utility payment delays",
-      "Elevated probability of default",
-      "Moderate cashflow volatility",
-    ],
+    risk_score: credit.risk_score ?? "—",
+    probability_of_default: credit.probability_of_default == null ? "—" : `${(Number(credit.probability_of_default) * 100).toFixed(1)}`,
+    risk_tier: credit.risk_tier ?? "Unavailable",
+    confidence: credit.confidence?.confidence_pct ?? credit.confidence ?? "—",
+    factor_contributions: (credit.shap_explanations ?? []).map((item) => ({
+      feature: item.feature_name ?? item.factor ?? "Feature",
+      contribution: Number(item.score_contribution ?? 0),
+      direction: item.contribution_type ?? (Number(item.score_contribution) === 0 ? "Neutral" : Number(item.score_contribution) > 0 ? "Positive" : "Negative"),
+      evidence: item.generated_reason ?? item.reason ?? "Backend-provided score contribution",
+    })),
+    reason_codes: (credit.reason_codes ?? []).map((reason) => typeof reason === "string" ? reason : reason.message ?? reason.reason ?? reason.factor ?? "Assessment factor"),
   };
 
   const getDirectionStyle = (direction) => {

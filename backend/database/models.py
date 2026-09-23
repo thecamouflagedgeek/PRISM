@@ -8,6 +8,7 @@ from sqlalchemy import (
     Numeric,
     ForeignKey
 )
+from sqlalchemy.dialects.postgresql import JSONB
 
 from database.db import Base
 
@@ -185,3 +186,19 @@ class SHAPExplanation(Base):
     generated_reason = Column(Text)
 
     created_at = Column(TIMESTAMP)
+
+
+# ==========================
+# ASSESSMENT DETAILS
+# ==========================
+class AssessmentDetail(Base):
+    """Durable non-credit outputs for a persisted risk-score run."""
+    __tablename__ = "assessment_details"
+    __table_args__ = {"schema": "prism"}
+
+    assessment_detail_id = Column(Integer, primary_key=True)
+    application_id = Column(Integer, ForeignKey("prism.applications.application_id"), nullable=False)
+    score_id = Column(Integer, ForeignKey("prism.risk_scores.score_id"), nullable=False, unique=True)
+    fraud_risk = Column(JSONB, nullable=False)
+    document_risk = Column(JSONB, nullable=False)
+    created_at = Column(TIMESTAMP, nullable=False)

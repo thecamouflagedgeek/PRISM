@@ -19,6 +19,8 @@ from database.crud import (
     save_features,
     save_risk_score,
     save_shap_explanations,
+    save_assessment_details,
+    mark_application_assessed,
 )
 
 from core.session_store import get_session
@@ -307,23 +309,17 @@ async def assess(
                 },
             })
 
-        # `pipeline_result` confirms this is a scoreable savings/current
-        # account statement, but PipelineResult only exposes `features` and
-        # `raw_summary` -- not the raw transaction DataFrame the fraud
-        # engine / document-consistency layer need. process_bank_doc() is
-        # the confirmed, existing source of the canonical
-        # (bank_features, bank_transactions) pair, so that's used here
-        # instead of pipeline_result.features.
-        #
-        # TRADE-OFF: this re-parses the bank statement a second time
-        # (DocumentPipeline already walked it internally for the OCR
-        # quality/scoreability check). That duplication is inherent to
-        # PipelineResult's current shape -- it doesn't expose transactions
-        # -- and isn't something this router can avoid on its own. The real
-        # fix is adding a `transactions` field to PipelineResult in
-        # ingestion/document_pipeline.py so this second pass isn't needed;
-        # flagging that as a follow-up rather than changing that module here.
-        bank_features, bank_transactions = process_bank_doc(bank_path)
+        # DocumentPipeline already extracted and validated the bank
+        # transactions. Reuse them for both credit scoring and fraud
+        # detection instead of reparsing the PDF.
+        bank_features = pipeline_result.features
+        bank_transactions = pipeline_result.transactions
+
+        if bank_transactions is None:
+            raise DocumentProcessingError(
+                "transactions_unavailable",
+                "Validated bank transactions were not produced by the document pipeline."
+            )
 
         save_features(
             db=db,
@@ -470,6 +466,18 @@ async def assess(
         score_id=score.score_id,
         explanations=result.get("shap_explanations", {}),
     )
+
+    # Persist the already-produced independent risk outputs. This does not
+    # rerun fraud or document checks and does not alter the /assess response.
+    persisted_result = json.loads(json.dumps(result, default=_json_default))
+    save_assessment_details(
+        db=db,
+        application_id=session.application_id,
+        score_id=score.score_id,
+        fraud_risk=persisted_result.get("fraud_risk", {}),
+        document_risk=persisted_result.get("document_risk", {}),
+    )
+    mark_application_assessed(db=db, application_id=session.application_id)
 
     session.assessment_result = result
     session.bank_features = bank_features

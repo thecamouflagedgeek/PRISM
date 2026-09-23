@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Nav } from "../components/Nav";
-
-const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { api } from "../services/api";
 
 export default function OTPPage({
   go,
@@ -32,26 +31,7 @@ export default function OTPPage({
         );
       }
 
-      const res = await fetch(`${API}/auth/verify`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone_number: phoneNumber,
-          otp: otp.trim(),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(
-          data.detail?.message ||
-          data.message ||
-          "OTP verification failed"
-        );
-      }
+      const data = await api.verifyOtp(phoneNumber, otp.trim());
 
       // ---------------------------------
       // LENDER FLOW

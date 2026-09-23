@@ -1,5 +1,6 @@
 // src/pages/ProcessingPage.jsx
 import { useState, useEffect } from "react";
+import { api } from "../services/api";
 
 const STAGES = [
   { icon: "📄", label: "Parsing documents",        sub: "pdfplumber extracting transaction rows" },
@@ -10,7 +11,7 @@ const STAGES = [
   { icon: "🚨", label: "Running fraud checks",      sub: "Income anomaly · stacking · identity plausibility" },
 ];
 
-export default function ProcessingPage() {
+export default function ProcessingPage({ assessmentInput, setResult, setError, go }) {
   const [active,   setActive]   = useState(0);
   const [complete, setComplete] = useState([]);
 
@@ -22,6 +23,17 @@ export default function ProcessingPage() {
     }, 850);
     return () => clearTimeout(t);
   }, [active]);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!assessmentInput) { setError("No documents were selected for assessment."); go("upload"); return undefined; }
+    api.assess(assessmentInput).then((data) => {
+      if (!cancelled) { setResult(data); go("results"); }
+    }).catch((err) => {
+      if (!cancelled) { setError(err.message); go("upload"); }
+    });
+    return () => { cancelled = true; };
+  }, [assessmentInput, go, setError, setResult]);
 
   const progress = Math.round((complete.length / STAGES.length) * 100);
 

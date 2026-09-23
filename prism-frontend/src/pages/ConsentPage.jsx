@@ -1,7 +1,6 @@
 // src/pages/ConsentPage.jsx
 import { Nav } from "../components/Nav";
-
-const BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+import { api } from "../services/api";
 
 const CONSENT_ITEMS = [
   { key: "bank",    label: "Bank Statement Access",       required: true,
@@ -16,33 +15,17 @@ const CONSENT_ITEMS = [
     desc: "You acknowledge that your data will be processed under India's Digital Personal Data Protection Act, 2023."},
 ];
 
-export default function ConsentPage({ go, session, setSession, consents, setConsents, setError }) {
+export default function ConsentPage({ go, session, consents, setConsents, setError }) {
 
 const handleConsent = async () => {
   try {
-    const res = await fetch(`${BASE}/consent`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    await api.recordConsent({
         session_id: session.session_id,
         consent_bank: consents.bank,
         consent_salary: consents.salary,
         consent_utility: consents.utility,
         consent_dpdpa: consents.dpdpa,
-      }),
     });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(
-        data.detail?.message ||
-        data.message ||
-        "Consent failed"
-      );
-    }
 
     go("upload");
 
