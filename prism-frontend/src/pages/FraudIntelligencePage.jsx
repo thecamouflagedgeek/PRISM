@@ -6,25 +6,197 @@ export default function FraudIntelligencePage({ go, lenderSession, result, lende
     ? assessmentResult.fraud_risk
     : {};
   const flags = Array.isArray(fraud.flags) ? fraud.flags.filter((flag) => flag && typeof flag === "object") : [];
-  const formatEvidence = (evidence, fallback) => {
-    if (evidence == null) return fallback ?? "No evidence was provided.";
-    if (typeof evidence === "string" || typeof evidence === "number" || typeof evidence === "boolean") return String(evidence);
-    try { return JSON.stringify(evidence); }
-    catch { return fallback ?? "Evidence is unavailable."; }
-  };
+  const EvidenceDisplay = ({ evidence, fallback }) => {
+  if (evidence == null) {
+    return <span>{fallback ?? "No evidence was provided."}</span>;
+  }
+
+  if (
+    typeof evidence === "string" ||
+    typeof evidence === "number" ||
+    typeof evidence === "boolean"
+  ) {
+    return <span>{String(evidence)}</span>;
+  }
+
+  const nearZeroBalances = Array.isArray(evidence.near_zero_balances)
+    ? evidence.near_zero_balances
+    : [];
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        minWidth: 0,
+      }}
+    >
+      {/* Summary values */}
+      {(evidence.near_zero_count !== undefined ||
+        evidence.negative_balance_count !== undefined) && (
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            flexWrap: "wrap",
+          }}
+        >
+          {evidence.near_zero_count !== undefined && (
+            <div
+              style={{
+                padding: "7px 10px",
+                borderRadius: 7,
+                background: "#f6f6f6",
+                fontSize: 11,
+              }}
+            >
+              <strong>Near-zero count:</strong>{" "}
+              {evidence.near_zero_count}
+            </div>
+          )}
+
+          {evidence.negative_balance_count !== undefined && (
+            <div
+              style={{
+                padding: "7px 10px",
+                borderRadius: 7,
+                background: "#f6f6f6",
+                fontSize: 11,
+              }}
+            >
+              <strong>Negative balance count:</strong>{" "}
+              {evidence.negative_balance_count}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Balance observations */}
+      {nearZeroBalances.length > 0 && (
+        <div>
+          <div
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              marginBottom: 6,
+            }}
+          >
+            Near-zero balance observations
+          </div>
+
+          <div
+            style={{
+              maxHeight: 150,
+              overflowY: "auto",
+              border: "1px solid #e5e5e5",
+              borderRadius: 7,
+            }}
+          >
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                fontSize: 11,
+              }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: "7px 9px",
+                      borderBottom: "1px solid #e5e5e5",
+                    }}
+                  >
+                    Date
+                  </th>
+
+                  <th
+                    style={{
+                      textAlign: "right",
+                      padding: "7px 9px",
+                      borderBottom: "1px solid #e5e5e5",
+                    }}
+                  >
+                    Balance
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {nearZeroBalances.map((item, index) => (
+                  <tr key={`${item.date}-${index}`}>
+                    <td
+                      style={{
+                        padding: "6px 9px",
+                        borderBottom: "1px solid #f0f0f0",
+                      }}
+                    >
+                      {item.date || "—"}
+                    </td>
+
+                    <td
+                      style={{
+                        padding: "6px 9px",
+                        textAlign: "right",
+                        borderBottom: "1px solid #f0f0f0",
+                      }}
+                    >
+                      {item.balance !== undefined
+                        ? `₹${Number(item.balance).toFixed(2)}`
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Any other evidence fields */}
+      {Object.entries(evidence)
+        .filter(
+          ([key]) =>
+            key !== "near_zero_count" &&
+            key !== "negative_balance_count" &&
+            key !== "near_zero_balances" &&
+            key !== "negative_balances"
+        )
+        .map(([key, value]) => (
+          <div
+            key={key}
+            style={{
+              fontSize: 11,
+              lineHeight: 1.5,
+            }}
+          >
+            <strong>
+              {key.replace(/_/g, " ")}:
+            </strong>{" "}
+            {typeof value === "object"
+              ? JSON.stringify(value)
+              : String(value)}
+          </div>
+        ))}
+    </div>
+  );
+};
   const fraudSummary = {
     application_id: assessmentResult?.application_id ?? lenderSession?.application_id ?? "Current session",
     borrower_id: assessmentResult?.application?.borrower_phone ?? lenderSession?.phone_number ?? "Borrower",
     fraud_flags: fraud.rule_count ?? flags.length,
     overall_status: fraud.fraud_status ?? "Unavailable",
   };
-  const checks = flags.map((flag) => ({
-    check: flag.rule ?? "Fraud rule",
-    status: flag.severity === "HIGH" ? "Review" : "Passed",
-    severity: flag.severity ?? flag.category ?? "Unspecified",
-    evidence: formatEvidence(flag.evidence, flag.message),
-  }));
-
+ const checks = flags.map((flag, index) => ({
+  id: `${flag.rule ?? "fraud-rule"}-${index}`,
+  check: flag.rule ?? "Fraud rule",
+  status: flag.severity === "HIGH" ? "Review" : "Passed",
+  severity: flag.severity ?? flag.category ?? "Unspecified",
+  evidence: flag.evidence,
+  message: flag.message,
+}));
   const getStatusStyle = (status) => {
     if (status === "Passed") {
       return {
@@ -275,45 +447,57 @@ export default function FraudIntelligencePage({ go, lenderSession, result, lende
                 </tr>
               </thead>
 
-              <tbody>
-                {checks.length ? checks.map((item) => (
-                  <tr key={item.check}>
-                    <td className="table-cell">
-                      <strong>{item.check}</strong>
-                    </td>
+            <tbody>
+  {checks.length ? (
+    checks.map((item) => (
+      <tr key={item.id}>
+        <td className="table-cell">
+          <strong>{item.check}</strong>
+        </td>
 
-                    <td className="table-cell">
-                      <span
-                        style={{
-                          ...getStatusStyle(item.status),
-                          padding: "5px 10px",
-                          borderRadius: 6,
-                          fontSize: 12,
-                          fontWeight: 700,
-                        }}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
+        <td className="table-cell">
+          <span
+            style={{
+              ...getStatusStyle(item.status),
+              padding: "5px 10px",
+              borderRadius: 6,
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
+            {item.status}
+          </span>
+        </td>
 
-                    <td className="table-cell">
-                      <span style={{ color: "var(--muted)" }}>
-                        {item.severity}
-                      </span>
-                    </td>
+        <td className="table-cell">
+          <span style={{ color: "var(--muted)" }}>
+            {item.severity}
+          </span>
+        </td>
 
-                    <td
-                      className="table-cell"
-                      style={{
-                        color: "var(--muted)",
-                        maxWidth: 420,
-                      }}
-                    >
-                      {item.evidence}
-                    </td>
-                  </tr>
-                )) : <tr><td className="table-cell" colSpan="4">No fraud flags reported by the assessment.</td></tr>}
-              </tbody>
+        <td
+          className="table-cell"
+          style={{
+            color: "var(--muted)",
+            maxWidth: 420,
+            verticalAlign: "top",
+          }}
+        >
+          <EvidenceDisplay
+            evidence={item.evidence}
+            fallback={item.message}
+          />
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td className="table-cell" colSpan="4">
+        No fraud flags reported by the assessment.
+      </td>
+    </tr>
+  )}
+</tbody>
             </table>
           </div>
         </div>

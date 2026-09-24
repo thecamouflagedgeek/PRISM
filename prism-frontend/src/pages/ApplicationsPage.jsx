@@ -7,6 +7,7 @@ export default function ApplicationsPage({ go, lenderSession, setLenderAssessmen
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     let active = true;
