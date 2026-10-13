@@ -1,0 +1,34 @@
+{
+  "gates": {
+    "boundaries": true,
+    "full_phase2_regression": true,
+    "golden_independent_reconstruction": true,
+    "invalid_evidence_fail_closed": true,
+    "no_training": true,
+    "protected_hashes": true,
+    "reference_pd_reproduction": true,
+    "score_anchors": true,
+    "source_frozen_artifact_available": true
+  },
+  "phase2_tests": {
+    "full_phase2_suite": {
+      "baseline_passed": 206,
+      "command": "python -m pytest backend/phase2/tests -q",
+      "failed": 0,
+      "passed": 227,
+      "skipped": 0
+    },
+    "log": "backend\\phase2\\outputs\\phase2f\\pytest_full_phase2.log",
+    "phase2f_specific": {
+      "command": "python -m pytest backend/phase2/tests/test_phase2f_shadow_scorecard.py -q",
+      "failed": 0,
+      "passed": 21,
+      "skipped": 0
+    },
+    "phase2f_tests_added": 21,
+    "suite_passed": true
+  },
+  "ready_for_controlled_shadow_demonstration": true,
+  "status": "PHASE_2F_SHADOW_SCORE_VERIFIED",
+  "training_calls": 0
+}

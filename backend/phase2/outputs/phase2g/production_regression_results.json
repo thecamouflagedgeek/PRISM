@@ -1,0 +1,8 @@
+{
+  "assess_route": true,
+  "assessment_route_source_unchanged": true,
+  "experimental_router_separate": true,
+  "production_assess_behavior_flag_off_on_identical": true,
+  "production_model_artifact_hashes_unchanged": true,
+  "shadow_module_calls_production_scorer": false
+}

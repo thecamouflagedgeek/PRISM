@@ -1,0 +1,1 @@
+Separate synthetic fixture repair. Only declared page sequence added to original bank PDFs. No transactions, dates, balances, or scoring thresholds changed. Original dossier retained in aarav_original.

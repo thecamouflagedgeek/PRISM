@@ -1,0 +1,554 @@
+{
+  "disclosure": "Entirely synthetic, fictional records. Ground truth validates parsing and arithmetic only; not model accuracy or genuine creditworthiness.",
+  "borrower": "Aarav Mehta (FICTIONAL)",
+  "period": "2026-03 through 2026-08",
+  "account_reference": "TEST-ACCT-0042",
+  "card_reference": "TEST-CARD-4821",
+  "monthly_summary": [
+    {
+      "month": "2026-03",
+      "salary": 92000,
+      "utility": 1950,
+      "opening_balance": 84000.0,
+      "closing_balance": 103450.0,
+      "bank_transactions": 8
+    },
+    {
+      "month": "2026-04",
+      "salary": 93400,
+      "utility": 2060,
+      "opening_balance": 103450.0,
+      "closing_balance": 121910.0,
+      "bank_transactions": 8
+    },
+    {
+      "month": "2026-05",
+      "salary": 94800,
+      "utility": 2170,
+      "opening_balance": 121910.0,
+      "closing_balance": 153380.0,
+      "bank_transactions": 8
+    },
+    {
+      "month": "2026-06",
+      "salary": 96200,
+      "utility": 2280,
+      "opening_balance": 153380.0,
+      "closing_balance": 179360.0,
+      "bank_transactions": 8
+    },
+    {
+      "month": "2026-07",
+      "salary": 97600,
+      "utility": 2390,
+      "opening_balance": 179360.0,
+      "closing_balance": 213850.0,
+      "bank_transactions": 8
+    },
+    {
+      "month": "2026-08",
+      "salary": 99000,
+      "utility": 2500,
+      "opening_balance": 213850.0,
+      "closing_balance": 243850.0,
+      "bank_transactions": 8
+    }
+  ],
+  "bank_transactions": [
+    {
+      "month": "2026-03",
+      "date": "2026-03-01",
+      "description": "SALARY CREDIT - FICTIONAL EMPLOYER",
+      "debit": 0,
+      "credit": 92000,
+      "balance": 176000.0
+    },
+    {
+      "month": "2026-03",
+      "date": "2026-03-03",
+      "description": "HOUSE RENT NEFT",
+      "debit": 26000,
+      "credit": 0,
+      "balance": 150000.0
+    },
+    {
+      "month": "2026-03",
+      "date": "2026-03-06",
+      "description": "GROCERY UPI",
+      "debit": 10500,
+      "credit": 0,
+      "balance": 139500.0
+    },
+    {
+      "month": "2026-03",
+      "date": "2026-03-09",
+      "description": "UTILITY ELECTRICITY PAYMENT",
+      "debit": 1950,
+      "credit": 0,
+      "balance": 137550.0
+    },
+    {
+      "month": "2026-03",
+      "date": "2026-03-12",
+      "description": "LOAN EMI AUTODEBIT",
+      "debit": 9200,
+      "credit": 0,
+      "balance": 128350.0
+    },
+    {
+      "month": "2026-03",
+      "date": "2026-03-17",
+      "description": "CARD BILL PAYMENT TEST-CARD-4821",
+      "debit": 17000,
+      "credit": 0,
+      "balance": 111350.0
+    },
+    {
+      "month": "2026-03",
+      "date": "2026-03-21",
+      "description": "COMMUTE AND TRAVEL UPI",
+      "debit": 4400,
+      "credit": 0,
+      "balance": 106950.0
+    },
+    {
+      "month": "2026-03",
+      "date": "2026-03-25",
+      "description": "RESTAURANTS AND SHOPPING",
+      "debit": 3500,
+      "credit": 0,
+      "balance": 103450.0
+    },
+    {
+      "month": "2026-04",
+      "date": "2026-04-01",
+      "description": "SALARY CREDIT - FICTIONAL EMPLOYER",
+      "debit": 0,
+      "credit": 93400,
+      "balance": 196850.0
+    },
+    {
+      "month": "2026-04",
+      "date": "2026-04-03",
+      "description": "HOUSE RENT NEFT",
+      "debit": 26000,
+      "credit": 0,
+      "balance": 170850.0
+    },
+    {
+      "month": "2026-04",
+      "date": "2026-04-06",
+      "description": "GROCERY UPI",
+      "debit": 10850,
+      "credit": 0,
+      "balance": 160000.0
+    },
+    {
+      "month": "2026-04",
+      "date": "2026-04-09",
+      "description": "UTILITY ELECTRICITY PAYMENT",
+      "debit": 2060,
+      "credit": 0,
+      "balance": 157940.0
+    },
+    {
+      "month": "2026-04",
+      "date": "2026-04-12",
+      "description": "LOAN EMI AUTODEBIT",
+      "debit": 9200,
+      "credit": 0,
+      "balance": 148740.0
+    },
+    {
+      "month": "2026-04",
+      "date": "2026-04-17",
+      "description": "CARD BILL PAYMENT TEST-CARD-4821",
+      "debit": 18500,
+      "credit": 0,
+      "balance": 130240.0
+    },
+    {
+      "month": "2026-04",
+      "date": "2026-04-21",
+      "description": "COMMUTE AND TRAVEL UPI",
+      "debit": 4580,
+      "credit": 0,
+      "balance": 125660.0
+    },
+    {
+      "month": "2026-04",
+      "date": "2026-04-25",
+      "description": "RESTAURANTS AND SHOPPING",
+      "debit": 3750,
+      "credit": 0,
+      "balance": 121910.0
+    },
+    {
+      "month": "2026-05",
+      "date": "2026-05-01",
+      "description": "SALARY CREDIT - FICTIONAL EMPLOYER",
+      "debit": 0,
+      "credit": 94800,
+      "balance": 216710.0
+    },
+    {
+      "month": "2026-05",
+      "date": "2026-05-03",
+      "description": "HOUSE RENT NEFT",
+      "debit": 26000,
+      "credit": 0,
+      "balance": 190710.0
+    },
+    {
+      "month": "2026-05",
+      "date": "2026-05-06",
+      "description": "GROCERY UPI",
+      "debit": 11200,
+      "credit": 0,
+      "balance": 179510.0
+    },
+    {
+      "month": "2026-05",
+      "date": "2026-05-09",
+      "description": "UTILITY ELECTRICITY PAYMENT",
+      "debit": 2170,
+      "credit": 0,
+      "balance": 177340.0
+    },
+    {
+      "month": "2026-05",
+      "date": "2026-05-12",
+      "description": "LOAN EMI AUTODEBIT",
+      "debit": 9200,
+      "credit": 0,
+      "balance": 168140.0
+    },
+    {
+      "month": "2026-05",
+      "date": "2026-05-17",
+      "description": "CARD BILL PAYMENT TEST-CARD-4821",
+      "debit": 6000,
+      "credit": 0,
+      "balance": 162140.0
+    },
+    {
+      "month": "2026-05",
+      "date": "2026-05-21",
+      "description": "COMMUTE AND TRAVEL UPI",
+      "debit": 4760,
+      "credit": 0,
+      "balance": 157380.0
+    },
+    {
+      "month": "2026-05",
+      "date": "2026-05-25",
+      "description": "RESTAURANTS AND SHOPPING",
+      "debit": 4000,
+      "credit": 0,
+      "balance": 153380.0
+    },
+    {
+      "month": "2026-06",
+      "date": "2026-06-01",
+      "description": "SALARY CREDIT - FICTIONAL EMPLOYER",
+      "debit": 0,
+      "credit": 96200,
+      "balance": 249580.0
+    },
+    {
+      "month": "2026-06",
+      "date": "2026-06-03",
+      "description": "HOUSE RENT NEFT",
+      "debit": 26000,
+      "credit": 0,
+      "balance": 223580.0
+    },
+    {
+      "month": "2026-06",
+      "date": "2026-06-06",
+      "description": "GROCERY UPI",
+      "debit": 11550,
+      "credit": 0,
+      "balance": 212030.0
+    },
+    {
+      "month": "2026-06",
+      "date": "2026-06-09",
+      "description": "UTILITY ELECTRICITY PAYMENT",
+      "debit": 2280,
+      "credit": 0,
+      "balance": 209750.0
+    },
+    {
+      "month": "2026-06",
+      "date": "2026-06-12",
+      "description": "LOAN EMI AUTODEBIT",
+      "debit": 9200,
+      "credit": 0,
+      "balance": 200550.0
+    },
+    {
+      "month": "2026-06",
+      "date": "2026-06-17",
+      "description": "CARD BILL PAYMENT TEST-CARD-4821",
+      "debit": 12000,
+      "credit": 0,
+      "balance": 188550.0
+    },
+    {
+      "month": "2026-06",
+      "date": "2026-06-21",
+      "description": "COMMUTE AND TRAVEL UPI",
+      "debit": 4940,
+      "credit": 0,
+      "balance": 183610.0
+    },
+    {
+      "month": "2026-06",
+      "date": "2026-06-25",
+      "description": "RESTAURANTS AND SHOPPING",
+      "debit": 4250,
+      "credit": 0,
+      "balance": 179360.0
+    },
+    {
+      "month": "2026-07",
+      "date": "2026-07-01",
+      "description": "SALARY CREDIT - FICTIONAL EMPLOYER",
+      "debit": 0,
+      "credit": 97600,
+      "balance": 276960.0
+    },
+    {
+      "month": "2026-07",
+      "date": "2026-07-03",
+      "description": "HOUSE RENT NEFT",
+      "debit": 26000,
+      "credit": 0,
+      "balance": 250960.0
+    },
+    {
+      "month": "2026-07",
+      "date": "2026-07-06",
+      "description": "GROCERY UPI",
+      "debit": 11900,
+      "credit": 0,
+      "balance": 239060.0
+    },
+    {
+      "month": "2026-07",
+      "date": "2026-07-09",
+      "description": "UTILITY ELECTRICITY PAYMENT",
+      "debit": 2390,
+      "credit": 0,
+      "balance": 236670.0
+    },
+    {
+      "month": "2026-07",
+      "date": "2026-07-12",
+      "description": "LOAN EMI AUTODEBIT",
+      "debit": 9200,
+      "credit": 0,
+      "balance": 227470.0
+    },
+    {
+      "month": "2026-07",
+      "date": "2026-07-17",
+      "description": "CARD BILL PAYMENT TEST-CARD-4821",
+      "debit": 4000,
+      "credit": 0,
+      "balance": 223470.0
+    },
+    {
+      "month": "2026-07",
+      "date": "2026-07-21",
+      "description": "COMMUTE AND TRAVEL UPI",
+      "debit": 5120,
+      "credit": 0,
+      "balance": 218350.0
+    },
+    {
+      "month": "2026-07",
+      "date": "2026-07-25",
+      "description": "RESTAURANTS AND SHOPPING",
+      "debit": 4500,
+      "credit": 0,
+      "balance": 213850.0
+    },
+    {
+      "month": "2026-08",
+      "date": "2026-08-01",
+      "description": "SALARY CREDIT - FICTIONAL EMPLOYER",
+      "debit": 0,
+      "credit": 99000,
+      "balance": 312850.0
+    },
+    {
+      "month": "2026-08",
+      "date": "2026-08-03",
+      "description": "HOUSE RENT NEFT",
+      "debit": 26000,
+      "credit": 0,
+      "balance": 286850.0
+    },
+    {
+      "month": "2026-08",
+      "date": "2026-08-06",
+      "description": "GROCERY UPI",
+      "debit": 12250,
+      "credit": 0,
+      "balance": 274600.0
+    },
+    {
+      "month": "2026-08",
+      "date": "2026-08-09",
+      "description": "UTILITY ELECTRICITY PAYMENT",
+      "debit": 2500,
+      "credit": 0,
+      "balance": 272100.0
+    },
+    {
+      "month": "2026-08",
+      "date": "2026-08-12",
+      "description": "LOAN EMI AUTODEBIT",
+      "debit": 9200,
+      "credit": 0,
+      "balance": 262900.0
+    },
+    {
+      "month": "2026-08",
+      "date": "2026-08-17",
+      "description": "CARD BILL PAYMENT TEST-CARD-4821",
+      "debit": 9000,
+      "credit": 0,
+      "balance": 253900.0
+    },
+    {
+      "month": "2026-08",
+      "date": "2026-08-21",
+      "description": "COMMUTE AND TRAVEL UPI",
+      "debit": 5300,
+      "credit": 0,
+      "balance": 248600.0
+    },
+    {
+      "month": "2026-08",
+      "date": "2026-08-25",
+      "description": "RESTAURANTS AND SHOPPING",
+      "debit": 4750,
+      "credit": 0,
+      "balance": 243850.0
+    }
+  ],
+  "credit_card_monthly_evidence": [
+    {
+      "month": "2026-03",
+      "statement_balance": 21000,
+      "payment_applied_to_statement": 17000,
+      "repayment_status_code": 0,
+      "payment_due_date": "2026-03-20",
+      "statement_date": "2026-03-01",
+      "payment_date": "2026-03-17",
+      "repayment_observation_date": "2026-03-31",
+      "statement_reference": "TEST-CARD-4821-2026-03",
+      "payment_statement_reference": "TEST-CARD-4821-2026-03",
+      "billing_period": [
+        "2026-02-01",
+        "2026-02-28"
+      ],
+      "repayment_status": "CURRENT"
+    },
+    {
+      "month": "2026-04",
+      "statement_balance": 25500,
+      "payment_applied_to_statement": 18500,
+      "repayment_status_code": 0,
+      "payment_due_date": "2026-04-20",
+      "statement_date": "2026-04-01",
+      "payment_date": "2026-04-17",
+      "repayment_observation_date": "2026-04-30",
+      "statement_reference": "TEST-CARD-4821-2026-04",
+      "payment_statement_reference": "TEST-CARD-4821-2026-04",
+      "billing_period": [
+        "2026-03-01",
+        "2026-03-31"
+      ],
+      "repayment_status": "CURRENT"
+    },
+    {
+      "month": "2026-05",
+      "statement_balance": 28500,
+      "payment_applied_to_statement": 6000,
+      "repayment_status_code": 1,
+      "payment_due_date": "2026-05-15",
+      "statement_date": "2026-05-01",
+      "payment_date": "2026-05-17",
+      "repayment_observation_date": "2026-05-31",
+      "statement_reference": "TEST-CARD-4821-2026-05",
+      "payment_statement_reference": "TEST-CARD-4821-2026-05",
+      "billing_period": [
+        "2026-04-01",
+        "2026-04-30"
+      ],
+      "repayment_status": "DELINQUENT"
+    },
+    {
+      "month": "2026-06",
+      "statement_balance": 31000,
+      "payment_applied_to_statement": 12000,
+      "repayment_status_code": 1,
+      "payment_due_date": "2026-06-15",
+      "statement_date": "2026-06-01",
+      "payment_date": "2026-06-17",
+      "repayment_observation_date": "2026-06-30",
+      "statement_reference": "TEST-CARD-4821-2026-06",
+      "payment_statement_reference": "TEST-CARD-4821-2026-06",
+      "billing_period": [
+        "2026-05-01",
+        "2026-05-31"
+      ],
+      "repayment_status": "DELINQUENT"
+    },
+    {
+      "month": "2026-07",
+      "statement_balance": 35000,
+      "payment_applied_to_statement": 4000,
+      "repayment_status_code": 2,
+      "payment_due_date": "2026-07-15",
+      "statement_date": "2026-07-01",
+      "payment_date": "2026-07-17",
+      "repayment_observation_date": "2026-07-31",
+      "statement_reference": "TEST-CARD-4821-2026-07",
+      "payment_statement_reference": "TEST-CARD-4821-2026-07",
+      "billing_period": [
+        "2026-06-01",
+        "2026-06-30"
+      ],
+      "repayment_status": "DELINQUENT"
+    },
+    {
+      "month": "2026-08",
+      "statement_balance": 37000,
+      "payment_applied_to_statement": 9000,
+      "repayment_status_code": 1,
+      "payment_due_date": "2026-08-15",
+      "statement_date": "2026-08-01",
+      "payment_date": "2026-08-17",
+      "repayment_observation_date": "2026-08-31",
+      "statement_reference": "TEST-CARD-4821-2026-08",
+      "payment_statement_reference": "TEST-CARD-4821-2026-08",
+      "billing_period": [
+        "2026-07-01",
+        "2026-07-31"
+      ],
+      "repayment_status": "DELINQUENT"
+    }
+  ],
+  "frozen_model_input_candidates": {
+    "recent_delinquency_level": 1,
+    "months_with_delinquency": 4,
+    "payment_to_statement_ratio": 0.37359550561797755,
+    "mean_statement_balance": 29666.666666666668
+  },
+  "caution": "Credit-card synthetic status codes are explicitly constructed test labels, not real issuer-certified delinquency evidence. Whether they match the exact original Phase 2F training coding must be verified before scoring."
+}

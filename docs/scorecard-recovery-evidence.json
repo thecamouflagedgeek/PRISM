@@ -1,0 +1,3110 @@
+{
+  "credit": {
+    "status": "EXPERIMENTAL_SHADOW_SCORE",
+    "assessment_status": "SCORED",
+    "assessment_type": "CREDIT_ACCOUNT_EXPERIMENTAL",
+    "decision_use": "NOT_FOR_CREDIT_DECISION",
+    "assessment_id": "42b2762c-9a21-4924-b4cb-bb1521ceef45",
+    "trace_id": "42b2762c-9a21-4924-b4cb-bb1521ceef45",
+    "application_id": 111,
+    "user_id": 96,
+    "model_version": "DE1C1106759ED00F53F208C5185D63B3D8D22DB477D3A3EFD36132B5830E4CA6",
+    "artifact_sha256": "DE1C1106759ED00F53F208C5185D63B3D8D22DB477D3A3EFD36132B5830E4CA6",
+    "model_status": "PHASE_2B6_INCONCLUSIVE",
+    "assessment_timestamp": "2026-10-10T06:40:10.407046+00:00",
+    "score": 454.635898966963,
+    "probability_of_default": 0.2727810906249319,
+    "risk_tier": null,
+    "feature_coverage": 1.0,
+    "feature_values": {
+      "mean_statement_balance": "29666.66666666666666666666667",
+      "months_with_delinquency": "4",
+      "recent_delinquency_level": "1",
+      "payment_to_statement_ratio": "0.3735955056179775280898876404"
+    },
+    "features": {
+      "mean_statement_balance": "29666.66666666666666666666667",
+      "months_with_delinquency": "4",
+      "recent_delinquency_level": "1",
+      "payment_to_statement_ratio": "0.3735955056179775280898876404"
+    },
+    "woe_values": {
+      "mean_statement_balance": 0.02174343357602067,
+      "months_with_delinquency": -1.3538771425779765,
+      "recent_delinquency_level": 0.35422892674623363,
+      "payment_to_statement_ratio": 0.40889681863656524
+    },
+    "feature_contributions": {
+      "mean_statement_balance": -0.06512621034488121,
+      "months_with_delinquency": 0.8733442754752132,
+      "recent_delinquency_level": -0.25450701637023043,
+      "payment_to_statement_ratio": -0.28582810302780487
+    },
+    "feature_trace": {
+      "mean_statement_balance": {
+        "bin": {
+          "woe": 0.02174343357602067,
+          "bin_id": 1,
+          "lower_bound": 2857.2000000000003,
+          "missing_bin": false,
+          "upper_bound": 72616.93333333335,
+          "training_count": 14400,
+          "iv_contribution": 0.00028193046021880974,
+          "interval_closure": "(lower, upper]",
+          "training_default_count": 3132,
+          "training_nondefault_count": 11268,
+          "observed_training_default_rate": 0.2175
+        },
+        "woe": 0.02174343357602067,
+        "bin_id": 1,
+        "coefficient": -2.995212789975563,
+        "contribution": -0.06512621034488121,
+        "raw_feature_value": "29666.66666666666666666666667",
+        "feature_provenance": {
+          "input_fields": [
+            "statement_balance"
+          ],
+          "derivation_method": "phase2b6_frozen_formula_v1",
+          "source_record_ids": [
+            "page:1:line:9"
+          ]
+        }
+      },
+      "months_with_delinquency": {
+        "bin": {
+          "woe": -1.3538771425779765,
+          "bin_id": 1,
+          "lower_bound": 1.0,
+          "missing_bin": false,
+          "upper_bound": "Infinity",
+          "training_count": 4532,
+          "iv_contribution": 0.4490782480252702,
+          "interval_closure": "(lower, upper]",
+          "training_default_count": 2374,
+          "training_nondefault_count": 2158,
+          "observed_training_default_rate": 0.5238305383936452
+        },
+        "woe": -1.3538771425779765,
+        "bin_id": 1,
+        "coefficient": -0.6450690745928691,
+        "contribution": 0.8733442754752132,
+        "raw_feature_value": "4",
+        "feature_provenance": {
+          "input_fields": [
+            "repayment_status.delinquency_level"
+          ],
+          "derivation_method": "phase2b6_frozen_formula_v1",
+          "source_record_ids": [
+            "page:1"
+          ]
+        }
+      },
+      "recent_delinquency_level": {
+        "bin": {
+          "woe": 0.35422892674623363,
+          "bin_id": 0,
+          "lower_bound": "-Infinity",
+          "missing_bin": false,
+          "upper_bound": 1.0,
+          "training_count": 21511,
+          "iv_contribution": 0.10139075919356688,
+          "interval_closure": "[-inf, upper]",
+          "training_default_count": 3575,
+          "training_nondefault_count": 17936,
+          "observed_training_default_rate": 0.1661940402584724
+        },
+        "woe": 0.35422892674623363,
+        "bin_id": 0,
+        "coefficient": -0.718481742041798,
+        "contribution": -0.25450701637023043,
+        "raw_feature_value": "1",
+        "feature_provenance": {
+          "input_fields": [
+            "repayment_status.delinquency_level"
+          ],
+          "derivation_method": "phase2b6_frozen_formula_v1",
+          "source_record_ids": [
+            "page:1"
+          ]
+        }
+      },
+      "payment_to_statement_ratio": {
+        "bin": {
+          "woe": 0.40889681863656524,
+          "bin_id": 3,
+          "lower_bound": 0.2040156495459412,
+          "missing_bin": false,
+          "upper_bound": 0.7971475131053173,
+          "training_count": 4643,
+          "iv_contribution": 0.028677649778309916,
+          "interval_closure": "(lower, upper]",
+          "training_default_count": 737,
+          "training_nondefault_count": 3906,
+          "observed_training_default_rate": 0.1587335774283868
+        },
+        "woe": 0.40889681863656524,
+        "bin_id": 3,
+        "coefficient": -0.6990225651079325,
+        "contribution": -0.28582810302780487,
+        "raw_feature_value": "0.3735955056179775280898876404",
+        "feature_provenance": {
+          "input_fields": [
+            "payment_amount",
+            "statement_balance"
+          ],
+          "derivation_method": "phase2b6_frozen_formula_v1",
+          "source_record_ids": [
+            "page:1:line:12",
+            "page:1:line:9"
+          ]
+        }
+      }
+    },
+    "reason_codes": [
+      {
+        "code": "months_with_delinquency",
+        "label": "Repeated repayment delinquency",
+        "trace": {
+          "bin": {
+            "woe": -1.3538771425779765,
+            "bin_id": 1,
+            "lower_bound": 1.0,
+            "missing_bin": false,
+            "upper_bound": "Infinity",
+            "training_count": 4532,
+            "iv_contribution": 0.4490782480252702,
+            "interval_closure": "(lower, upper]",
+            "training_default_count": 2374,
+            "training_nondefault_count": 2158,
+            "observed_training_default_rate": 0.5238305383936452
+          },
+          "woe": -1.3538771425779765,
+          "bin_id": 1,
+          "coefficient": -0.6450690745928691,
+          "contribution": 0.8733442754752132,
+          "raw_feature_value": "4",
+          "feature_provenance": {
+            "input_fields": [
+              "repayment_status.delinquency_level"
+            ],
+            "derivation_method": "phase2b6_frozen_formula_v1",
+            "source_record_ids": [
+              "page:1"
+            ]
+          }
+        },
+        "direction": "increases_default_logit",
+        "contribution": 0.8733442754752132
+      }
+    ],
+    "improvement_recommendations": [
+      {
+        "feature": "months_with_delinquency",
+        "message": "Build a consistent record of on-time repayments over future statement cycles.",
+        "reason_code": "months_with_delinquency",
+        "causality_claim": false
+      }
+    ],
+    "document_findings": {
+      "documents": [
+        {
+          "fields": {
+            "currency": "INR",
+            "provider": "PRISM DEMO CARD SERVICES (fictional)",
+            "product_type": "CREDIT_CARD",
+            "payment_amount": "17,000.00",
+            "statement_month": "31/03/2026",
+            "repayment_status": {
+              "status": "CURRENT",
+              "delinquency_severity": "0"
+            },
+            "account_reference": "TEST-CARD-4821",
+            "statement_balance": "21,000.00",
+            "masked_account_number": "TEST-CARD-4821",
+            "synthetic_status_code": "0"
+          },
+          "findings": [],
+          "file_name": "Credit_Card_2026-03.pdf",
+          "page_count": 1,
+          "document_id": 506,
+          "source_lines": {
+            "status": 13,
+            "currency": 16,
+            "provider": 5,
+            "payment_amount": 12,
+            "statement_month": 7,
+            "account_reference": 6,
+            "statement_balance": 9,
+            "delinquency_severity": 14,
+            "masked_account_number": 6,
+            "synthetic_status_code": 13
+          },
+          "document_type": "CREDIT_CARD_STATEMENT",
+          "auxiliary_fields": {
+            "amount_due": "INR 21,000.00",
+            "statement_date": "31/03/2026",
+            "payment_due_date": "27/03/2026",
+            "minimum_amount_due": "INR 1,050.00"
+          },
+          "field_provenance": {
+            "status": {
+              "line": 13,
+              "page": 1
+            },
+            "currency": {
+              "line": 16,
+              "page": 1
+            },
+            "provider": {
+              "line": 5,
+              "page": 1
+            },
+            "payment_amount": {
+              "line": 12,
+              "page": 1
+            },
+            "statement_month": {
+              "line": 7,
+              "page": 1
+            },
+            "account_reference": {
+              "line": 6,
+              "page": 1
+            },
+            "statement_balance": {
+              "line": 9,
+              "page": 1
+            },
+            "delinquency_severity": {
+              "line": 14,
+              "page": 1
+            },
+            "masked_account_number": {
+              "line": 6,
+              "page": 1
+            },
+            "synthetic_status_code": {
+              "line": 13,
+              "page": 1
+            }
+          },
+          "extraction_method": "native_pdf_text",
+          "classification_reason": "CREDIT_CARD_STATEMENT",
+          "extraction_confidence": 0.0,
+          "auxiliary_source_lines": {
+            "amount_due": 10,
+            "statement_date": 7,
+            "payment_due_date": 8,
+            "minimum_amount_due": 11
+          },
+          "required_field_coverage": 1.0,
+          "extraction_quality_basis": "required_explicit_field_coverage"
+        },
+        {
+          "fields": {
+            "currency": "INR",
+            "provider": "PRISM DEMO CARD SERVICES (fictional)",
+            "product_type": "CREDIT_CARD",
+            "payment_amount": "18,500.00",
+            "statement_month": "30/04/2026",
+            "repayment_status": {
+              "status": "CURRENT",
+              "delinquency_severity": "0"
+            },
+            "account_reference": "TEST-CARD-4821",
+            "statement_balance": "25,500.00",
+            "masked_account_number": "TEST-CARD-4821",
+            "synthetic_status_code": "0"
+          },
+          "findings": [],
+          "file_name": "Credit_Card_2026-04.pdf",
+          "page_count": 1,
+          "document_id": 507,
+          "source_lines": {
+            "status": 13,
+            "currency": 16,
+            "provider": 5,
+            "payment_amount": 12,
+            "statement_month": 7,
+            "account_reference": 6,
+            "statement_balance": 9,
+            "delinquency_severity": 14,
+            "masked_account_number": 6,
+            "synthetic_status_code": 13
+          },
+          "document_type": "CREDIT_CARD_STATEMENT",
+          "auxiliary_fields": {
+            "amount_due": "INR 25,500.00",
+            "statement_date": "30/04/2026",
+            "payment_due_date": "27/04/2026",
+            "minimum_amount_due": "INR 1,275.00"
+          },
+          "field_provenance": {
+            "status": {
+              "line": 13,
+              "page": 1
+            },
+            "currency": {
+              "line": 16,
+              "page": 1
+            },
+            "provider": {
+              "line": 5,
+              "page": 1
+            },
+            "payment_amount": {
+              "line": 12,
+              "page": 1
+            },
+            "statement_month": {
+              "line": 7,
+              "page": 1
+            },
+            "account_reference": {
+              "line": 6,
+              "page": 1
+            },
+            "statement_balance": {
+              "line": 9,
+              "page": 1
+            },
+            "delinquency_severity": {
+              "line": 14,
+              "page": 1
+            },
+            "masked_account_number": {
+              "line": 6,
+              "page": 1
+            },
+            "synthetic_status_code": {
+              "line": 13,
+              "page": 1
+            }
+          },
+          "extraction_method": "native_pdf_text",
+          "classification_reason": "CREDIT_CARD_STATEMENT",
+          "extraction_confidence": 0.0,
+          "auxiliary_source_lines": {
+            "amount_due": 10,
+            "statement_date": 7,
+            "payment_due_date": 8,
+            "minimum_amount_due": 11
+          },
+          "required_field_coverage": 1.0,
+          "extraction_quality_basis": "required_explicit_field_coverage"
+        },
+        {
+          "fields": {
+            "currency": "INR",
+            "provider": "PRISM DEMO CARD SERVICES (fictional)",
+            "product_type": "CREDIT_CARD",
+            "payment_amount": "6,000.00",
+            "statement_month": "31/05/2026",
+            "repayment_status": {
+              "status": "DELINQUENT",
+              "delinquency_severity": "1"
+            },
+            "account_reference": "TEST-CARD-4821",
+            "statement_balance": "28,500.00",
+            "masked_account_number": "TEST-CARD-4821",
+            "synthetic_status_code": "1"
+          },
+          "findings": [],
+          "file_name": "Credit_Card_2026-05.pdf",
+          "page_count": 1,
+          "document_id": 508,
+          "source_lines": {
+            "status": 13,
+            "currency": 16,
+            "provider": 5,
+            "payment_amount": 12,
+            "statement_month": 7,
+            "account_reference": 6,
+            "statement_balance": 9,
+            "delinquency_severity": 14,
+            "masked_account_number": 6,
+            "synthetic_status_code": 13
+          },
+          "document_type": "CREDIT_CARD_STATEMENT",
+          "auxiliary_fields": {
+            "amount_due": "INR 28,500.00",
+            "statement_date": "31/05/2026",
+            "payment_due_date": "27/05/2026",
+            "minimum_amount_due": "INR 1,425.00"
+          },
+          "field_provenance": {
+            "status": {
+              "line": 13,
+              "page": 1
+            },
+            "currency": {
+              "line": 16,
+              "page": 1
+            },
+            "provider": {
+              "line": 5,
+              "page": 1
+            },
+            "payment_amount": {
+              "line": 12,
+              "page": 1
+            },
+            "statement_month": {
+              "line": 7,
+              "page": 1
+            },
+            "account_reference": {
+              "line": 6,
+              "page": 1
+            },
+            "statement_balance": {
+              "line": 9,
+              "page": 1
+            },
+            "delinquency_severity": {
+              "line": 14,
+              "page": 1
+            },
+            "masked_account_number": {
+              "line": 6,
+              "page": 1
+            },
+            "synthetic_status_code": {
+              "line": 13,
+              "page": 1
+            }
+          },
+          "extraction_method": "native_pdf_text",
+          "classification_reason": "CREDIT_CARD_STATEMENT",
+          "extraction_confidence": 0.0,
+          "auxiliary_source_lines": {
+            "amount_due": 10,
+            "statement_date": 7,
+            "payment_due_date": 8,
+            "minimum_amount_due": 11
+          },
+          "required_field_coverage": 1.0,
+          "extraction_quality_basis": "required_explicit_field_coverage"
+        },
+        {
+          "fields": {
+            "currency": "INR",
+            "provider": "PRISM DEMO CARD SERVICES (fictional)",
+            "product_type": "CREDIT_CARD",
+            "payment_amount": "12,000.00",
+            "statement_month": "30/06/2026",
+            "repayment_status": {
+              "status": "DELINQUENT",
+              "delinquency_severity": "1"
+            },
+            "account_reference": "TEST-CARD-4821",
+            "statement_balance": "31,000.00",
+            "masked_account_number": "TEST-CARD-4821",
+            "synthetic_status_code": "1"
+          },
+          "findings": [],
+          "file_name": "Credit_Card_2026-06.pdf",
+          "page_count": 1,
+          "document_id": 509,
+          "source_lines": {
+            "status": 13,
+            "currency": 16,
+            "provider": 5,
+            "payment_amount": 12,
+            "statement_month": 7,
+            "account_reference": 6,
+            "statement_balance": 9,
+            "delinquency_severity": 14,
+            "masked_account_number": 6,
+            "synthetic_status_code": 13
+          },
+          "document_type": "CREDIT_CARD_STATEMENT",
+          "auxiliary_fields": {
+            "amount_due": "INR 31,000.00",
+            "statement_date": "30/06/2026",
+            "payment_due_date": "27/06/2026",
+            "minimum_amount_due": "INR 1,550.00"
+          },
+          "field_provenance": {
+            "status": {
+              "line": 13,
+              "page": 1
+            },
+            "currency": {
+              "line": 16,
+              "page": 1
+            },
+            "provider": {
+              "line": 5,
+              "page": 1
+            },
+            "payment_amount": {
+              "line": 12,
+              "page": 1
+            },
+            "statement_month": {
+              "line": 7,
+              "page": 1
+            },
+            "account_reference": {
+              "line": 6,
+              "page": 1
+            },
+            "statement_balance": {
+              "line": 9,
+              "page": 1
+            },
+            "delinquency_severity": {
+              "line": 14,
+              "page": 1
+            },
+            "masked_account_number": {
+              "line": 6,
+              "page": 1
+            },
+            "synthetic_status_code": {
+              "line": 13,
+              "page": 1
+            }
+          },
+          "extraction_method": "native_pdf_text",
+          "classification_reason": "CREDIT_CARD_STATEMENT",
+          "extraction_confidence": 0.0,
+          "auxiliary_source_lines": {
+            "amount_due": 10,
+            "statement_date": 7,
+            "payment_due_date": 8,
+            "minimum_amount_due": 11
+          },
+          "required_field_coverage": 1.0,
+          "extraction_quality_basis": "required_explicit_field_coverage"
+        },
+        {
+          "fields": {
+            "currency": "INR",
+            "provider": "PRISM DEMO CARD SERVICES (fictional)",
+            "product_type": "CREDIT_CARD",
+            "payment_amount": "4,000.00",
+            "statement_month": "31/07/2026",
+            "repayment_status": {
+              "status": "DELINQUENT",
+              "delinquency_severity": "2"
+            },
+            "account_reference": "TEST-CARD-4821",
+            "statement_balance": "35,000.00",
+            "masked_account_number": "TEST-CARD-4821",
+            "synthetic_status_code": "2"
+          },
+          "findings": [],
+          "file_name": "Credit_Card_2026-07.pdf",
+          "page_count": 1,
+          "document_id": 510,
+          "source_lines": {
+            "status": 13,
+            "currency": 16,
+            "provider": 5,
+            "payment_amount": 12,
+            "statement_month": 7,
+            "account_reference": 6,
+            "statement_balance": 9,
+            "delinquency_severity": 14,
+            "masked_account_number": 6,
+            "synthetic_status_code": 13
+          },
+          "document_type": "CREDIT_CARD_STATEMENT",
+          "auxiliary_fields": {
+            "amount_due": "INR 35,000.00",
+            "statement_date": "31/07/2026",
+            "payment_due_date": "27/07/2026",
+            "minimum_amount_due": "INR 1,750.00"
+          },
+          "field_provenance": {
+            "status": {
+              "line": 13,
+              "page": 1
+            },
+            "currency": {
+              "line": 16,
+              "page": 1
+            },
+            "provider": {
+              "line": 5,
+              "page": 1
+            },
+            "payment_amount": {
+              "line": 12,
+              "page": 1
+            },
+            "statement_month": {
+              "line": 7,
+              "page": 1
+            },
+            "account_reference": {
+              "line": 6,
+              "page": 1
+            },
+            "statement_balance": {
+              "line": 9,
+              "page": 1
+            },
+            "delinquency_severity": {
+              "line": 14,
+              "page": 1
+            },
+            "masked_account_number": {
+              "line": 6,
+              "page": 1
+            },
+            "synthetic_status_code": {
+              "line": 13,
+              "page": 1
+            }
+          },
+          "extraction_method": "native_pdf_text",
+          "classification_reason": "CREDIT_CARD_STATEMENT",
+          "extraction_confidence": 0.0,
+          "auxiliary_source_lines": {
+            "amount_due": 10,
+            "statement_date": 7,
+            "payment_due_date": 8,
+            "minimum_amount_due": 11
+          },
+          "required_field_coverage": 1.0,
+          "extraction_quality_basis": "required_explicit_field_coverage"
+        },
+        {
+          "fields": {
+            "currency": "INR",
+            "provider": "PRISM DEMO CARD SERVICES (fictional)",
+            "product_type": "CREDIT_CARD",
+            "payment_amount": "9,000.00",
+            "statement_month": "31/08/2026",
+            "repayment_status": {
+              "status": "DELINQUENT",
+              "delinquency_severity": "1"
+            },
+            "account_reference": "TEST-CARD-4821",
+            "statement_balance": "37,000.00",
+            "masked_account_number": "TEST-CARD-4821",
+            "synthetic_status_code": "1"
+          },
+          "findings": [],
+          "file_name": "Credit_Card_2026-08.pdf",
+          "page_count": 1,
+          "document_id": 511,
+          "source_lines": {
+            "status": 13,
+            "currency": 16,
+            "provider": 5,
+            "payment_amount": 12,
+            "statement_month": 7,
+            "account_reference": 6,
+            "statement_balance": 9,
+            "delinquency_severity": 14,
+            "masked_account_number": 6,
+            "synthetic_status_code": 13
+          },
+          "document_type": "CREDIT_CARD_STATEMENT",
+          "auxiliary_fields": {
+            "amount_due": "INR 37,000.00",
+            "statement_date": "31/08/2026",
+            "payment_due_date": "27/08/2026",
+            "minimum_amount_due": "INR 1,850.00"
+          },
+          "field_provenance": {
+            "status": {
+              "line": 13,
+              "page": 1
+            },
+            "currency": {
+              "line": 16,
+              "page": 1
+            },
+            "provider": {
+              "line": 5,
+              "page": 1
+            },
+            "payment_amount": {
+              "line": 12,
+              "page": 1
+            },
+            "statement_month": {
+              "line": 7,
+              "page": 1
+            },
+            "account_reference": {
+              "line": 6,
+              "page": 1
+            },
+            "statement_balance": {
+              "line": 9,
+              "page": 1
+            },
+            "delinquency_severity": {
+              "line": 14,
+              "page": 1
+            },
+            "masked_account_number": {
+              "line": 6,
+              "page": 1
+            },
+            "synthetic_status_code": {
+              "line": 13,
+              "page": 1
+            }
+          },
+          "extraction_method": "native_pdf_text",
+          "classification_reason": "CREDIT_CARD_STATEMENT",
+          "extraction_confidence": 0.0,
+          "auxiliary_source_lines": {
+            "amount_due": 10,
+            "statement_date": 7,
+            "payment_due_date": 8,
+            "minimum_amount_due": 11
+          },
+          "required_field_coverage": 1.0,
+          "extraction_quality_basis": "required_explicit_field_coverage"
+        }
+      ],
+      "model_status": "PHASE_2B6_INCONCLUSIVE",
+      "feature_trace": {
+        "mean_statement_balance": {
+          "bin": {
+            "woe": 0.02174343357602067,
+            "bin_id": 1,
+            "lower_bound": 2857.2000000000003,
+            "missing_bin": false,
+            "upper_bound": 72616.93333333335,
+            "training_count": 14400,
+            "iv_contribution": 0.00028193046021880974,
+            "interval_closure": "(lower, upper]",
+            "training_default_count": 3132,
+            "training_nondefault_count": 11268,
+            "observed_training_default_rate": 0.2175
+          },
+          "woe": 0.02174343357602067,
+          "bin_id": 1,
+          "coefficient": -2.995212789975563,
+          "contribution": -0.06512621034488121,
+          "raw_feature_value": "29666.66666666666666666666667",
+          "feature_provenance": {
+            "input_fields": [
+              "statement_balance"
+            ],
+            "derivation_method": "phase2b6_frozen_formula_v1",
+            "source_record_ids": [
+              "page:1:line:9"
+            ]
+          }
+        },
+        "months_with_delinquency": {
+          "bin": {
+            "woe": -1.3538771425779765,
+            "bin_id": 1,
+            "lower_bound": 1.0,
+            "missing_bin": false,
+            "upper_bound": "Infinity",
+            "training_count": 4532,
+            "iv_contribution": 0.4490782480252702,
+            "interval_closure": "(lower, upper]",
+            "training_default_count": 2374,
+            "training_nondefault_count": 2158,
+            "observed_training_default_rate": 0.5238305383936452
+          },
+          "woe": -1.3538771425779765,
+          "bin_id": 1,
+          "coefficient": -0.6450690745928691,
+          "contribution": 0.8733442754752132,
+          "raw_feature_value": "4",
+          "feature_provenance": {
+            "input_fields": [
+              "repayment_status.delinquency_level"
+            ],
+            "derivation_method": "phase2b6_frozen_formula_v1",
+            "source_record_ids": [
+              "page:1"
+            ]
+          }
+        },
+        "recent_delinquency_level": {
+          "bin": {
+            "woe": 0.35422892674623363,
+            "bin_id": 0,
+            "lower_bound": "-Infinity",
+            "missing_bin": false,
+            "upper_bound": 1.0,
+            "training_count": 21511,
+            "iv_contribution": 0.10139075919356688,
+            "interval_closure": "[-inf, upper]",
+            "training_default_count": 3575,
+            "training_nondefault_count": 17936,
+            "observed_training_default_rate": 0.1661940402584724
+          },
+          "woe": 0.35422892674623363,
+          "bin_id": 0,
+          "coefficient": -0.718481742041798,
+          "contribution": -0.25450701637023043,
+          "raw_feature_value": "1",
+          "feature_provenance": {
+            "input_fields": [
+              "repayment_status.delinquency_level"
+            ],
+            "derivation_method": "phase2b6_frozen_formula_v1",
+            "source_record_ids": [
+              "page:1"
+            ]
+          }
+        },
+        "payment_to_statement_ratio": {
+          "bin": {
+            "woe": 0.40889681863656524,
+            "bin_id": 3,
+            "lower_bound": 0.2040156495459412,
+            "missing_bin": false,
+            "upper_bound": 0.7971475131053173,
+            "training_count": 4643,
+            "iv_contribution": 0.028677649778309916,
+            "interval_closure": "(lower, upper]",
+            "training_default_count": 737,
+            "training_nondefault_count": 3906,
+            "observed_training_default_rate": 0.1587335774283868
+          },
+          "woe": 0.40889681863656524,
+          "bin_id": 3,
+          "coefficient": -0.6990225651079325,
+          "contribution": -0.28582810302780487,
+          "raw_feature_value": "0.3735955056179775280898876404",
+          "feature_provenance": {
+            "input_fields": [
+              "payment_amount",
+              "statement_balance"
+            ],
+            "derivation_method": "phase2b6_frozen_formula_v1",
+            "source_record_ids": [
+              "page:1:line:12",
+              "page:1:line:9"
+            ]
+          }
+        }
+      },
+      "window_months": 6,
+      "assessment_timing": "HISTORICAL_SNAPSHOT",
+      "prediction_cutoff_month": "2026-09"
+    },
+    "evidence_validation": {
+      "valid": true,
+      "eligible": true,
+      "warnings": [
+        "PHASE_2B6_INCONCLUSIVE_EXTERNAL_VALIDATION_ABSENT"
+      ],
+      "assembly_state": "COMPUTABLE",
+      "expected_months": [
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08"
+      ],
+      "blocking_reasons": [],
+      "validated_months": [
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08"
+      ],
+      "feature_derivation": {
+        "mean_statement_balance": "arithmetic mean of the six account statement balances in original currency units",
+        "months_with_delinquency": "count of the six explicit monthly severity values greater than zero",
+        "recent_delinquency_level": "explicit delinquency severity from latest statement month; 0 means explicitly current",
+        "payment_to_statement_ratio": "sum of settled payment amounts applied to these statements / sum(max(statement balance, 0))"
+      },
+      "candidate_feature_values": {
+        "mean_statement_balance": "29666.66666666666666666666667",
+        "months_with_delinquency": "4",
+        "recent_delinquency_level": "1",
+        "payment_to_statement_ratio": "0.3735955056179775280898876404"
+      }
+    },
+    "source_document_ids": [
+      506,
+      507,
+      508,
+      509,
+      510,
+      511
+    ],
+    "consent_record": {
+      "scope": "CREDIT_CARD_STATEMENTS",
+      "state": "GRANTED",
+      "granted_at": "2026-10-10T06:40:10.385599+00:00",
+      "consent_version": "credit-card-experimental-v1",
+      "granted_by_user_id": 96
+    },
+    "limitations": [
+      "NOT_EXTERNALLY_VALIDATED",
+      "NOT_CURRENT_MARKET_VALIDATED",
+      "NOT_INDIAN_MARKET_VALIDATED",
+      "NOT_PRODUCTION_APPROVED"
+    ],
+    "scorecard": {
+      "experimental_shadow_score": 454.635898966963,
+      "raw_pd": 0.2727810906249319,
+      "logit": -0.9805579378403773,
+      "score_label": "Experimental Shadow Score",
+      "pdo_presentation_only": true
+    },
+    "idempotent_replay": false,
+    "request_id": "2b84cf3a-6e67-466f-9c11-69078c995952"
+  },
+  "bank_original": {
+    "pd": null,
+    "score": null,
+    "status": "INSUFFICIENT_EVIDENCE",
+    "monthly": [
+      {
+        "month": "2026-03",
+        "net_flow": 19450.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 92000.0,
+        "expense_total": 72550.0
+      },
+      {
+        "month": "2026-04",
+        "net_flow": 18460.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 93400.0,
+        "expense_total": 74940.0
+      },
+      {
+        "month": "2026-05",
+        "net_flow": 31470.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 94800.0,
+        "expense_total": 63330.0
+      },
+      {
+        "month": "2026-06",
+        "net_flow": 25980.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 96200.0,
+        "expense_total": 70220.0
+      },
+      {
+        "month": "2026-07",
+        "net_flow": 34490.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 97600.0,
+        "expense_total": 63110.0
+      },
+      {
+        "month": "2026-08",
+        "net_flow": 30000.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 99000.0,
+        "expense_total": 69000.0
+      }
+    ],
+    "currency": "INR",
+    "evidence": {
+      "account_linked": true,
+      "balance_reconciled": true,
+      "extraction_methods": [
+        "native_text"
+      ],
+      "duplicate_ambiguity": false,
+      "source_document_ids": [
+        512,
+        513,
+        514,
+        515,
+        516,
+        517
+      ],
+      "extraction_quality_min": 1.0,
+      "page_coverage_complete": false,
+      "complete_month_coverage": true,
+      "duplicate_rows_detected": 0,
+      "transaction_order_valid": true,
+      "non_cashflow_adjustments_clear": true,
+      "account_reference_token_present": true,
+      "refund_reversal_rows_requiring_review": 0,
+      "internal_transfer_rows_requiring_review": 0
+    },
+    "risk_tier": null,
+    "scoreable": false,
+    "model_name": "Experimental Bank Financial Health Index",
+    "methodology": {
+      "mapping": "score = round(300 + 600 \u00d7 normalized weighted health)",
+      "weights": {
+        "debt_burden": 0.15,
+        "liquidity_buffer": 0.15,
+        "expense_to_income": 0.25,
+        "income_regularity": 0.2,
+        "surplus_month_rate": 0.25
+      },
+      "limitations": [
+        "This is an experimental descriptive index, not a validated credit score or PD.",
+        "No lending tier, bureau equivalence, or lending decision is produced.",
+        "Keyword detected repayments are unverified; absent matches do not mean no debt."
+      ],
+      "missing_data_policy": "Each unavailable indicator is omitted and remaining fixed weights are renormalized; an unobserved debt indicator is unknown, not zero.",
+      "minimum_history_months": 3
+    },
+    "decision_use": "NOT_FOR_CREDIT_DECISION",
+    "reason_codes": [],
+    "evidence_gaps": [
+      "STATEMENT_PAGE_COVERAGE_NOT_VERIFIED"
+    ],
+    "model_version": "BANK_FINANCIAL_HEALTH_INDEX_V1",
+    "feature_values": {
+      "debt_burden": 0.903665,
+      "liquidity_buffer": 0.943977,
+      "expense_to_income": 0.27897,
+      "income_regularity": 0.973306,
+      "surplus_month_rate": 1.0
+    },
+    "assessment_type": "BANK_CASHFLOW_EXPERIMENTAL",
+    "months_observed": 6,
+    "observed_months": [
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+    ],
+    "recommendations": [
+      "Review recurring spending and preserve a monthly cash-flow surplus where feasible."
+    ],
+    "document_findings": [
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-03.pdf",
+        "page_count": 1,
+        "document_id": 512,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-03-31",
+          "start": "2026-03-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 512
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 512
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 512
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 512
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 512
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 512
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 512
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 512
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": null,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-04.pdf",
+        "page_count": 1,
+        "document_id": 513,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-04-30",
+          "start": "2026-04-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 513
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 513
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 513
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 513
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 513
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 513
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 513
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 513
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": null,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-05.pdf",
+        "page_count": 1,
+        "document_id": 514,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-05-31",
+          "start": "2026-05-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 514
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 514
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 514
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 514
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 514
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 514
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 514
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 514
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": null,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-06.pdf",
+        "page_count": 1,
+        "document_id": 515,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-06-30",
+          "start": "2026-06-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 515
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 515
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 515
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 515
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 515
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 515
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 515
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 515
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": null,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-07.pdf",
+        "page_count": 1,
+        "document_id": 516,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-07-31",
+          "start": "2026-07-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 516
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 516
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 516
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 516
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 516
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 516
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 516
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 516
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": null,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-08.pdf",
+        "page_count": 1,
+        "document_id": 517,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-08-31",
+          "start": "2026-08-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 517
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 517
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 517
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 517
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 517
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 517
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 517
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 517
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": null,
+        "statement_closing_balance_available": true
+      }
+    ],
+    "financial_metrics": {
+      "average_monthly_income": 95500.0,
+      "average_monthly_expenses": 68858.33,
+      "average_observed_closing_balance": 195002.08,
+      "identified_monthly_debt_payments": 9200.0,
+      "minimum_observed_closing_balance": 103450.0,
+      "monthly_income_coefficient_of_variation": 0.027426
+    },
+    "transaction_count": 48,
+    "validation_status": "INCOMPLETE",
+    "supporting_documents": [
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 12545.45,
+          "net_salary": 92000.0,
+          "gross_salary": 104545.45,
+          "salary_period": "March 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-03.pdf",
+        "page_count": 1,
+        "document_id": 518,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 12736.36,
+          "net_salary": 93400.0,
+          "gross_salary": 106136.36,
+          "salary_period": "April 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-04.pdf",
+        "page_count": 1,
+        "document_id": 519,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 12927.27,
+          "net_salary": 94800.0,
+          "gross_salary": 107727.27,
+          "salary_period": "May 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-05.pdf",
+        "page_count": 1,
+        "document_id": 520,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 13118.18,
+          "net_salary": 96200.0,
+          "gross_salary": 109318.18,
+          "salary_period": "June 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-06.pdf",
+        "page_count": 1,
+        "document_id": 521,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 13309.09,
+          "net_salary": 97600.0,
+          "gross_salary": 110909.09,
+          "salary_period": "July 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-07.pdf",
+        "page_count": 1,
+        "document_id": 522,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 13500.0,
+          "net_salary": 99000.0,
+          "gross_salary": 112500.0,
+          "salary_period": "August 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-08.pdf",
+        "page_count": 1,
+        "document_id": 523,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/03/2026",
+          "amount_due": 1950.0,
+          "payment_date": "09/03/2026",
+          "billing_period": "01/03/2026 - 31/03/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-03.pdf",
+        "page_count": 1,
+        "document_id": 524,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/04/2026",
+          "amount_due": 2060.0,
+          "payment_date": "09/04/2026",
+          "billing_period": "01/04/2026 - 30/04/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-04.pdf",
+        "page_count": 1,
+        "document_id": 525,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/05/2026",
+          "amount_due": 2170.0,
+          "payment_date": "09/05/2026",
+          "billing_period": "01/05/2026 - 31/05/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-05.pdf",
+        "page_count": 1,
+        "document_id": 526,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/06/2026",
+          "amount_due": 2280.0,
+          "payment_date": "09/06/2026",
+          "billing_period": "01/06/2026 - 30/06/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-06.pdf",
+        "page_count": 1,
+        "document_id": 527,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/07/2026",
+          "amount_due": 2390.0,
+          "payment_date": "09/07/2026",
+          "billing_period": "01/07/2026 - 31/07/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-07.pdf",
+        "page_count": 1,
+        "document_id": 528,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/08/2026",
+          "amount_due": 2500.0,
+          "payment_date": "09/08/2026",
+          "billing_period": "01/08/2026 - 31/08/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-08.pdf",
+        "page_count": 1,
+        "document_id": 529,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      }
+    ],
+    "feature_contributions": [],
+    "assessment_id": "aecfc5ec-10a5-4712-ba65-761841a173e2",
+    "application_id": 111,
+    "assessment_timestamp": "2026-10-10T06:40:19.524529+00:00",
+    "idempotent_replay": false,
+    "request_id": "70485688-3bc6-4598-b98d-b9e825e8f413"
+  },
+  "bank_repaired": {
+    "pd": null,
+    "score": 775,
+    "status": "SCORED",
+    "monthly": [
+      {
+        "month": "2026-03",
+        "net_flow": 19450.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 92000.0,
+        "expense_total": 72550.0
+      },
+      {
+        "month": "2026-04",
+        "net_flow": 18460.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 93400.0,
+        "expense_total": 74940.0
+      },
+      {
+        "month": "2026-05",
+        "net_flow": 31470.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 94800.0,
+        "expense_total": 63330.0
+      },
+      {
+        "month": "2026-06",
+        "net_flow": 25980.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 96200.0,
+        "expense_total": 70220.0
+      },
+      {
+        "month": "2026-07",
+        "net_flow": 34490.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 97600.0,
+        "expense_total": 63110.0
+      },
+      {
+        "month": "2026-08",
+        "net_flow": 30000.0,
+        "debit_count": 7,
+        "credit_count": 1,
+        "income_total": 99000.0,
+        "expense_total": 69000.0
+      }
+    ],
+    "currency": "INR",
+    "evidence": {
+      "account_linked": true,
+      "balance_reconciled": true,
+      "extraction_methods": [
+        "native_text"
+      ],
+      "duplicate_ambiguity": false,
+      "source_document_ids": [
+        530,
+        531,
+        532,
+        533,
+        534,
+        535
+      ],
+      "extraction_quality_min": 1.0,
+      "page_coverage_complete": true,
+      "complete_month_coverage": true,
+      "duplicate_rows_detected": 0,
+      "transaction_order_valid": true,
+      "non_cashflow_adjustments_clear": true,
+      "account_reference_token_present": true,
+      "refund_reversal_rows_requiring_review": 0,
+      "internal_transfer_rows_requiring_review": 0
+    },
+    "risk_tier": null,
+    "scoreable": true,
+    "model_name": "Experimental Bank Financial Health Index",
+    "methodology": {
+      "mapping": "score = round(300 + 600 \u00d7 normalized weighted health)",
+      "weights": {
+        "debt_burden": 0.15,
+        "liquidity_buffer": 0.15,
+        "expense_to_income": 0.25,
+        "income_regularity": 0.2,
+        "surplus_month_rate": 0.25
+      },
+      "limitations": [
+        "This is an experimental descriptive index, not a validated credit score or PD.",
+        "No lending tier, bureau equivalence, or lending decision is produced.",
+        "Keyword detected repayments are unverified; absent matches do not mean no debt."
+      ],
+      "missing_data_policy": "Each unavailable indicator is omitted and remaining fixed weights are renormalized; an unobserved debt indicator is unknown, not zero.",
+      "minimum_history_months": 3
+    },
+    "decision_use": "NOT_FOR_CREDIT_DECISION",
+    "reason_codes": [
+      "expense_to_income"
+    ],
+    "evidence_gaps": [],
+    "model_version": "BANK_FINANCIAL_HEALTH_INDEX_V1",
+    "feature_values": {
+      "debt_burden": 0.903665,
+      "liquidity_buffer": 0.943977,
+      "expense_to_income": 0.27897,
+      "income_regularity": 0.973306,
+      "surplus_month_rate": 1.0
+    },
+    "assessment_type": "BANK_CASHFLOW_EXPERIMENTAL",
+    "months_observed": 6,
+    "observed_months": [
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+    ],
+    "recommendations": [
+      "Review recurring spending and preserve a monthly cash-flow surplus where feasible."
+    ],
+    "document_findings": [
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-03.pdf",
+        "page_count": 1,
+        "document_id": 530,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-03-31",
+          "start": "2026-03-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 530
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 530
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 530
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 530
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 530
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 530
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 530
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 530
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": true,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-04.pdf",
+        "page_count": 1,
+        "document_id": 531,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-04-30",
+          "start": "2026-04-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 531
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 531
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 531
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 531
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 531
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 531
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 531
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 531
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": true,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-05.pdf",
+        "page_count": 1,
+        "document_id": 532,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-05-31",
+          "start": "2026-05-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 532
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 532
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 532
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 532
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 532
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 532
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 532
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 532
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": true,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-06.pdf",
+        "page_count": 1,
+        "document_id": 533,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-06-30",
+          "start": "2026-06-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 533
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 533
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 533
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 533
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 533
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 533
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 533
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 533
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": true,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-07.pdf",
+        "page_count": 1,
+        "document_id": 534,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-07-31",
+          "start": "2026-07-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 534
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 534
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 534
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 534
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 534
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 534
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 534
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 534
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": true,
+        "statement_closing_balance_available": true
+      },
+      {
+        "currency": "INR",
+        "findings": [
+          "Explicit debit/credit/balance table; required field coverage measured"
+        ],
+        "file_name": "Bank_Statement_2026-08.pdf",
+        "page_count": 1,
+        "document_id": 535,
+        "document_type": "BANK_STATEMENT",
+        "quality_score": 1.0,
+        "statement_period": {
+          "end": "2026-08-31",
+          "start": "2026-08-01"
+        },
+        "extraction_method": "native_text",
+        "source_provenance": [
+          {
+            "source_line": 14,
+            "source_page": 1,
+            "source_document_id": 535
+          },
+          {
+            "source_line": 15,
+            "source_page": 1,
+            "source_document_id": 535
+          },
+          {
+            "source_line": 16,
+            "source_page": 1,
+            "source_document_id": 535
+          },
+          {
+            "source_line": 18,
+            "source_page": 1,
+            "source_document_id": 535
+          },
+          {
+            "source_line": 19,
+            "source_page": 1,
+            "source_document_id": 535
+          },
+          {
+            "source_line": 21,
+            "source_page": 1,
+            "source_document_id": 535
+          },
+          {
+            "source_line": 23,
+            "source_page": 1,
+            "source_document_id": 535
+          },
+          {
+            "source_line": 25,
+            "source_page": 1,
+            "source_document_id": 535
+          }
+        ],
+        "transaction_count": 8,
+        "extraction_confidence": 1.0,
+        "opening_balance_available": true,
+        "valid_transaction_coverage": 1.0,
+        "account_reference_available": true,
+        "declared_page_sequence_complete": true,
+        "statement_closing_balance_available": true
+      }
+    ],
+    "financial_metrics": {
+      "average_monthly_income": 95500.0,
+      "average_monthly_expenses": 68858.33,
+      "average_observed_closing_balance": 195002.08,
+      "identified_monthly_debt_payments": 9200.0,
+      "minimum_observed_closing_balance": 103450.0,
+      "monthly_income_coefficient_of_variation": 0.027426
+    },
+    "transaction_count": 48,
+    "validation_status": "VALIDATED",
+    "supporting_documents": [
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 12545.45,
+          "net_salary": 92000.0,
+          "gross_salary": 104545.45,
+          "salary_period": "March 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-03.pdf",
+        "page_count": 1,
+        "document_id": 518,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 12736.36,
+          "net_salary": 93400.0,
+          "gross_salary": 106136.36,
+          "salary_period": "April 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-04.pdf",
+        "page_count": 1,
+        "document_id": 519,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 12927.27,
+          "net_salary": 94800.0,
+          "gross_salary": 107727.27,
+          "salary_period": "May 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-05.pdf",
+        "page_count": 1,
+        "document_id": 520,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 13118.18,
+          "net_salary": 96200.0,
+          "gross_salary": 109318.18,
+          "salary_period": "June 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-06.pdf",
+        "page_count": 1,
+        "document_id": 521,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 13309.09,
+          "net_salary": 97600.0,
+          "gross_salary": 110909.09,
+          "salary_period": "July 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-07.pdf",
+        "page_count": 1,
+        "document_id": 522,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+          "deductions": 13500.0,
+          "net_salary": 99000.0,
+          "gross_salary": 112500.0,
+          "salary_period": "August 2026",
+          "employee_reference": "DEMO-EMP-042"
+        },
+        "findings": [],
+        "file_name": "Salary_Slip_2026-08.pdf",
+        "page_count": 1,
+        "document_id": 523,
+        "document_type": "SALARY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "employer": {
+            "line": 5,
+            "page": 1
+          },
+          "deductions": {
+            "line": 24,
+            "page": 1
+          },
+          "net_salary": {
+            "line": 9,
+            "page": 1
+          },
+          "gross_salary": {
+            "line": 22,
+            "page": 1
+          },
+          "salary_period": {
+            "line": 7,
+            "page": 1
+          },
+          "employee_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/03/2026",
+          "amount_due": 1950.0,
+          "payment_date": "09/03/2026",
+          "billing_period": "01/03/2026 - 31/03/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-03.pdf",
+        "page_count": 1,
+        "document_id": 524,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/04/2026",
+          "amount_due": 2060.0,
+          "payment_date": "09/04/2026",
+          "billing_period": "01/04/2026 - 30/04/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-04.pdf",
+        "page_count": 1,
+        "document_id": 525,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/05/2026",
+          "amount_due": 2170.0,
+          "payment_date": "09/05/2026",
+          "billing_period": "01/05/2026 - 31/05/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-05.pdf",
+        "page_count": 1,
+        "document_id": 526,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/06/2026",
+          "amount_due": 2280.0,
+          "payment_date": "09/06/2026",
+          "billing_period": "01/06/2026 - 30/06/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-06.pdf",
+        "page_count": 1,
+        "document_id": 527,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/07/2026",
+          "amount_due": 2390.0,
+          "payment_date": "09/07/2026",
+          "billing_period": "01/07/2026 - 31/07/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-07.pdf",
+        "page_count": 1,
+        "document_id": 528,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      },
+      {
+        "fields": {
+          "due_date": "18/08/2026",
+          "amount_due": 2500.0,
+          "payment_date": "09/08/2026",
+          "billing_period": "01/08/2026 - 31/08/2026",
+          "payment_status": "PAID - recorded in demo bank ledger",
+          "service_reference": "TEST-UTILITY-042"
+        },
+        "findings": [],
+        "file_name": "Utility_Bill_2026-08.pdf",
+        "page_count": 1,
+        "document_id": 529,
+        "document_type": "UTILITY",
+        "assessment_role": "SUPPORTING_ONLY_NOT_MODEL_INPUT",
+        "field_provenance": {
+          "due_date": {
+            "line": 9,
+            "page": 1
+          },
+          "amount_due": {
+            "line": 21,
+            "page": 1
+          },
+          "payment_date": {
+            "line": 10,
+            "page": 1
+          },
+          "billing_period": {
+            "line": 7,
+            "page": 1
+          },
+          "payment_status": {
+            "line": 24,
+            "page": 1
+          },
+          "service_reference": {
+            "line": 6,
+            "page": 1
+          }
+        },
+        "extraction_method": "native_pdf_text"
+      }
+    ],
+    "feature_contributions": [
+      {
+        "value": 1.0,
+        "weight": 0.25,
+        "feature": "surplus_month_rate",
+        "direction": "FAVORABLE",
+        "explanation": "Higher is favorable; this component raises the index.",
+        "score_contribution": 150.0
+      },
+      {
+        "value": 0.27897,
+        "weight": 0.25,
+        "feature": "expense_to_income",
+        "direction": "ADVERSE",
+        "explanation": "Lower is adverse; this component reduces the index.",
+        "score_contribution": 41.85
+      },
+      {
+        "value": 0.973306,
+        "weight": 0.2,
+        "feature": "income_regularity",
+        "direction": "FAVORABLE",
+        "explanation": "Higher is favorable; this component raises the index.",
+        "score_contribution": 116.8
+      },
+      {
+        "value": 0.943977,
+        "weight": 0.15,
+        "feature": "liquidity_buffer",
+        "direction": "FAVORABLE",
+        "explanation": "Higher is favorable; this component raises the index.",
+        "score_contribution": 84.96
+      },
+      {
+        "value": 0.903665,
+        "weight": 0.15,
+        "feature": "debt_burden",
+        "direction": "FAVORABLE",
+        "explanation": "Higher is favorable; this component raises the index.",
+        "score_contribution": 81.39
+      }
+    ],
+    "assessment_id": "761f5f1e-6460-484b-9e85-57da05430cb4",
+    "application_id": 111,
+    "assessment_timestamp": "2026-10-10T06:40:30.289659+00:00",
+    "idempotent_replay": false,
+    "request_id": "bbd5c845-29eb-4f03-8c33-36ec3f78367e"
+  },
+  "database_verification": "PostgreSQL rollback-only integration; IDs not retained"
+}

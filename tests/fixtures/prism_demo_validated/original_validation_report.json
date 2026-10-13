@@ -1,0 +1,352 @@
+{
+  "documents": [
+    {
+      "filename": "Bank_Statement_2026-03.pdf",
+      "category": "Bank_Statement",
+      "month": "2026-03",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "2bb684a7f75be4609c1e52008c49f4f51a04abe1afdf8cb6b4b2e1d95b216f43",
+      "account_reference": "TEST-ACCT-0042",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Bank_Statement_2026-04.pdf",
+      "category": "Bank_Statement",
+      "month": "2026-04",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "547a495fd631c82056160f413bc967b319f34efffeb05ae44900f5476267439c",
+      "account_reference": "TEST-ACCT-0042",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Bank_Statement_2026-05.pdf",
+      "category": "Bank_Statement",
+      "month": "2026-05",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "9b772e6a9a5b1ef3bb26f3d023edf8fd1da8071e3c464e70c9ee7895b480b15b",
+      "account_reference": "TEST-ACCT-0042",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Bank_Statement_2026-06.pdf",
+      "category": "Bank_Statement",
+      "month": "2026-06",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "4ea90025d405ed141dd12a3b932274ad8aefc4f081ce3c8ea7928e634b0cabef",
+      "account_reference": "TEST-ACCT-0042",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Bank_Statement_2026-07.pdf",
+      "category": "Bank_Statement",
+      "month": "2026-07",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "95469d9f13b3d171f18bd814221902b87ce55f70589a3f380b6105b1f8c1dd26",
+      "account_reference": "TEST-ACCT-0042",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Bank_Statement_2026-08.pdf",
+      "category": "Bank_Statement",
+      "month": "2026-08",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "641b7b49641e208b776a91d2edf54f57b00a0a9b76992273827fb7ea90d28705",
+      "account_reference": "TEST-ACCT-0042",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Credit_Card_2026-03.pdf",
+      "category": "Credit_Card",
+      "month": "2026-03",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "4a99ca44164d19c043e49180d92e405aedaac7ec02425efc1a92d5dac4846dbe",
+      "account_reference": "TEST-CARD-4821",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING",
+        "DUE_DATE_BEFORE_STATEMENT_DATE",
+        "PAYMENT_PRECEDES_STATEMENT_ISSUE_DATE",
+        "REPAYMENT_OBSERVATION_DATE_UNDECLARED",
+        "STATEMENT_PAYMENT_REFERENCE_UNDECLARED"
+      ],
+      "original_statement_date": "2026-03-31",
+      "original_due_date": "2026-03-27",
+      "ledger_payment_date": "2026-03-17"
+    },
+    {
+      "filename": "Credit_Card_2026-04.pdf",
+      "category": "Credit_Card",
+      "month": "2026-04",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "d653570549504842772ab16c84d179b6de8eb813ed0586ab70d7cc6b89cb86ef",
+      "account_reference": "TEST-CARD-4821",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING",
+        "DUE_DATE_BEFORE_STATEMENT_DATE",
+        "PAYMENT_PRECEDES_STATEMENT_ISSUE_DATE",
+        "REPAYMENT_OBSERVATION_DATE_UNDECLARED",
+        "STATEMENT_PAYMENT_REFERENCE_UNDECLARED"
+      ],
+      "original_statement_date": "2026-04-30",
+      "original_due_date": "2026-04-27",
+      "ledger_payment_date": "2026-04-17"
+    },
+    {
+      "filename": "Credit_Card_2026-05.pdf",
+      "category": "Credit_Card",
+      "month": "2026-05",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "e6078d4041e74d507d0a32fbe78b49dc9278cecec7b591236cf2f6f4fb761eed",
+      "account_reference": "TEST-CARD-4821",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING",
+        "DUE_DATE_BEFORE_STATEMENT_DATE",
+        "PAYMENT_PRECEDES_STATEMENT_ISSUE_DATE",
+        "REPAYMENT_OBSERVATION_DATE_UNDECLARED",
+        "STATEMENT_PAYMENT_REFERENCE_UNDECLARED"
+      ],
+      "original_statement_date": "2026-05-31",
+      "original_due_date": "2026-05-27",
+      "ledger_payment_date": "2026-05-17"
+    },
+    {
+      "filename": "Credit_Card_2026-06.pdf",
+      "category": "Credit_Card",
+      "month": "2026-06",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "7dbdc3d2ab8387f824c761ec3919c89fa60a6e862d06f8108b93add78af4edbb",
+      "account_reference": "TEST-CARD-4821",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING",
+        "DUE_DATE_BEFORE_STATEMENT_DATE",
+        "PAYMENT_PRECEDES_STATEMENT_ISSUE_DATE",
+        "REPAYMENT_OBSERVATION_DATE_UNDECLARED",
+        "STATEMENT_PAYMENT_REFERENCE_UNDECLARED"
+      ],
+      "original_statement_date": "2026-06-30",
+      "original_due_date": "2026-06-27",
+      "ledger_payment_date": "2026-06-17"
+    },
+    {
+      "filename": "Credit_Card_2026-07.pdf",
+      "category": "Credit_Card",
+      "month": "2026-07",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "e8e35ff4217d84cfd9f19a439765cc91b2ac09ef4023d53a5cb87fccc1092c9e",
+      "account_reference": "TEST-CARD-4821",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING",
+        "DUE_DATE_BEFORE_STATEMENT_DATE",
+        "PAYMENT_PRECEDES_STATEMENT_ISSUE_DATE",
+        "REPAYMENT_OBSERVATION_DATE_UNDECLARED",
+        "STATEMENT_PAYMENT_REFERENCE_UNDECLARED"
+      ],
+      "original_statement_date": "2026-07-31",
+      "original_due_date": "2026-07-27",
+      "ledger_payment_date": "2026-07-17"
+    },
+    {
+      "filename": "Credit_Card_2026-08.pdf",
+      "category": "Credit_Card",
+      "month": "2026-08",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "d71275830056e9dff9c2a5daf1909410fc8e4f6c35c57e384b29fdccfe42db36",
+      "account_reference": "TEST-CARD-4821",
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING",
+        "DUE_DATE_BEFORE_STATEMENT_DATE",
+        "PAYMENT_PRECEDES_STATEMENT_ISSUE_DATE",
+        "REPAYMENT_OBSERVATION_DATE_UNDECLARED",
+        "STATEMENT_PAYMENT_REFERENCE_UNDECLARED"
+      ],
+      "original_statement_date": "2026-08-31",
+      "original_due_date": "2026-08-27",
+      "ledger_payment_date": "2026-08-17"
+    },
+    {
+      "filename": "Salary_Slip_2026-03.pdf",
+      "category": "Salary_Slip",
+      "month": "2026-03",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "2454e580858937f5060036e2953df3af805607291920bcdd2334a5243412b3b6",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Salary_Slip_2026-04.pdf",
+      "category": "Salary_Slip",
+      "month": "2026-04",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "ef19a84e372d79018a12127fdb4b9cdf17f95198606bc2cbe77e3fbe806f26fd",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Salary_Slip_2026-05.pdf",
+      "category": "Salary_Slip",
+      "month": "2026-05",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "3abd7e385b800caabccbf74e50d5b1ba0026c0244b889313b201a1aa48c9adb4",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Salary_Slip_2026-06.pdf",
+      "category": "Salary_Slip",
+      "month": "2026-06",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "39840b87b3aad994204b6d484645252bef68c238fcdfcdea66e061415be08b3d",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Salary_Slip_2026-07.pdf",
+      "category": "Salary_Slip",
+      "month": "2026-07",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "50a558b0715dbc0cde47713a4a694506153c943eeb4196190c7f476c9bd49186",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Salary_Slip_2026-08.pdf",
+      "category": "Salary_Slip",
+      "month": "2026-08",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "ce6d9fdc8c1533dd996beccdef36fefe700a41801a5f553c076afd5033b8c39f",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Utility_Bill_2026-03.pdf",
+      "category": "Utility_Bill",
+      "month": "2026-03",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "cb67894287156629a93e5086e0fae60a2d2403533a45604c56ea588f725acad5",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Utility_Bill_2026-04.pdf",
+      "category": "Utility_Bill",
+      "month": "2026-04",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "e099162e092ee133fd3245c3d77a9f13c468e1be32bf1490049961fc372760de",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Utility_Bill_2026-05.pdf",
+      "category": "Utility_Bill",
+      "month": "2026-05",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "e03f20b82efeea9a124b7e7c4710b3d8be5910ed20e94b27bea9a33d09d815a7",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Utility_Bill_2026-06.pdf",
+      "category": "Utility_Bill",
+      "month": "2026-06",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "fa01004b0045c76e4ea9ad564363a69a73c38b1376ac192ce8fb0c1e0e7364b2",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Utility_Bill_2026-07.pdf",
+      "category": "Utility_Bill",
+      "month": "2026-07",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "6898ca7021b3de893e9a2f7d987a9d718842e97ced1ac8ff06df72e83a9e34da",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    },
+    {
+      "filename": "Utility_Bill_2026-08.pdf",
+      "category": "Utility_Bill",
+      "month": "2026-08",
+      "pages": 1,
+      "native_text": true,
+      "original_sha256": "17778252a0eae5f9f9c4617d3f7415a3772cc65d1f803618ebf91e9c313bb190",
+      "account_reference": null,
+      "issues": [
+        "DECLARED_PAGE_SEQUENCE_MISSING"
+      ]
+    }
+  ],
+  "bank_ledger_expected_rows": 48,
+  "credit_features": {
+    "recent_delinquency_level": 1,
+    "months_with_delinquency": 4,
+    "payment_to_statement_ratio": 0.37359550561797755,
+    "mean_statement_balance": 29666.666666666668
+  },
+  "assumptions": [
+    "All 24 files are fictional synthetic repairs; originals are unchanged negative fixtures.",
+    "All page declarations are added to the existing one-page synthetic layouts; no pages/transactions are inferred for genuine documents.",
+    "The 48-row bank ledger, dates, debit/credit amounts, narration and opening/closing balances are unchanged.",
+    "Cards issue on day 1 of their explicit statement month. Purchase dates move to the preceding calendar billing period; purchase and balance/payment amounts are unchanged.",
+    "Card payment date is day 17 from the preserved bank ledger. Due dates are day 20 for explicit CURRENT labels and day 15 for explicit DELINQUENT labels; these are new fictional schedule assumptions.",
+    "Severity codes 0,0,1,1,2,1 are the original constructed categorical labels, not inferred from payment dates or claimed issuer-certified DPD buckets. July level 2 is a supplied synthetic history assumption.",
+    "Monthly repayment status is explicitly observed at month end. Every observation and settled payment precedes the exclusive historical cutoff 2026-09.",
+    "Each payment amount is explicitly applied to its matching TEST-CARD-4821-YYYY-MM statement reference; the matching bank debit remains unchanged.",
+    "Frozen features retain their exact existing definitions and units; no supporting salary/utility values enter the frozen model."
+  ]
+}

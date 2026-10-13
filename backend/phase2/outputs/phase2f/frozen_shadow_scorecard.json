@@ -1,0 +1,401 @@
+{
+  "artifact_provenance": {
+    "note": "PDO scaling is added only as a Phase 2F shadow presentation layer; Phase 2B.6 itself emitted raw LR PD.",
+    "retrained": false,
+    "source_recovered_artifact": "backend\\phase2\\outputs\\phase2b6_recovery\\recovered_final_scorecard.json",
+    "source_sha256": "A8F64F289D76DBA2B766F85739CEA9B59AC0D8285C7F0531B387ADBBA1EEF6EC"
+  },
+  "artifact_type": "EXPERIMENTAL_RECOVERED_PHASE_2B6_SCORECARD",
+  "calibration": {
+    "applied_to_pd": false,
+    "calibrator_artifact": null,
+    "test_diagnostic_only": true
+  },
+  "dataset_sha256": "88BD2BD25327B52AF2148B7437740ACA427AAF8F0E52AD782EE8BBAE44B509BD",
+  "feature_order": [
+    "recent_delinquency_level",
+    "months_with_delinquency",
+    "payment_to_statement_ratio",
+    "mean_statement_balance"
+  ],
+  "features": {
+    "mean_statement_balance": {
+      "bad_total": 5309,
+      "binning_direction": "decreasing",
+      "bins": [
+        {
+          "bin_id": 0,
+          "interval_closure": "[-inf, upper]",
+          "iv_contribution": 0.007411363888728245,
+          "lower_bound": "-Infinity",
+          "missing_bin": false,
+          "observed_training_default_rate": 0.2552083333333333,
+          "training_count": 4800,
+          "training_default_count": 1225,
+          "training_nondefault_count": 3575,
+          "upper_bound": 2857.2000000000003,
+          "woe": -0.18768027859219305
+        },
+        {
+          "bin_id": 1,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.00028193046021880974,
+          "lower_bound": 2857.2000000000003,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.2175,
+          "training_count": 14400,
+          "training_default_count": 3132,
+          "training_nondefault_count": 11268,
+          "upper_bound": 72616.93333333335,
+          "woe": 0.02174343357602067
+        },
+        {
+          "bin_id": 2,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.0036578564868560625,
+          "lower_bound": 72616.93333333335,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.19833333333333333,
+          "training_count": 4800,
+          "training_default_count": 952,
+          "training_nondefault_count": 3848,
+          "upper_bound": "Infinity",
+          "woe": 0.13791225286103986
+        }
+      ],
+      "duplicates": "drop",
+      "edges": [
+        "-Infinity",
+        2857.2000000000003,
+        72616.93333333335,
+        "Infinity"
+      ],
+      "good_total": 18691,
+      "include_lowest": true,
+      "jeffreys_smoothing": 0.5,
+      "missing_semantics": "separate learned bin id -1 when present and support-qualified; otherwise missing input is unmappable and fails closed",
+      "out_of_range_semantics": "outer edges are -Infinity/+Infinity; numeric values below/above observed fit range map to first/last learned interval; no clipping",
+      "right_closed": true,
+      "woe_convention": "ln(P(bin|nondefault)/P(bin|default))",
+      "woe_mapping": {
+        "0": -0.18768027859219305,
+        "1": 0.02174343357602067,
+        "2": 0.13791225286103986
+      }
+    },
+    "months_with_delinquency": {
+      "bad_total": 5309,
+      "binning_direction": "increasing",
+      "bins": [
+        {
+          "bin_id": 0,
+          "interval_closure": "[-inf, upper]",
+          "iv_contribution": 0.15590036292293077,
+          "lower_bound": "-Infinity",
+          "missing_bin": false,
+          "observed_training_default_rate": 0.1507602219026094,
+          "training_count": 19468,
+          "training_default_count": 2935,
+          "training_nondefault_count": 16533,
+          "upper_bound": 1.0,
+          "woe": 0.47000703955068834
+        },
+        {
+          "bin_id": 1,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.4490782480252702,
+          "lower_bound": 1.0,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.5238305383936452,
+          "training_count": 4532,
+          "training_default_count": 2374,
+          "training_nondefault_count": 2158,
+          "upper_bound": "Infinity",
+          "woe": -1.3538771425779765
+        }
+      ],
+      "duplicates": "drop",
+      "edges": [
+        "-Infinity",
+        1.0,
+        "Infinity"
+      ],
+      "good_total": 18691,
+      "include_lowest": true,
+      "jeffreys_smoothing": 0.5,
+      "missing_semantics": "separate learned bin id -1 when present and support-qualified; otherwise missing input is unmappable and fails closed",
+      "out_of_range_semantics": "outer edges are -Infinity/+Infinity; numeric values below/above observed fit range map to first/last learned interval; no clipping",
+      "right_closed": true,
+      "woe_convention": "ln(P(bin|nondefault)/P(bin|default))",
+      "woe_mapping": {
+        "0": 0.47000703955068834,
+        "1": -1.3538771425779765
+      }
+    },
+    "payment_to_statement_ratio": {
+      "bad_total": 5309,
+      "binning_direction": "decreasing",
+      "bins": [
+        {
+          "bin_id": -1,
+          "interval_closure": "missing-category",
+          "iv_contribution": 0.018979578567201515,
+          "lower_bound": null,
+          "missing_bin": true,
+          "observed_training_default_rate": 0.36398467432950193,
+          "training_count": 783,
+          "training_default_count": 285,
+          "training_nondefault_count": 498,
+          "upper_bound": null,
+          "woe": -0.700872644280431
+        },
+        {
+          "bin_id": 0,
+          "interval_closure": "[-inf, upper]",
+          "iv_contribution": 0.02527815926687921,
+          "lower_bound": "-Infinity",
+          "missing_bin": false,
+          "observed_training_default_rate": 0.28639104220499567,
+          "training_count": 4644,
+          "training_default_count": 1330,
+          "training_nondefault_count": 3314,
+          "upper_bound": 0.03970137750280616,
+          "woe": -0.3454822333225566
+        },
+        {
+          "bin_id": 1,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.007884268648382224,
+          "lower_bound": 0.03970137750280616,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.2569459401249192,
+          "training_count": 4643,
+          "training_default_count": 1193,
+          "training_nondefault_count": 3450,
+          "upper_bound": 0.06032254575963966,
+          "woe": -0.1966052233044872
+        },
+        {
+          "bin_id": 2,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.0005994052567443019,
+          "lower_bound": 0.06032254575963966,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.23088520353219902,
+          "training_count": 4643,
+          "training_default_count": 1072,
+          "training_nondefault_count": 3571,
+          "upper_bound": 0.2040156495459412,
+          "woe": -0.05524090079340384
+        },
+        {
+          "bin_id": 3,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.028677649778309916,
+          "lower_bound": 0.2040156495459412,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.1587335774283868,
+          "training_count": 4643,
+          "training_default_count": 737,
+          "training_nondefault_count": 3906,
+          "upper_bound": 0.7971475131053173,
+          "woe": 0.40889681863656524
+        },
+        {
+          "bin_id": 4,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.039200494175783085,
+          "lower_bound": 0.7971475131053173,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.14900947459086994,
+          "training_count": 4644,
+          "training_default_count": 692,
+          "training_nondefault_count": 3952,
+          "upper_bound": "Infinity",
+          "woe": 0.4835611264358745
+        }
+      ],
+      "duplicates": "drop",
+      "edges": [
+        "-Infinity",
+        0.03970137750280616,
+        0.06032254575963966,
+        0.2040156495459412,
+        0.7971475131053173,
+        "Infinity"
+      ],
+      "good_total": 18691,
+      "include_lowest": true,
+      "jeffreys_smoothing": 0.5,
+      "missing_semantics": "separate learned bin id -1 when present and support-qualified; otherwise missing input is unmappable and fails closed",
+      "out_of_range_semantics": "outer edges are -Infinity/+Infinity; numeric values below/above observed fit range map to first/last learned interval; no clipping",
+      "right_closed": true,
+      "woe_convention": "ln(P(bin|nondefault)/P(bin|default))",
+      "woe_mapping": {
+        "-1": -0.700872644280431,
+        "0": -0.3454822333225566,
+        "1": -0.1966052233044872,
+        "2": -0.05524090079340384,
+        "3": 0.40889681863656524,
+        "4": 0.4835611264358745
+      }
+    },
+    "recent_delinquency_level": {
+      "bad_total": 5309,
+      "binning_direction": "increasing",
+      "bins": [
+        {
+          "bin_id": 0,
+          "interval_closure": "[-inf, upper]",
+          "iv_contribution": 0.10139075919356688,
+          "lower_bound": "-Infinity",
+          "missing_bin": false,
+          "observed_training_default_rate": 0.1661940402584724,
+          "training_count": 21511,
+          "training_default_count": 3575,
+          "training_nondefault_count": 17936,
+          "upper_bound": 1.0,
+          "woe": 0.35422892674623363
+        },
+        {
+          "bin_id": 1,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.5981046710758414,
+          "lower_bound": 1.0,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.6966653274407393,
+          "training_count": 2489,
+          "training_default_count": 1734,
+          "training_nondefault_count": 755,
+          "upper_bound": "Infinity",
+          "woe": -2.0895984742813423
+        }
+      ],
+      "duplicates": "drop",
+      "edges": [
+        "-Infinity",
+        1.0,
+        "Infinity"
+      ],
+      "good_total": 18691,
+      "include_lowest": true,
+      "jeffreys_smoothing": 0.5,
+      "missing_semantics": "separate learned bin id -1 when present and support-qualified; otherwise missing input is unmappable and fails closed",
+      "out_of_range_semantics": "outer edges are -Infinity/+Infinity; numeric values below/above observed fit range map to first/last learned interval; no clipping",
+      "right_closed": true,
+      "woe_convention": "ln(P(bin|nondefault)/P(bin|default))",
+      "woe_mapping": {
+        "0": 0.35422892674623363,
+        "1": -2.0895984742813423
+      }
+    }
+  },
+  "logistic_regression": {
+    "class_weight": null,
+    "coefficients": {
+      "mean_statement_balance": -2.995212789975563,
+      "months_with_delinquency": -0.6450690745928691,
+      "payment_to_statement_ratio": -0.6990225651079325,
+      "recent_delinquency_level": -0.718481742041798
+    },
+    "convergence": {
+      "diagnostic_result_captured_by_passthrough": {
+        "function_evaluations": 18,
+        "gradient_norm": 1.0215343977981904e-05,
+        "iterations": 14,
+        "message": "Optimization terminated successfully.",
+        "status": 0,
+        "success": true
+      },
+      "fit_lr_returned_optimizer_result": false,
+      "optimizer_call_count_including_historical_test_calibration_diagnostic": 2,
+      "scorecard_final_fit_calls": 1
+    },
+    "feature_order": [
+      "recent_delinquency_level",
+      "months_with_delinquency",
+      "payment_to_statement_ratio",
+      "mean_statement_balance"
+    ],
+    "initial_parameters": "all zeros",
+    "intercept": -1.248440883572674,
+    "objective": "sum(logaddexp(0, X beta) - y*(X beta)) + 0.5*l2*sum(non-intercept coefficients^2)",
+    "random_state": null,
+    "regularization": {
+      "intercept_penalized": false,
+      "l2": 1.0
+    },
+    "solver": "scipy.optimize.minimize(method='BFGS')"
+  },
+  "original_artifact_was_persisted": false,
+  "outer_split_seed": 20261007,
+  "primary_config": {
+    "correlation_cap": 0.9,
+    "iv_floor": 0.01,
+    "l2": 1.0,
+    "max_bins": 5,
+    "min_bad": 25,
+    "min_bin_share": 0.02,
+    "min_good": 25
+  },
+  "provenance": {
+    "base_runner": "backend/phase2/real_evidence/run_phase2b5r.py",
+    "base_runner_sha256": "C5C8D596E79ED1B4182F65BD2DCE3986135BA45940303E1858C7FC89DD68D9A3",
+    "coefficients_origin": "single original-procedure final fit on development rows only",
+    "intercept_origin": "single original-procedure final fit on development rows only",
+    "per_feature_bins": {
+      "mean_statement_balance": {
+        "binning_origin": "original final development-set fit via run_phase2b6.learn_binner",
+        "source": "backend/phase2/real_evidence/run_phase2b6.py",
+        "source_sha256": "27910F97A417F2833D401CF133DF65585F9495ACE8AD4B466A85776AE1C1CF92",
+        "training_rows": 24000,
+        "woe_origin": "original final development-set tabulation and Jeffreys-smoothed map"
+      },
+      "months_with_delinquency": {
+        "binning_origin": "original final development-set fit via run_phase2b6.learn_binner",
+        "source": "backend/phase2/real_evidence/run_phase2b6.py",
+        "source_sha256": "27910F97A417F2833D401CF133DF65585F9495ACE8AD4B466A85776AE1C1CF92",
+        "training_rows": 24000,
+        "woe_origin": "original final development-set tabulation and Jeffreys-smoothed map"
+      },
+      "payment_to_statement_ratio": {
+        "binning_origin": "original final development-set fit via run_phase2b6.learn_binner",
+        "source": "backend/phase2/real_evidence/run_phase2b6.py",
+        "source_sha256": "27910F97A417F2833D401CF133DF65585F9495ACE8AD4B466A85776AE1C1CF92",
+        "training_rows": 24000,
+        "woe_origin": "original final development-set tabulation and Jeffreys-smoothed map"
+      },
+      "recent_delinquency_level": {
+        "binning_origin": "original final development-set fit via run_phase2b6.learn_binner",
+        "source": "backend/phase2/real_evidence/run_phase2b6.py",
+        "source_sha256": "27910F97A417F2833D401CF133DF65585F9495ACE8AD4B466A85776AE1C1CF92",
+        "training_rows": 24000,
+        "woe_origin": "original final development-set tabulation and Jeffreys-smoothed map"
+      }
+    },
+    "runner": "backend/phase2/real_evidence/run_phase2b6.py",
+    "runner_sha256": "27910F97A417F2833D401CF133DF65585F9495ACE8AD4B466A85776AE1C1CF92",
+    "training_default_count": 5309,
+    "training_good_count": 18691
+  },
+  "reason_code_method": {
+    "name": "positive logistic contribution ranking",
+    "not_shap": true,
+    "rule": "coefficient * WoE > 0 increases default logit; rank descending contribution, stable feature order for ties"
+  },
+  "recovery_status": "DETERMINISTIC_REPRODUCTION_PENDING_METRIC_CHECK",
+  "score_scaling": {
+    "base_good_bad_odds": 20,
+    "base_score": 600,
+    "convention": "score = offset + factor * ln((1-PD)/PD); higher score means lower PD",
+    "factor": 72.13475204444818,
+    "offset": 383.9035952556319,
+    "pdo": 50,
+    "phase2f_shadow_only": true,
+    "reason": "Phase 2F prompt's display scale; not a Phase 2B.6 fitted parameter or production score",
+    "used_in_original_phase2b6": false
+  },
+  "source_feature_derivation": "run_phase2b5r.derive; no edits",
+  "source_phase": "Phase 2B.6 final development-set fit",
+  "source_status": "PHASE_2B6_INCONCLUSIVE"
+}

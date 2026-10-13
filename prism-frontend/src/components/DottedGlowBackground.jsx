@@ -114,12 +114,9 @@ export const DottedGlowBackground = ({
     };
     regenDots();
 
-    let last = performance.now();
     const draw = (now) => {
       if (stopped) return;
       if (!isVisible) { raf = requestAnimationFrame(draw); return; }
-      const dt = (now - last) / 1000;
-      last = now;
       const { width, height } = container.getBoundingClientRect();
       ctx.clearRect(0, 0, el.width, el.height);
       ctx.globalAlpha = opacity;

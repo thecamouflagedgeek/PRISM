@@ -42,19 +42,21 @@ class UtilityFeatureEngineer:
         """
 
         if self.df is None or len(self.df) == 0:
-            return 0.0
+            return None
 
         # Case 1: explicit flag exists
         if "on_time_payment" in self.df.columns:
-            return float(self.df["on_time_payment"].mean())
+            values = pd.to_numeric(self.df["on_time_payment"], errors="coerce").dropna()
+            return float(values.mean()) if not values.empty else None
 
         # Case 2: derived heuristic
         if "delay_days" in self.df.columns:
             # normalize delay (higher delay = worse)
-            return float(np.clip(1 - (self.df["delay_days"].mean() / 30), 0, 1))
+            delays = pd.to_numeric(self.df["delay_days"], errors="coerce").dropna()
+            return float(np.clip(1 - (delays.mean() / 30), 0, 1)) if not delays.empty else None
 
         # Case 3: fallback (no data)
-        return 0.5  # neutral risk
+        return None
 
     # ─────────────────────────────────────────────
     # FEATURE 2: UTILITY STABILITY SCORE
@@ -68,26 +70,30 @@ class UtilityFeatureEngineer:
         """
 
         if self.df is None or len(self.df) == 0:
-            return 0.0
+            return None
 
         score_components = []
 
         # variability in bill amount
         if "bill_amount" in self.df.columns:
-            cv = self._coefficient_of_variation(self.df["bill_amount"])
-            score_components.append(1 / (1 + cv))  # stable spending = better
+            amounts = pd.to_numeric(self.df["bill_amount"], errors="coerce").dropna()
+            if len(amounts) >= 2 and amounts.mean() != 0:
+                cv = self._coefficient_of_variation(amounts)
+                if np.isfinite(cv):
+                    score_components.append(1 / (1 + cv))  # stable spending = better
 
         # missing payment frequency
         if "missed_payments" in self.df.columns:
-            miss_rate = self.df["missed_payments"].mean()
-            score_components.append(1 - miss_rate)
+            misses = pd.to_numeric(self.df["missed_payments"], errors="coerce").dropna()
+            if not misses.empty:
+                score_components.append(1 - misses.mean())
 
         # consistency over time (if timestamp exists)
         if "payment_date" in self.df.columns:
             score_components.append(self._time_consistency_score())
 
         if not score_components:
-            return 0.5  # neutral default
+            return None
 
         return float(np.clip(np.mean(score_components), 0, 1))
 
@@ -98,7 +104,7 @@ class UtilityFeatureEngineer:
         mean = series.mean()
         std = series.std()
         if mean == 0:
-            return 0.0
+            return None
         return std / mean
 
     def _time_consistency_score(self) -> float:
@@ -112,10 +118,10 @@ class UtilityFeatureEngineer:
             gaps = dates.sort_values().diff().dt.days.dropna()
 
             if len(gaps) == 0:
-                return 0.5
+                return None
 
             cv = self._coefficient_of_variation(gaps)
             return 1 / (1 + cv)
 
         except Exception:
-            return 0.5
+            return None

@@ -1,0 +1,61 @@
+{
+  "assess_off": {
+    "body": {
+      "detail": [
+        {
+          "input": null,
+          "loc": [
+            "header",
+            "session-id"
+          ],
+          "msg": "Field required",
+          "type": "missing"
+        },
+        {
+          "input": null,
+          "loc": [
+            "body",
+            "bank_file"
+          ],
+          "msg": "Field required",
+          "type": "missing"
+        }
+      ]
+    },
+    "status_code": 422
+  },
+  "assess_on": {
+    "body": {
+      "detail": [
+        {
+          "input": null,
+          "loc": [
+            "header",
+            "session-id"
+          ],
+          "msg": "Field required",
+          "type": "missing"
+        },
+        {
+          "input": null,
+          "loc": [
+            "body",
+            "bank_file"
+          ],
+          "msg": "Field required",
+          "type": "missing"
+        }
+      ]
+    },
+    "status_code": 422
+  },
+  "default": "false",
+  "off": {
+    "error_code": "EXPERIMENTAL_FEATURE_DISABLED",
+    "status_code": 404
+  },
+  "on": {
+    "status_code": 200
+  },
+  "production_assess_identical": true
+}

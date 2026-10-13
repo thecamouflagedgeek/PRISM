@@ -1,0 +1,20 @@
+{
+  "frozen_artifact_sha256_before": "DE1C1106759ED00F53F208C5185D63B3D8D22DB477D3A3EFD36132B5830E4CA6",
+  "frozen_artifact_sha256_after": "DE1C1106759ED00F53F208C5185D63B3D8D22DB477D3A3EFD36132B5830E4CA6",
+  "statistics": {
+    "n": 6000,
+    "minimum": 244.69189204168197,
+    "maximum": 568.368861823088,
+    "mean": 487.659069626345,
+    "median": 508.97296561895945,
+    "p05": 304.57483214861884,
+    "p25": 470.85323111704224,
+    "p75": 539.5046912326886,
+    "p95": 543.2695508053497,
+    "below_300_percent": 4.433333333333334,
+    "within_300_900_percent": 95.56666666666666,
+    "above_900_percent": 0.0,
+    "independent_pd_max_abs_error_vs_saved_frozen_predictions": 0.0,
+    "source": "All 6,000 rows in the deterministic held-out 20% split from the original 30,000-row UCI dataset"
+  }
+}

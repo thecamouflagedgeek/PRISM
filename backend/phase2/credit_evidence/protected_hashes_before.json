@@ -1,0 +1,172 @@
+[
+  {
+    "scope": "production_artifact",
+    "relative_path": "backend\\scoring\\artifacts\\binning.pkl",
+    "sha256": "C0752F03082FC5E80FD08ADAFB3AFA3AD93526DF53898BE32EAC207454198C76"
+  },
+  {
+    "scope": "production_artifact",
+    "relative_path": "backend\\scoring\\artifacts\\lr_model.pkl",
+    "sha256": "9670A955E46132180D6C2664C4298DD5126AB5C1214BC9C16F8EBCA5D1FD4015"
+  },
+  {
+    "scope": "production_artifact",
+    "relative_path": "backend\\scoring\\artifacts\\manifest.json",
+    "sha256": "B7ACF498DC2523CB11FFFEFE2B12E5EE58E55BCAB54C231B39768DD671E11148"
+  },
+  {
+    "scope": "production_artifact",
+    "relative_path": "backend\\scoring\\artifacts\\pd_calibrator.pkl",
+    "sha256": "B80979E944D7F7835903BCAC41148734838360C86CE46A926F2280A2AB038299"
+  },
+  {
+    "scope": "production_artifact",
+    "relative_path": "backend\\scoring\\artifacts\\pd_output.pkl",
+    "sha256": "15D39EFC3FC4B36C1165EC11DD34C81BA9BEBECCCDC9D990C65B678FC31732DA"
+  },
+  {
+    "scope": "production_artifact",
+    "relative_path": "backend\\scoring\\artifacts\\scored_output.pkl",
+    "sha256": "7B72B9760EF06A66EF5C40FA4D18E5E2BF865C2A867BE51B0AF2D4B194A738EB"
+  },
+  {
+    "scope": "production_artifact",
+    "relative_path": "backend\\scoring\\artifacts\\shap_output.pkl",
+    "sha256": "9683C5755890D5010CF5247D365DABD5655A939033EE7CB51A05C5F90E66CDC3"
+  },
+  {
+    "scope": "production_artifact",
+    "relative_path": "backend\\scoring\\artifacts\\woe_datasets.pkl",
+    "sha256": "978646208F925A2CF77466586284696E510CE66335B229CAB0C1187FED85CCAC"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\acceptance_gates.json",
+    "sha256": "6A0CAFA11A5487C5D4A05DC13736DB47A36C5B712382B55B005DD7D0056DB31D"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\bin_stability_summary.csv",
+    "sha256": "55C1903EAB8A870C9F8ED08B1EB6FD5CCA96D9C14B0A88854F932C2033D3B234"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\bin_stability.csv",
+    "sha256": "AA725716227C72EE4AD1A40A9523A62125F8726DFEEADA77B143B129DC3BDDFA"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\coefficient_stability.csv",
+    "sha256": "4D1165464D8BFDF1EEE1A4E01DCEC8BB28F5AB9F71A1BA373A5874442EA0E17D"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\constrained_binning_summary.csv",
+    "sha256": "455B97A12519DD7BF0B0FC1604CC50626F975FCD046874A92B42047081456C95"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\feature_stability.csv",
+    "sha256": "7F4A228DABC522E92FE8410544BEEBF71F31DEA0E4D6693D92DD92DD4B3A022C"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\phase2b6_report.md",
+    "sha256": "105EDE772A83CA0304E1B4F595F73AA2F53D9403F8095C4D7A6A030D163C2E98"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\phase2b6_summary.json",
+    "sha256": "A54458C58474F4493CE2168A08BC4A2C95E850EA8BEE4BA6F76308C189C8D525"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\robustness_sensitivity_summary.csv",
+    "sha256": "D10E36215CC22BC19533FA35E4F34D9D278AE5E2C9108BCD593EDAF38D000CDF"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\robustness_sensitivity.csv",
+    "sha256": "4C9EE80560A91586603D88E2951B9B209F266E29CA2A6C221161B504AB7DE581"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\split_registry.csv",
+    "sha256": "AEA9DCA8852464068F469F7B95B7FD3A1FF95710098465CD21359CD40CA362F6"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\test_metrics.json",
+    "sha256": "0957364BFC1C5C6E283F9F86C7572BD320BFED20C6C2F9E0E375B24E21459C17"
+  },
+  {
+    "scope": "phase2b6_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\validation_metrics.csv",
+    "sha256": "BCBE0080C36C2E83FC6157FF658E1FFAE0854E29B5FE83CDE432145B984467B2"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\architecture_decision.json",
+    "sha256": "1E054C81FD0BF3A909BE8E6D36895BDB86205AF0CAD4733255BF7BA6E6C8E805"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\current_prism_evidence_inventory.json",
+    "sha256": "803912DD6A03C2BFC9A69BCBA7A3F9931DC8470FA68A2BF4E3AF4E2C94AB2685"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\equivalence_test_results.json",
+    "sha256": "56B874D6D55CB4749585E7E47DF04D2BC3A25B869746BC627CB94C0244019D02"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\feature_compatibility_matrix.csv",
+    "sha256": "8F361CFFBE14337F34EBBD1E8E96043DAC34D81B367D59895E90183C7485C3DA"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\feature_schema_v2.json",
+    "sha256": "FCFEBD39DD4F6C5BC1C6AA212D48CB9487A39B81F6BC8DBF1A5BB339D1FDB525"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\observation_window_requirements.json",
+    "sha256": "98420EE56DE47F93DCB12A865E31ED402AC7D47F166019A53A23297ED90E4E08"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\phase2b6_feature_definitions.json",
+    "sha256": "F521417C908E07728AAB2BD68AE921093229A5E054F211D279969CE5B1DBD76B"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\phase2c_report.md",
+    "sha256": "32BEE073A5810578F1CFDAC18C6C1DB87D4B00B597505F6FCDE4C8203D49F302"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\phase2c_summary.json",
+    "sha256": "956EF098FFA0708F06790BB165D2DFF909192D8621FD9659C128AD1EF300E5F2"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\provenance_requirements.json",
+    "sha256": "D79BDA191313A43DFDB04D4DD636C822CB4121A54C950288BA2787A2A9A6CB4E"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\pytest_results.xml",
+    "sha256": "A497174449A56225DAEEFD959336761FD79C9AE8704633B69D0956CD1E63F3BD"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\required_evidence_extensions.json",
+    "sha256": "184DE32F4158139525568D31C74AEE7CA124360455729B66EDB59797131C132F"
+  },
+  {
+    "scope": "phase2c_output",
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\semantic_mapping_report.md",
+    "sha256": "32BEE073A5810578F1CFDAC18C6C1DB87D4B00B597505F6FCDE4C8203D49F302"
+  }
+]

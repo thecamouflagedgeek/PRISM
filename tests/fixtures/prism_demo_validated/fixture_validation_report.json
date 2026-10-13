@@ -1,0 +1,1407 @@
+{
+  "document_count": 24,
+  "validated_documents": [
+    {
+      "filename": "Bank_Statement_2026-03.pdf",
+      "classification": "bank",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-03",
+      "transactions": 8,
+      "credits": 92000,
+      "debits": 72550,
+      "ledger_unchanged": true,
+      "account_linked": true,
+      "quality": 1.0,
+      "opening_balance": 84000.0,
+      "closing_balance": 103450.0,
+      "reconciliation": "PASS"
+    },
+    {
+      "filename": "Bank_Statement_2026-04.pdf",
+      "classification": "bank",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-04",
+      "transactions": 8,
+      "credits": 93400,
+      "debits": 74940,
+      "ledger_unchanged": true,
+      "account_linked": true,
+      "quality": 1.0,
+      "opening_balance": 103450.0,
+      "closing_balance": 121910.0,
+      "reconciliation": "PASS"
+    },
+    {
+      "filename": "Bank_Statement_2026-05.pdf",
+      "classification": "bank",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-05",
+      "transactions": 8,
+      "credits": 94800,
+      "debits": 63330,
+      "ledger_unchanged": true,
+      "account_linked": true,
+      "quality": 1.0,
+      "opening_balance": 121910.0,
+      "closing_balance": 153380.0,
+      "reconciliation": "PASS"
+    },
+    {
+      "filename": "Bank_Statement_2026-06.pdf",
+      "classification": "bank",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-06",
+      "transactions": 8,
+      "credits": 96200,
+      "debits": 70220,
+      "ledger_unchanged": true,
+      "account_linked": true,
+      "quality": 1.0,
+      "opening_balance": 153380.0,
+      "closing_balance": 179360.0,
+      "reconciliation": "PASS"
+    },
+    {
+      "filename": "Bank_Statement_2026-07.pdf",
+      "classification": "bank",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-07",
+      "transactions": 8,
+      "credits": 97600,
+      "debits": 63110,
+      "ledger_unchanged": true,
+      "account_linked": true,
+      "quality": 1.0,
+      "opening_balance": 179360.0,
+      "closing_balance": 213850.0,
+      "reconciliation": "PASS"
+    },
+    {
+      "filename": "Bank_Statement_2026-08.pdf",
+      "classification": "bank",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-08",
+      "transactions": 8,
+      "credits": 99000,
+      "debits": 69000,
+      "ledger_unchanged": true,
+      "account_linked": true,
+      "quality": 1.0,
+      "opening_balance": 213850.0,
+      "closing_balance": 243850.0,
+      "reconciliation": "PASS"
+    },
+    {
+      "filename": "Credit_Card_2026-03.pdf",
+      "classification": "creditCards",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED",
+        "ISSUE_AND_BILLING_DATES_REPAIRED",
+        "DUE_DATES_REPAIRED",
+        "PAYMENT_AND_OBSERVATION_DATES_DECLARED",
+        "PAYMENT_STATEMENT_REFERENCE_DECLARED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-03",
+      "account_linked": true,
+      "quality": 1.0,
+      "original_date_findings": [
+        "PAYMENT_DUE_DATE_NOT_AFTER_STATEMENT_DATE"
+      ],
+      "original_dates": {
+        "statement_date": "31/03/2026",
+        "payment_due_date": "27/03/2026",
+        "amount_due": "INR 21,000.00",
+        "minimum_amount_due": "INR 1,050.00"
+      },
+      "corrected_fields": {
+        "provider": "PRISM DEMO CARD SERVICES (fictional)",
+        "account_reference": "TEST-CARD-4821",
+        "masked_account_number": "XXXX-XXXX-XXXX-4821",
+        "statement_month": "2026-03",
+        "statement_balance": "INR 21,000.00",
+        "payment_amount": "INR 17,000.00",
+        "status": "CURRENT",
+        "delinquency_severity": "0",
+        "currency": "INR",
+        "_line_numbers": {
+          "provider": 7,
+          "account_reference": 8,
+          "masked_account_number": 9,
+          "statement_month": 10,
+          "statement_balance": 15,
+          "payment_amount": 18,
+          "status": 22,
+          "delinquency_severity": 23,
+          "currency": 25
+        },
+        "_field_provenance": {
+          "provider": {
+            "page": 1,
+            "line": 7
+          },
+          "account_reference": {
+            "page": 1,
+            "line": 8
+          },
+          "masked_account_number": {
+            "page": 1,
+            "line": 9
+          },
+          "statement_month": {
+            "page": 1,
+            "line": 10
+          },
+          "statement_balance": {
+            "page": 1,
+            "line": 15
+          },
+          "payment_amount": {
+            "page": 1,
+            "line": 18
+          },
+          "status": {
+            "page": 1,
+            "line": 22
+          },
+          "delinquency_severity": {
+            "page": 1,
+            "line": 23
+          },
+          "currency": {
+            "page": 1,
+            "line": 25
+          }
+        },
+        "_auxiliary_fields": {
+          "statement_date": "01/03/2026",
+          "statement_period": "01/02/2026 - 28/02/2026",
+          "payment_due_date": "20/03/2026",
+          "statement_reference": "TEST-CARD-4821-2026-03",
+          "amount_due": "INR 21,000.00",
+          "minimum_amount_due": "INR 1,050.00",
+          "payment_date": "17/03/2026",
+          "payment_statement_reference": "TEST-CARD-4821-2026-03",
+          "payment_settlement_status": "SETTLED",
+          "repayment_observation_date": "31/03/2026",
+          "declared_cutoff_month": "2026-09"
+        },
+        "_auxiliary_line_numbers": {
+          "statement_date": 11,
+          "statement_period": 12,
+          "payment_due_date": 13,
+          "statement_reference": 14,
+          "amount_due": 16,
+          "minimum_amount_due": 17,
+          "payment_date": 19,
+          "payment_statement_reference": 20,
+          "payment_settlement_status": 21,
+          "repayment_observation_date": 24,
+          "declared_cutoff_month": 26
+        },
+        "_auxiliary_provenance": {
+          "statement_date": {
+            "page": 1,
+            "line": 11
+          },
+          "statement_period": {
+            "page": 1,
+            "line": 12
+          },
+          "payment_due_date": {
+            "page": 1,
+            "line": 13
+          },
+          "statement_reference": {
+            "page": 1,
+            "line": 14
+          },
+          "amount_due": {
+            "page": 1,
+            "line": 16
+          },
+          "minimum_amount_due": {
+            "page": 1,
+            "line": 17
+          },
+          "payment_date": {
+            "page": 1,
+            "line": 19
+          },
+          "payment_statement_reference": {
+            "page": 1,
+            "line": 20
+          },
+          "payment_settlement_status": {
+            "page": 1,
+            "line": 21
+          },
+          "repayment_observation_date": {
+            "page": 1,
+            "line": 24
+          },
+          "declared_cutoff_month": {
+            "page": 1,
+            "line": 26
+          }
+        }
+      }
+    },
+    {
+      "filename": "Credit_Card_2026-04.pdf",
+      "classification": "creditCards",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED",
+        "ISSUE_AND_BILLING_DATES_REPAIRED",
+        "DUE_DATES_REPAIRED",
+        "PAYMENT_AND_OBSERVATION_DATES_DECLARED",
+        "PAYMENT_STATEMENT_REFERENCE_DECLARED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-04",
+      "account_linked": true,
+      "quality": 1.0,
+      "original_date_findings": [
+        "PAYMENT_DUE_DATE_NOT_AFTER_STATEMENT_DATE"
+      ],
+      "original_dates": {
+        "statement_date": "30/04/2026",
+        "payment_due_date": "27/04/2026",
+        "amount_due": "INR 25,500.00",
+        "minimum_amount_due": "INR 1,275.00"
+      },
+      "corrected_fields": {
+        "provider": "PRISM DEMO CARD SERVICES (fictional)",
+        "account_reference": "TEST-CARD-4821",
+        "masked_account_number": "XXXX-XXXX-XXXX-4821",
+        "statement_month": "2026-04",
+        "statement_balance": "INR 25,500.00",
+        "payment_amount": "INR 18,500.00",
+        "status": "CURRENT",
+        "delinquency_severity": "0",
+        "currency": "INR",
+        "_line_numbers": {
+          "provider": 7,
+          "account_reference": 8,
+          "masked_account_number": 9,
+          "statement_month": 10,
+          "statement_balance": 15,
+          "payment_amount": 18,
+          "status": 22,
+          "delinquency_severity": 23,
+          "currency": 25
+        },
+        "_field_provenance": {
+          "provider": {
+            "page": 1,
+            "line": 7
+          },
+          "account_reference": {
+            "page": 1,
+            "line": 8
+          },
+          "masked_account_number": {
+            "page": 1,
+            "line": 9
+          },
+          "statement_month": {
+            "page": 1,
+            "line": 10
+          },
+          "statement_balance": {
+            "page": 1,
+            "line": 15
+          },
+          "payment_amount": {
+            "page": 1,
+            "line": 18
+          },
+          "status": {
+            "page": 1,
+            "line": 22
+          },
+          "delinquency_severity": {
+            "page": 1,
+            "line": 23
+          },
+          "currency": {
+            "page": 1,
+            "line": 25
+          }
+        },
+        "_auxiliary_fields": {
+          "statement_date": "01/04/2026",
+          "statement_period": "01/03/2026 - 31/03/2026",
+          "payment_due_date": "20/04/2026",
+          "statement_reference": "TEST-CARD-4821-2026-04",
+          "amount_due": "INR 25,500.00",
+          "minimum_amount_due": "INR 1,275.00",
+          "payment_date": "17/04/2026",
+          "payment_statement_reference": "TEST-CARD-4821-2026-04",
+          "payment_settlement_status": "SETTLED",
+          "repayment_observation_date": "30/04/2026",
+          "declared_cutoff_month": "2026-09"
+        },
+        "_auxiliary_line_numbers": {
+          "statement_date": 11,
+          "statement_period": 12,
+          "payment_due_date": 13,
+          "statement_reference": 14,
+          "amount_due": 16,
+          "minimum_amount_due": 17,
+          "payment_date": 19,
+          "payment_statement_reference": 20,
+          "payment_settlement_status": 21,
+          "repayment_observation_date": 24,
+          "declared_cutoff_month": 26
+        },
+        "_auxiliary_provenance": {
+          "statement_date": {
+            "page": 1,
+            "line": 11
+          },
+          "statement_period": {
+            "page": 1,
+            "line": 12
+          },
+          "payment_due_date": {
+            "page": 1,
+            "line": 13
+          },
+          "statement_reference": {
+            "page": 1,
+            "line": 14
+          },
+          "amount_due": {
+            "page": 1,
+            "line": 16
+          },
+          "minimum_amount_due": {
+            "page": 1,
+            "line": 17
+          },
+          "payment_date": {
+            "page": 1,
+            "line": 19
+          },
+          "payment_statement_reference": {
+            "page": 1,
+            "line": 20
+          },
+          "payment_settlement_status": {
+            "page": 1,
+            "line": 21
+          },
+          "repayment_observation_date": {
+            "page": 1,
+            "line": 24
+          },
+          "declared_cutoff_month": {
+            "page": 1,
+            "line": 26
+          }
+        }
+      }
+    },
+    {
+      "filename": "Credit_Card_2026-05.pdf",
+      "classification": "creditCards",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED",
+        "ISSUE_AND_BILLING_DATES_REPAIRED",
+        "DUE_DATES_REPAIRED",
+        "PAYMENT_AND_OBSERVATION_DATES_DECLARED",
+        "PAYMENT_STATEMENT_REFERENCE_DECLARED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-05",
+      "account_linked": true,
+      "quality": 1.0,
+      "original_date_findings": [
+        "PAYMENT_DUE_DATE_NOT_AFTER_STATEMENT_DATE"
+      ],
+      "original_dates": {
+        "statement_date": "31/05/2026",
+        "payment_due_date": "27/05/2026",
+        "amount_due": "INR 28,500.00",
+        "minimum_amount_due": "INR 1,425.00"
+      },
+      "corrected_fields": {
+        "provider": "PRISM DEMO CARD SERVICES (fictional)",
+        "account_reference": "TEST-CARD-4821",
+        "masked_account_number": "XXXX-XXXX-XXXX-4821",
+        "statement_month": "2026-05",
+        "statement_balance": "INR 28,500.00",
+        "payment_amount": "INR 6,000.00",
+        "status": "DELINQUENT",
+        "delinquency_severity": "1",
+        "currency": "INR",
+        "_line_numbers": {
+          "provider": 7,
+          "account_reference": 8,
+          "masked_account_number": 9,
+          "statement_month": 10,
+          "statement_balance": 15,
+          "payment_amount": 18,
+          "status": 22,
+          "delinquency_severity": 23,
+          "currency": 25
+        },
+        "_field_provenance": {
+          "provider": {
+            "page": 1,
+            "line": 7
+          },
+          "account_reference": {
+            "page": 1,
+            "line": 8
+          },
+          "masked_account_number": {
+            "page": 1,
+            "line": 9
+          },
+          "statement_month": {
+            "page": 1,
+            "line": 10
+          },
+          "statement_balance": {
+            "page": 1,
+            "line": 15
+          },
+          "payment_amount": {
+            "page": 1,
+            "line": 18
+          },
+          "status": {
+            "page": 1,
+            "line": 22
+          },
+          "delinquency_severity": {
+            "page": 1,
+            "line": 23
+          },
+          "currency": {
+            "page": 1,
+            "line": 25
+          }
+        },
+        "_auxiliary_fields": {
+          "statement_date": "01/05/2026",
+          "statement_period": "01/04/2026 - 30/04/2026",
+          "payment_due_date": "15/05/2026",
+          "statement_reference": "TEST-CARD-4821-2026-05",
+          "amount_due": "INR 28,500.00",
+          "minimum_amount_due": "INR 1,425.00",
+          "payment_date": "17/05/2026",
+          "payment_statement_reference": "TEST-CARD-4821-2026-05",
+          "payment_settlement_status": "SETTLED",
+          "repayment_observation_date": "31/05/2026",
+          "declared_cutoff_month": "2026-09"
+        },
+        "_auxiliary_line_numbers": {
+          "statement_date": 11,
+          "statement_period": 12,
+          "payment_due_date": 13,
+          "statement_reference": 14,
+          "amount_due": 16,
+          "minimum_amount_due": 17,
+          "payment_date": 19,
+          "payment_statement_reference": 20,
+          "payment_settlement_status": 21,
+          "repayment_observation_date": 24,
+          "declared_cutoff_month": 26
+        },
+        "_auxiliary_provenance": {
+          "statement_date": {
+            "page": 1,
+            "line": 11
+          },
+          "statement_period": {
+            "page": 1,
+            "line": 12
+          },
+          "payment_due_date": {
+            "page": 1,
+            "line": 13
+          },
+          "statement_reference": {
+            "page": 1,
+            "line": 14
+          },
+          "amount_due": {
+            "page": 1,
+            "line": 16
+          },
+          "minimum_amount_due": {
+            "page": 1,
+            "line": 17
+          },
+          "payment_date": {
+            "page": 1,
+            "line": 19
+          },
+          "payment_statement_reference": {
+            "page": 1,
+            "line": 20
+          },
+          "payment_settlement_status": {
+            "page": 1,
+            "line": 21
+          },
+          "repayment_observation_date": {
+            "page": 1,
+            "line": 24
+          },
+          "declared_cutoff_month": {
+            "page": 1,
+            "line": 26
+          }
+        }
+      }
+    },
+    {
+      "filename": "Credit_Card_2026-06.pdf",
+      "classification": "creditCards",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED",
+        "ISSUE_AND_BILLING_DATES_REPAIRED",
+        "DUE_DATES_REPAIRED",
+        "PAYMENT_AND_OBSERVATION_DATES_DECLARED",
+        "PAYMENT_STATEMENT_REFERENCE_DECLARED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-06",
+      "account_linked": true,
+      "quality": 1.0,
+      "original_date_findings": [
+        "PAYMENT_DUE_DATE_NOT_AFTER_STATEMENT_DATE"
+      ],
+      "original_dates": {
+        "statement_date": "30/06/2026",
+        "payment_due_date": "27/06/2026",
+        "amount_due": "INR 31,000.00",
+        "minimum_amount_due": "INR 1,550.00"
+      },
+      "corrected_fields": {
+        "provider": "PRISM DEMO CARD SERVICES (fictional)",
+        "account_reference": "TEST-CARD-4821",
+        "masked_account_number": "XXXX-XXXX-XXXX-4821",
+        "statement_month": "2026-06",
+        "statement_balance": "INR 31,000.00",
+        "payment_amount": "INR 12,000.00",
+        "status": "DELINQUENT",
+        "delinquency_severity": "1",
+        "currency": "INR",
+        "_line_numbers": {
+          "provider": 7,
+          "account_reference": 8,
+          "masked_account_number": 9,
+          "statement_month": 10,
+          "statement_balance": 15,
+          "payment_amount": 18,
+          "status": 22,
+          "delinquency_severity": 23,
+          "currency": 25
+        },
+        "_field_provenance": {
+          "provider": {
+            "page": 1,
+            "line": 7
+          },
+          "account_reference": {
+            "page": 1,
+            "line": 8
+          },
+          "masked_account_number": {
+            "page": 1,
+            "line": 9
+          },
+          "statement_month": {
+            "page": 1,
+            "line": 10
+          },
+          "statement_balance": {
+            "page": 1,
+            "line": 15
+          },
+          "payment_amount": {
+            "page": 1,
+            "line": 18
+          },
+          "status": {
+            "page": 1,
+            "line": 22
+          },
+          "delinquency_severity": {
+            "page": 1,
+            "line": 23
+          },
+          "currency": {
+            "page": 1,
+            "line": 25
+          }
+        },
+        "_auxiliary_fields": {
+          "statement_date": "01/06/2026",
+          "statement_period": "01/05/2026 - 31/05/2026",
+          "payment_due_date": "15/06/2026",
+          "statement_reference": "TEST-CARD-4821-2026-06",
+          "amount_due": "INR 31,000.00",
+          "minimum_amount_due": "INR 1,550.00",
+          "payment_date": "17/06/2026",
+          "payment_statement_reference": "TEST-CARD-4821-2026-06",
+          "payment_settlement_status": "SETTLED",
+          "repayment_observation_date": "30/06/2026",
+          "declared_cutoff_month": "2026-09"
+        },
+        "_auxiliary_line_numbers": {
+          "statement_date": 11,
+          "statement_period": 12,
+          "payment_due_date": 13,
+          "statement_reference": 14,
+          "amount_due": 16,
+          "minimum_amount_due": 17,
+          "payment_date": 19,
+          "payment_statement_reference": 20,
+          "payment_settlement_status": 21,
+          "repayment_observation_date": 24,
+          "declared_cutoff_month": 26
+        },
+        "_auxiliary_provenance": {
+          "statement_date": {
+            "page": 1,
+            "line": 11
+          },
+          "statement_period": {
+            "page": 1,
+            "line": 12
+          },
+          "payment_due_date": {
+            "page": 1,
+            "line": 13
+          },
+          "statement_reference": {
+            "page": 1,
+            "line": 14
+          },
+          "amount_due": {
+            "page": 1,
+            "line": 16
+          },
+          "minimum_amount_due": {
+            "page": 1,
+            "line": 17
+          },
+          "payment_date": {
+            "page": 1,
+            "line": 19
+          },
+          "payment_statement_reference": {
+            "page": 1,
+            "line": 20
+          },
+          "payment_settlement_status": {
+            "page": 1,
+            "line": 21
+          },
+          "repayment_observation_date": {
+            "page": 1,
+            "line": 24
+          },
+          "declared_cutoff_month": {
+            "page": 1,
+            "line": 26
+          }
+        }
+      }
+    },
+    {
+      "filename": "Credit_Card_2026-07.pdf",
+      "classification": "creditCards",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED",
+        "ISSUE_AND_BILLING_DATES_REPAIRED",
+        "DUE_DATES_REPAIRED",
+        "PAYMENT_AND_OBSERVATION_DATES_DECLARED",
+        "PAYMENT_STATEMENT_REFERENCE_DECLARED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-07",
+      "account_linked": true,
+      "quality": 1.0,
+      "original_date_findings": [
+        "PAYMENT_DUE_DATE_NOT_AFTER_STATEMENT_DATE"
+      ],
+      "original_dates": {
+        "statement_date": "31/07/2026",
+        "payment_due_date": "27/07/2026",
+        "amount_due": "INR 35,000.00",
+        "minimum_amount_due": "INR 1,750.00"
+      },
+      "corrected_fields": {
+        "provider": "PRISM DEMO CARD SERVICES (fictional)",
+        "account_reference": "TEST-CARD-4821",
+        "masked_account_number": "XXXX-XXXX-XXXX-4821",
+        "statement_month": "2026-07",
+        "statement_balance": "INR 35,000.00",
+        "payment_amount": "INR 4,000.00",
+        "status": "DELINQUENT",
+        "delinquency_severity": "2",
+        "currency": "INR",
+        "_line_numbers": {
+          "provider": 7,
+          "account_reference": 8,
+          "masked_account_number": 9,
+          "statement_month": 10,
+          "statement_balance": 15,
+          "payment_amount": 18,
+          "status": 22,
+          "delinquency_severity": 23,
+          "currency": 25
+        },
+        "_field_provenance": {
+          "provider": {
+            "page": 1,
+            "line": 7
+          },
+          "account_reference": {
+            "page": 1,
+            "line": 8
+          },
+          "masked_account_number": {
+            "page": 1,
+            "line": 9
+          },
+          "statement_month": {
+            "page": 1,
+            "line": 10
+          },
+          "statement_balance": {
+            "page": 1,
+            "line": 15
+          },
+          "payment_amount": {
+            "page": 1,
+            "line": 18
+          },
+          "status": {
+            "page": 1,
+            "line": 22
+          },
+          "delinquency_severity": {
+            "page": 1,
+            "line": 23
+          },
+          "currency": {
+            "page": 1,
+            "line": 25
+          }
+        },
+        "_auxiliary_fields": {
+          "statement_date": "01/07/2026",
+          "statement_period": "01/06/2026 - 30/06/2026",
+          "payment_due_date": "15/07/2026",
+          "statement_reference": "TEST-CARD-4821-2026-07",
+          "amount_due": "INR 35,000.00",
+          "minimum_amount_due": "INR 1,750.00",
+          "payment_date": "17/07/2026",
+          "payment_statement_reference": "TEST-CARD-4821-2026-07",
+          "payment_settlement_status": "SETTLED",
+          "repayment_observation_date": "31/07/2026",
+          "declared_cutoff_month": "2026-09"
+        },
+        "_auxiliary_line_numbers": {
+          "statement_date": 11,
+          "statement_period": 12,
+          "payment_due_date": 13,
+          "statement_reference": 14,
+          "amount_due": 16,
+          "minimum_amount_due": 17,
+          "payment_date": 19,
+          "payment_statement_reference": 20,
+          "payment_settlement_status": 21,
+          "repayment_observation_date": 24,
+          "declared_cutoff_month": 26
+        },
+        "_auxiliary_provenance": {
+          "statement_date": {
+            "page": 1,
+            "line": 11
+          },
+          "statement_period": {
+            "page": 1,
+            "line": 12
+          },
+          "payment_due_date": {
+            "page": 1,
+            "line": 13
+          },
+          "statement_reference": {
+            "page": 1,
+            "line": 14
+          },
+          "amount_due": {
+            "page": 1,
+            "line": 16
+          },
+          "minimum_amount_due": {
+            "page": 1,
+            "line": 17
+          },
+          "payment_date": {
+            "page": 1,
+            "line": 19
+          },
+          "payment_statement_reference": {
+            "page": 1,
+            "line": 20
+          },
+          "payment_settlement_status": {
+            "page": 1,
+            "line": 21
+          },
+          "repayment_observation_date": {
+            "page": 1,
+            "line": 24
+          },
+          "declared_cutoff_month": {
+            "page": 1,
+            "line": 26
+          }
+        }
+      }
+    },
+    {
+      "filename": "Credit_Card_2026-08.pdf",
+      "classification": "creditCards",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED",
+        "ISSUE_AND_BILLING_DATES_REPAIRED",
+        "DUE_DATES_REPAIRED",
+        "PAYMENT_AND_OBSERVATION_DATES_DECLARED",
+        "PAYMENT_STATEMENT_REFERENCE_DECLARED"
+      ],
+      "validation_result": "VALID",
+      "statement_month": "2026-08",
+      "account_linked": true,
+      "quality": 1.0,
+      "original_date_findings": [
+        "PAYMENT_DUE_DATE_NOT_AFTER_STATEMENT_DATE"
+      ],
+      "original_dates": {
+        "statement_date": "31/08/2026",
+        "payment_due_date": "27/08/2026",
+        "amount_due": "INR 37,000.00",
+        "minimum_amount_due": "INR 1,850.00"
+      },
+      "corrected_fields": {
+        "provider": "PRISM DEMO CARD SERVICES (fictional)",
+        "account_reference": "TEST-CARD-4821",
+        "masked_account_number": "XXXX-XXXX-XXXX-4821",
+        "statement_month": "2026-08",
+        "statement_balance": "INR 37,000.00",
+        "payment_amount": "INR 9,000.00",
+        "status": "DELINQUENT",
+        "delinquency_severity": "1",
+        "currency": "INR",
+        "_line_numbers": {
+          "provider": 7,
+          "account_reference": 8,
+          "masked_account_number": 9,
+          "statement_month": 10,
+          "statement_balance": 15,
+          "payment_amount": 18,
+          "status": 22,
+          "delinquency_severity": 23,
+          "currency": 25
+        },
+        "_field_provenance": {
+          "provider": {
+            "page": 1,
+            "line": 7
+          },
+          "account_reference": {
+            "page": 1,
+            "line": 8
+          },
+          "masked_account_number": {
+            "page": 1,
+            "line": 9
+          },
+          "statement_month": {
+            "page": 1,
+            "line": 10
+          },
+          "statement_balance": {
+            "page": 1,
+            "line": 15
+          },
+          "payment_amount": {
+            "page": 1,
+            "line": 18
+          },
+          "status": {
+            "page": 1,
+            "line": 22
+          },
+          "delinquency_severity": {
+            "page": 1,
+            "line": 23
+          },
+          "currency": {
+            "page": 1,
+            "line": 25
+          }
+        },
+        "_auxiliary_fields": {
+          "statement_date": "01/08/2026",
+          "statement_period": "01/07/2026 - 31/07/2026",
+          "payment_due_date": "15/08/2026",
+          "statement_reference": "TEST-CARD-4821-2026-08",
+          "amount_due": "INR 37,000.00",
+          "minimum_amount_due": "INR 1,850.00",
+          "payment_date": "17/08/2026",
+          "payment_statement_reference": "TEST-CARD-4821-2026-08",
+          "payment_settlement_status": "SETTLED",
+          "repayment_observation_date": "31/08/2026",
+          "declared_cutoff_month": "2026-09"
+        },
+        "_auxiliary_line_numbers": {
+          "statement_date": 11,
+          "statement_period": 12,
+          "payment_due_date": 13,
+          "statement_reference": 14,
+          "amount_due": 16,
+          "minimum_amount_due": 17,
+          "payment_date": 19,
+          "payment_statement_reference": 20,
+          "payment_settlement_status": 21,
+          "repayment_observation_date": 24,
+          "declared_cutoff_month": 26
+        },
+        "_auxiliary_provenance": {
+          "statement_date": {
+            "page": 1,
+            "line": 11
+          },
+          "statement_period": {
+            "page": 1,
+            "line": 12
+          },
+          "payment_due_date": {
+            "page": 1,
+            "line": 13
+          },
+          "statement_reference": {
+            "page": 1,
+            "line": 14
+          },
+          "amount_due": {
+            "page": 1,
+            "line": 16
+          },
+          "minimum_amount_due": {
+            "page": 1,
+            "line": 17
+          },
+          "payment_date": {
+            "page": 1,
+            "line": 19
+          },
+          "payment_statement_reference": {
+            "page": 1,
+            "line": 20
+          },
+          "payment_settlement_status": {
+            "page": 1,
+            "line": 21
+          },
+          "repayment_observation_date": {
+            "page": 1,
+            "line": 24
+          },
+          "declared_cutoff_month": {
+            "page": 1,
+            "line": 26
+          }
+        }
+      }
+    },
+    {
+      "filename": "Salary_Slip_2026-03.pdf",
+      "classification": "salary",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: March 2026",
+        "Employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+        "Employee ID": "DEMO-EMP-042",
+        "Payroll month": "March 2026",
+        "Bank account": "TEST-ACCT-0042",
+        "Net salary": "INR 92,000.00"
+      }
+    },
+    {
+      "filename": "Salary_Slip_2026-04.pdf",
+      "classification": "salary",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: April 2026",
+        "Employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+        "Employee ID": "DEMO-EMP-042",
+        "Payroll month": "April 2026",
+        "Bank account": "TEST-ACCT-0042",
+        "Net salary": "INR 93,400.00"
+      }
+    },
+    {
+      "filename": "Salary_Slip_2026-05.pdf",
+      "classification": "salary",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: May 2026",
+        "Employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+        "Employee ID": "DEMO-EMP-042",
+        "Payroll month": "May 2026",
+        "Bank account": "TEST-ACCT-0042",
+        "Net salary": "INR 94,800.00"
+      }
+    },
+    {
+      "filename": "Salary_Slip_2026-06.pdf",
+      "classification": "salary",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: June 2026",
+        "Employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+        "Employee ID": "DEMO-EMP-042",
+        "Payroll month": "June 2026",
+        "Bank account": "TEST-ACCT-0042",
+        "Net salary": "INR 96,200.00"
+      }
+    },
+    {
+      "filename": "Salary_Slip_2026-07.pdf",
+      "classification": "salary",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: July 2026",
+        "Employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+        "Employee ID": "DEMO-EMP-042",
+        "Payroll month": "July 2026",
+        "Bank account": "TEST-ACCT-0042",
+        "Net salary": "INR 97,600.00"
+      }
+    },
+    {
+      "filename": "Salary_Slip_2026-08.pdf",
+      "classification": "salary",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: August 2026",
+        "Employer": "NORTHSTAR SOFTWARE LABS - FICTIONAL",
+        "Employee ID": "DEMO-EMP-042",
+        "Payroll month": "August 2026",
+        "Bank account": "TEST-ACCT-0042",
+        "Net salary": "INR 99,000.00"
+      }
+    },
+    {
+      "filename": "Utility_Bill_2026-03.pdf",
+      "classification": "utility",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: March 2026",
+        "Provider": "CITYGRID POWER - FICTIONAL",
+        "Consumer reference": "TEST-UTILITY-042",
+        "Billing period": "01/03/2026 - 31/03/2026",
+        "Bill date": "05/03/2026",
+        "Due date": "18/03/2026",
+        "Payment date": "09/03/2026",
+        "Account holder": "Aarav Mehta (FICTIONAL)"
+      }
+    },
+    {
+      "filename": "Utility_Bill_2026-04.pdf",
+      "classification": "utility",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: April 2026",
+        "Provider": "CITYGRID POWER - FICTIONAL",
+        "Consumer reference": "TEST-UTILITY-042",
+        "Billing period": "01/04/2026 - 30/04/2026",
+        "Bill date": "05/04/2026",
+        "Due date": "18/04/2026",
+        "Payment date": "09/04/2026",
+        "Account holder": "Aarav Mehta (FICTIONAL)"
+      }
+    },
+    {
+      "filename": "Utility_Bill_2026-05.pdf",
+      "classification": "utility",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: May 2026",
+        "Provider": "CITYGRID POWER - FICTIONAL",
+        "Consumer reference": "TEST-UTILITY-042",
+        "Billing period": "01/05/2026 - 31/05/2026",
+        "Bill date": "05/05/2026",
+        "Due date": "18/05/2026",
+        "Payment date": "09/05/2026",
+        "Account holder": "Aarav Mehta (FICTIONAL)"
+      }
+    },
+    {
+      "filename": "Utility_Bill_2026-06.pdf",
+      "classification": "utility",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: June 2026",
+        "Provider": "CITYGRID POWER - FICTIONAL",
+        "Consumer reference": "TEST-UTILITY-042",
+        "Billing period": "01/06/2026 - 30/06/2026",
+        "Bill date": "05/06/2026",
+        "Due date": "18/06/2026",
+        "Payment date": "09/06/2026",
+        "Account holder": "Aarav Mehta (FICTIONAL)"
+      }
+    },
+    {
+      "filename": "Utility_Bill_2026-07.pdf",
+      "classification": "utility",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: July 2026",
+        "Provider": "CITYGRID POWER - FICTIONAL",
+        "Consumer reference": "TEST-UTILITY-042",
+        "Billing period": "01/07/2026 - 31/07/2026",
+        "Bill date": "05/07/2026",
+        "Due date": "18/07/2026",
+        "Payment date": "09/07/2026",
+        "Account holder": "Aarav Mehta (FICTIONAL)"
+      }
+    },
+    {
+      "filename": "Utility_Bill_2026-08.pdf",
+      "classification": "utility",
+      "native_extraction": true,
+      "actual_pages": 1,
+      "declared_pages": 1,
+      "original_declared_pages": null,
+      "original_unchanged": true,
+      "repaired_issues": [
+        "PAGE_DECLARATION_ADDED"
+      ],
+      "validation_result": "VALID",
+      "supporting_only": true,
+      "native_fields": {
+        "Customer": "Aarav Mehta (FICTIONAL) | Period: August 2026",
+        "Provider": "CITYGRID POWER - FICTIONAL",
+        "Consumer reference": "TEST-UTILITY-042",
+        "Billing period": "01/08/2026 - 31/08/2026",
+        "Bill date": "05/08/2026",
+        "Due date": "18/08/2026",
+        "Payment date": "09/08/2026",
+        "Account holder": "Aarav Mehta (FICTIONAL)"
+      }
+    }
+  ],
+  "bank_transactions": 48,
+  "original_bank_ledger_unchanged": true,
+  "original_card_date_errors": 6,
+  "rejected_corrected_documents": 0,
+  "credit_features": {
+    "recent_delinquency_level": 1,
+    "months_with_delinquency": 4,
+    "payment_to_statement_ratio": 0.37359550561797755,
+    "mean_statement_balance": 29666.666666666668
+  },
+  "cutoff_month": "2026-09",
+  "assumptions": [
+    "All 24 files are fictional synthetic repairs; originals are unchanged negative fixtures.",
+    "All page declarations are added to the existing one-page synthetic layouts; no pages/transactions are inferred for genuine documents.",
+    "The 48-row bank ledger, dates, debit/credit amounts, narration and opening/closing balances are unchanged.",
+    "Cards issue on day 1 of their explicit statement month. Purchase dates move to the preceding calendar billing period; purchase and balance/payment amounts are unchanged.",
+    "Card payment date is day 17 from the preserved bank ledger. Due dates are day 20 for explicit CURRENT labels and day 15 for explicit DELINQUENT labels; these are new fictional schedule assumptions.",
+    "Severity codes 0,0,1,1,2,1 are the original constructed categorical labels, not inferred from payment dates or claimed issuer-certified DPD buckets. July level 2 is a supplied synthetic history assumption.",
+    "Monthly repayment status is explicitly observed at month end. Every observation and settled payment precedes the exclusive historical cutoff 2026-09.",
+    "Each payment amount is explicitly applied to its matching TEST-CARD-4821-YYYY-MM statement reference; the matching bank debit remains unchanged.",
+    "Frozen features retain their exact existing definitions and units; no supporting salary/utility values enter the frozen model."
+  ]
+}

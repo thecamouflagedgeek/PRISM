@@ -1,0 +1,82 @@
+{
+  "feature_equivalence": {
+    "mean_statement_balance": "350",
+    "months_with_delinquency": 3,
+    "payment_to_statement_ratio": "0.5",
+    "recent_delinquency_level": 3
+  },
+  "gates": [
+    {
+      "evidence": "Experimental code only under backend/phase2/credit_parser.",
+      "gate": "parser_isolation",
+      "status": "PASS"
+    },
+    {
+      "evidence": "Final object is the existing Phase 2D CreditAccountEvidence validated by its validator.",
+      "gate": "contract_compliance",
+      "status": "PASS"
+    },
+    {
+      "evidence": "Golden history contains expected Jan-Jun months before July cutoff.",
+      "gate": "six_month_reconstruction",
+      "status": "PASS"
+    },
+    {
+      "evidence": "Reference/provider/product/month/confidence checked; mismatch cases fail closed.",
+      "gate": "account_linkage",
+      "status": "PASS"
+    },
+    {
+      "evidence": "Repayment status comes only from explicit statement or supplementary history.",
+      "gate": "repayment_semantics",
+      "status": "PASS"
+    },
+    {
+      "evidence": "Four expected values independently specified and exactly reproduced.",
+      "gate": "feature_equivalence",
+      "status": "PASS"
+    },
+    {
+      "evidence": "All feature lineage includes the contributing record ids.",
+      "gate": "provenance",
+      "status": "PASS"
+    },
+    {
+      "evidence": "All 18 negative/edge scenarios withhold a complete eligible vector.",
+      "gate": "fail_closed",
+      "status": "PASS"
+    },
+    {
+      "evidence": "Absent scope and withdrawn consent block.",
+      "gate": "consent",
+      "status": "PASS"
+    },
+    {
+      "evidence": "Credit-card product only.",
+      "gate": "product_compatibility",
+      "status": "PASS"
+    },
+    {
+      "evidence": "Separate account objects; Phase 2D unresolved aggregation remains blocked.",
+      "gate": "multiple_accounts",
+      "status": "PASS"
+    },
+    {
+      "evidence": "60 protected production and Phase 2B/2C/2D files are hash-verified.",
+      "gate": "production_isolation",
+      "status": "PASS"
+    }
+  ],
+  "golden_fixture_sha256": "F03B320882A39415B1A8966BD990A6C05C78172C5158E53B65EFB065FD6E58BE",
+  "negative_fixture_count": 18,
+  "next_recommendation": "Phase 2F \u2014 Isolated Shadow Scorecard Execution",
+  "ocr": "OCR_ADAPTER_DEFERRED",
+  "phase2b6_status": "PHASE_2B6_INCONCLUSIVE",
+  "phase2d_status": "PHASE_2D_CONTRACT_READY",
+  "phase_status": "PHASE_2E_EQUIVALENCE_VERIFIED",
+  "production_status": "UNVERIFIED_REAL_WORLD",
+  "production_validated": false,
+  "protected_file_count": 60,
+  "protected_hashes_unchanged": true,
+  "scorecard_executed": false
+}

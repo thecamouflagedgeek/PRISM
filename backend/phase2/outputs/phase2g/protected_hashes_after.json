@@ -1,0 +1,596 @@
+[
+  {
+    "relative_path": "backend/phase2/credit_evidence/feature_adapter.py",
+    "sha256": "E310CEC484B530508C3A33C03114E9AECA520D0CDAAA08E77D25A1DDDB4BC9D4",
+    "actual_sha256": "E310CEC484B530508C3A33C03114E9AECA520D0CDAAA08E77D25A1DDDB4BC9D4",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/credit_evidence/validation.py",
+    "sha256": "CBF3D2DBF6FFDCD07A86F4A084EEA17D55A9EAAF1DA3DEE700089EA07FB6E4B9",
+    "actual_sha256": "CBF3D2DBF6FFDCD07A86F4A084EEA17D55A9EAAF1DA3DEE700089EA07FB6E4B9",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/credit_parser/normalizer.py",
+    "sha256": "6C09009BC3820BE94DDEA2E897F5A518B3EBE1AD7A15E5441CA3F14580FF26F1",
+    "actual_sha256": "6C09009BC3820BE94DDEA2E897F5A518B3EBE1AD7A15E5441CA3F14580FF26F1",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/frozen_shadow_scorecard.json",
+    "sha256": "DE1C1106759ED00F53F208C5185D63B3D8D22DB477D3A3EFD36132B5830E4CA6",
+    "actual_sha256": "DE1C1106759ED00F53F208C5185D63B3D8D22DB477D3A3EFD36132B5830E4CA6",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/golden_shadow_trace.json",
+    "sha256": "57E970D020553C6DCCFAEEB07E16819CC50E5600EF963D5F0DAA2AEDB1917122",
+    "actual_sha256": "57E970D020553C6DCCFAEEB07E16819CC50E5600EF963D5F0DAA2AEDB1917122",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/phase2b6_reference_reconstruction.json",
+    "sha256": "E484ACB0DA40A9A4EDBC98264A56E1156B726B75A49508633555C01642C1E119",
+    "actual_sha256": "E484ACB0DA40A9A4EDBC98264A56E1156B726B75A49508633555C01642C1E119",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/phase2f_report.md",
+    "sha256": "1FF7E789C6B4B33455B4764D4A04CF2A92AF6154433EE930D2FAE0E6884F5C7B",
+    "actual_sha256": "1FF7E789C6B4B33455B4764D4A04CF2A92AF6154433EE930D2FAE0E6884F5C7B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/phase2f_status.json",
+    "sha256": "D52D1D4E05782ACEB48A79A60DCC1BF270C334D67A2050B75A50B69BC7581422",
+    "actual_sha256": "D52D1D4E05782ACEB48A79A60DCC1BF270C334D67A2050B75A50B69BC7581422",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/phase2f_test_results.json",
+    "sha256": "6631C5876B611017D2D63B848DC2043B6FB52EB873452C77E399BE3FB8D26BC5",
+    "actual_sha256": "6631C5876B611017D2D63B848DC2043B6FB52EB873452C77E399BE3FB8D26BC5",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/phase2f_verification.json",
+    "sha256": "1F958AAFB3D18ABC619CFD7B9D8FB6596299CD768E0D15CD4E6971F1E53A28D2",
+    "actual_sha256": "1F958AAFB3D18ABC619CFD7B9D8FB6596299CD768E0D15CD4E6971F1E53A28D2",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/protected_hash_verification.json",
+    "sha256": "076A5779E3DA67D2A7B7CC19D7E8708CA4BC4329AEC6D1BEA1E4F21471238D4B",
+    "actual_sha256": "076A5779E3DA67D2A7B7CC19D7E8708CA4BC4329AEC6D1BEA1E4F21471238D4B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/protected_hashes_after.json",
+    "sha256": "FFF99A6A4594C0A1B653D03B177134AC4244408D09AB03C2B1D241CE01990B82",
+    "actual_sha256": "FFF99A6A4594C0A1B653D03B177134AC4244408D09AB03C2B1D241CE01990B82",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/protected_hashes_before.json",
+    "sha256": "C30C49A88FF6E3A31AA99AFBFF3A38F47106B75E4BB33F3E9E69994D6C9A4824",
+    "actual_sha256": "C30C49A88FF6E3A31AA99AFBFF3A38F47106B75E4BB33F3E9E69994D6C9A4824",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/outputs/phase2f/pytest_full_phase2.log",
+    "sha256": "0F2EBAC5D75CC92FF801F533778A0E35282D42CFE689CA9ED703A97D79C57223",
+    "actual_sha256": "0F2EBAC5D75CC92FF801F533778A0E35282D42CFE689CA9ED703A97D79C57223",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/shadow_scorecard/artifacts.py",
+    "sha256": "8E43E130536AFA0C8A14A3560FF7A6AF2C6AAF40F5009CE5EB748FD7210A00A1",
+    "actual_sha256": "8E43E130536AFA0C8A14A3560FF7A6AF2C6AAF40F5009CE5EB748FD7210A00A1",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/phase2/shadow_scorecard/scorer.py",
+    "sha256": "FEEFA6E973EF85702E03B214C2C2AFA6810E54E5200A74385420BB2C8ADBC323",
+    "actual_sha256": "FEEFA6E973EF85702E03B214C2C2AFA6810E54E5200A74385420BB2C8ADBC323",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/route/assessment_routes.py",
+    "sha256": "3071EE62F843396510C7E53E8CC60F11FA5C9F2D10E1F8E3D7B41D9814D0A063",
+    "actual_sha256": "3071EE62F843396510C7E53E8CC60F11FA5C9F2D10E1F8E3D7B41D9814D0A063",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/route/routes.py",
+    "sha256": "EA66CC27956C0377AD32C79898E5DCD56C6CE1A0F04DC85E35D09349542ABA0B",
+    "actual_sha256": "EA66CC27956C0377AD32C79898E5DCD56C6CE1A0F04DC85E35D09349542ABA0B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/artifacts/binning.pkl",
+    "sha256": "C0752F03082FC5E80FD08ADAFB3AFA3AD93526DF53898BE32EAC207454198C76",
+    "actual_sha256": "C0752F03082FC5E80FD08ADAFB3AFA3AD93526DF53898BE32EAC207454198C76",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/artifacts/lr_model.pkl",
+    "sha256": "9670A955E46132180D6C2664C4298DD5126AB5C1214BC9C16F8EBCA5D1FD4015",
+    "actual_sha256": "9670A955E46132180D6C2664C4298DD5126AB5C1214BC9C16F8EBCA5D1FD4015",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/artifacts/manifest.json",
+    "sha256": "B7ACF498DC2523CB11FFFEFE2B12E5EE58E55BCAB54C231B39768DD671E11148",
+    "actual_sha256": "B7ACF498DC2523CB11FFFEFE2B12E5EE58E55BCAB54C231B39768DD671E11148",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/artifacts/pd_calibrator.pkl",
+    "sha256": "B80979E944D7F7835903BCAC41148734838360C86CE46A926F2280A2AB038299",
+    "actual_sha256": "B80979E944D7F7835903BCAC41148734838360C86CE46A926F2280A2AB038299",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/artifacts/pd_output.pkl",
+    "sha256": "15D39EFC3FC4B36C1165EC11DD34C81BA9BEBECCCDC9D990C65B678FC31732DA",
+    "actual_sha256": "15D39EFC3FC4B36C1165EC11DD34C81BA9BEBECCCDC9D990C65B678FC31732DA",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/artifacts/scored_output.pkl",
+    "sha256": "7B72B9760EF06A66EF5C40FA4D18E5E2BF865C2A867BE51B0AF2D4B194A738EB",
+    "actual_sha256": "7B72B9760EF06A66EF5C40FA4D18E5E2BF865C2A867BE51B0AF2D4B194A738EB",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/artifacts/shap_output.pkl",
+    "sha256": "9683C5755890D5010CF5247D365DABD5655A939033EE7CB51A05C5F90E66CDC3",
+    "actual_sha256": "9683C5755890D5010CF5247D365DABD5655A939033EE7CB51A05C5F90E66CDC3",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/artifacts/woe_datasets.pkl",
+    "sha256": "978646208F925A2CF77466586284696E510CE66335B229CAB0C1187FED85CCAC",
+    "actual_sha256": "978646208F925A2CF77466586284696E510CE66335B229CAB0C1187FED85CCAC",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/pipeline.py",
+    "sha256": "9BD400DB4071569157B2B04BD956D4CA7188CAE19E9E54C761530505FE5C192E",
+    "actual_sha256": "9BD400DB4071569157B2B04BD956D4CA7188CAE19E9E54C761530505FE5C192E",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/risk_scorer.py",
+    "sha256": "6EC65E0C2E91B1A327BE01924015A1F65B374C337ED9F72AD65CE117D055252B",
+    "actual_sha256": "6EC65E0C2E91B1A327BE01924015A1F65B374C337ED9F72AD65CE117D055252B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend/scoring/score_scaling.py",
+    "sha256": "832997BDCEFD45D8FE796A1D4D1B7D90543B1A8E9FBA4C7A10E8149446326688",
+    "actual_sha256": "832997BDCEFD45D8FE796A1D4D1B7D90543B1A8E9FBA4C7A10E8149446326688",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\credit_evidence\\feature_adapter.py",
+    "sha256": "E310CEC484B530508C3A33C03114E9AECA520D0CDAAA08E77D25A1DDDB4BC9D4",
+    "actual_sha256": "E310CEC484B530508C3A33C03114E9AECA520D0CDAAA08E77D25A1DDDB4BC9D4",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\credit_parser\\fixtures.py",
+    "sha256": "E5875EA3A21D6CBE04A0C8DB57B04D44E7595349746778B31E2270AA1D276912",
+    "actual_sha256": "E5875EA3A21D6CBE04A0C8DB57B04D44E7595349746778B31E2270AA1D276912",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\acceptance_gates.json",
+    "sha256": "6A0CAFA11A5487C5D4A05DC13736DB47A36C5B712382B55B005DD7D0056DB31D",
+    "actual_sha256": "6A0CAFA11A5487C5D4A05DC13736DB47A36C5B712382B55B005DD7D0056DB31D",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\bin_stability.csv",
+    "sha256": "AA725716227C72EE4AD1A40A9523A62125F8726DFEEADA77B143B129DC3BDDFA",
+    "actual_sha256": "AA725716227C72EE4AD1A40A9523A62125F8726DFEEADA77B143B129DC3BDDFA",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\bin_stability_summary.csv",
+    "sha256": "55C1903EAB8A870C9F8ED08B1EB6FD5CCA96D9C14B0A88854F932C2033D3B234",
+    "actual_sha256": "55C1903EAB8A870C9F8ED08B1EB6FD5CCA96D9C14B0A88854F932C2033D3B234",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\coefficient_stability.csv",
+    "sha256": "4D1165464D8BFDF1EEE1A4E01DCEC8BB28F5AB9F71A1BA373A5874442EA0E17D",
+    "actual_sha256": "4D1165464D8BFDF1EEE1A4E01DCEC8BB28F5AB9F71A1BA373A5874442EA0E17D",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\constrained_binning_summary.csv",
+    "sha256": "455B97A12519DD7BF0B0FC1604CC50626F975FCD046874A92B42047081456C95",
+    "actual_sha256": "455B97A12519DD7BF0B0FC1604CC50626F975FCD046874A92B42047081456C95",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\feature_stability.csv",
+    "sha256": "7F4A228DABC522E92FE8410544BEEBF71F31DEA0E4D6693D92DD92DD4B3A022C",
+    "actual_sha256": "7F4A228DABC522E92FE8410544BEEBF71F31DEA0E4D6693D92DD92DD4B3A022C",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\phase2b6_report.md",
+    "sha256": "105EDE772A83CA0304E1B4F595F73AA2F53D9403F8095C4D7A6A030D163C2E98",
+    "actual_sha256": "105EDE772A83CA0304E1B4F595F73AA2F53D9403F8095C4D7A6A030D163C2E98",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\phase2b6_summary.json",
+    "sha256": "A54458C58474F4493CE2168A08BC4A2C95E850EA8BEE4BA6F76308C189C8D525",
+    "actual_sha256": "A54458C58474F4493CE2168A08BC4A2C95E850EA8BEE4BA6F76308C189C8D525",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\robustness_sensitivity.csv",
+    "sha256": "4C9EE80560A91586603D88E2951B9B209F266E29CA2A6C221161B504AB7DE581",
+    "actual_sha256": "4C9EE80560A91586603D88E2951B9B209F266E29CA2A6C221161B504AB7DE581",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\robustness_sensitivity_summary.csv",
+    "sha256": "D10E36215CC22BC19533FA35E4F34D9D278AE5E2C9108BCD593EDAF38D000CDF",
+    "actual_sha256": "D10E36215CC22BC19533FA35E4F34D9D278AE5E2C9108BCD593EDAF38D000CDF",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\split_registry.csv",
+    "sha256": "AEA9DCA8852464068F469F7B95B7FD3A1FF95710098465CD21359CD40CA362F6",
+    "actual_sha256": "AEA9DCA8852464068F469F7B95B7FD3A1FF95710098465CD21359CD40CA362F6",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\test_metrics.json",
+    "sha256": "0957364BFC1C5C6E283F9F86C7572BD320BFED20C6C2F9E0E375B24E21459C17",
+    "actual_sha256": "0957364BFC1C5C6E283F9F86C7572BD320BFED20C6C2F9E0E375B24E21459C17",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6\\validation_metrics.csv",
+    "sha256": "BCBE0080C36C2E83FC6157FF658E1FFAE0854E29B5FE83CDE432145B984467B2",
+    "actual_sha256": "BCBE0080C36C2E83FC6157FF658E1FFAE0854E29B5FE83CDE432145B984467B2",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6_recovery\\recovered_final_scorecard.json",
+    "sha256": "A8F64F289D76DBA2B766F85739CEA9B59AC0D8285C7F0531B387ADBBA1EEF6EC",
+    "actual_sha256": "A8F64F289D76DBA2B766F85739CEA9B59AC0D8285C7F0531B387ADBBA1EEF6EC",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2b6_recovery\\recovered_final_scorecard.sha256",
+    "sha256": "18763A460711ECA6F333F40BC99376AF5E3E0A0542424C0DE0D92DFA44AB65E8",
+    "actual_sha256": "18763A460711ECA6F333F40BC99376AF5E3E0A0542424C0DE0D92DFA44AB65E8",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\architecture_decision.json",
+    "sha256": "1E054C81FD0BF3A909BE8E6D36895BDB86205AF0CAD4733255BF7BA6E6C8E805",
+    "actual_sha256": "1E054C81FD0BF3A909BE8E6D36895BDB86205AF0CAD4733255BF7BA6E6C8E805",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\current_prism_evidence_inventory.json",
+    "sha256": "803912DD6A03C2BFC9A69BCBA7A3F9931DC8470FA68A2BF4E3AF4E2C94AB2685",
+    "actual_sha256": "803912DD6A03C2BFC9A69BCBA7A3F9931DC8470FA68A2BF4E3AF4E2C94AB2685",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\equivalence_test_results.json",
+    "sha256": "56B874D6D55CB4749585E7E47DF04D2BC3A25B869746BC627CB94C0244019D02",
+    "actual_sha256": "56B874D6D55CB4749585E7E47DF04D2BC3A25B869746BC627CB94C0244019D02",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\feature_compatibility_matrix.csv",
+    "sha256": "8F361CFFBE14337F34EBBD1E8E96043DAC34D81B367D59895E90183C7485C3DA",
+    "actual_sha256": "8F361CFFBE14337F34EBBD1E8E96043DAC34D81B367D59895E90183C7485C3DA",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\feature_schema_v2.json",
+    "sha256": "FCFEBD39DD4F6C5BC1C6AA212D48CB9487A39B81F6BC8DBF1A5BB339D1FDB525",
+    "actual_sha256": "FCFEBD39DD4F6C5BC1C6AA212D48CB9487A39B81F6BC8DBF1A5BB339D1FDB525",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\observation_window_requirements.json",
+    "sha256": "98420EE56DE47F93DCB12A865E31ED402AC7D47F166019A53A23297ED90E4E08",
+    "actual_sha256": "98420EE56DE47F93DCB12A865E31ED402AC7D47F166019A53A23297ED90E4E08",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\phase2b6_feature_definitions.json",
+    "sha256": "F521417C908E07728AAB2BD68AE921093229A5E054F211D279969CE5B1DBD76B",
+    "actual_sha256": "F521417C908E07728AAB2BD68AE921093229A5E054F211D279969CE5B1DBD76B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\phase2c_report.md",
+    "sha256": "32BEE073A5810578F1CFDAC18C6C1DB87D4B00B597505F6FCDE4C8203D49F302",
+    "actual_sha256": "32BEE073A5810578F1CFDAC18C6C1DB87D4B00B597505F6FCDE4C8203D49F302",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\phase2c_summary.json",
+    "sha256": "956EF098FFA0708F06790BB165D2DFF909192D8621FD9659C128AD1EF300E5F2",
+    "actual_sha256": "956EF098FFA0708F06790BB165D2DFF909192D8621FD9659C128AD1EF300E5F2",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\provenance_requirements.json",
+    "sha256": "D79BDA191313A43DFDB04D4DD636C822CB4121A54C950288BA2787A2A9A6CB4E",
+    "actual_sha256": "D79BDA191313A43DFDB04D4DD636C822CB4121A54C950288BA2787A2A9A6CB4E",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\pytest_results.xml",
+    "sha256": "A497174449A56225DAEEFD959336761FD79C9AE8704633B69D0956CD1E63F3BD",
+    "actual_sha256": "A497174449A56225DAEEFD959336761FD79C9AE8704633B69D0956CD1E63F3BD",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\required_evidence_extensions.json",
+    "sha256": "184DE32F4158139525568D31C74AEE7CA124360455729B66EDB59797131C132F",
+    "actual_sha256": "184DE32F4158139525568D31C74AEE7CA124360455729B66EDB59797131C132F",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2c\\semantic_mapping_report.md",
+    "sha256": "32BEE073A5810578F1CFDAC18C6C1DB87D4B00B597505F6FCDE4C8203D49F302",
+    "actual_sha256": "32BEE073A5810578F1CFDAC18C6C1DB87D4B00B597505F6FCDE4C8203D49F302",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\consent_contract.json",
+    "sha256": "CD1031354F284E9FD43FB7F2382D6938CD32570162F7B0A4A7017783F05913D1",
+    "actual_sha256": "CD1031354F284E9FD43FB7F2382D6938CD32570162F7B0A4A7017783F05913D1",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\credit_evidence_contract.json",
+    "sha256": "D1EC456146A05FA696DA3722A814C3AC5B9D104098567586E768F9E225617815",
+    "actual_sha256": "D1EC456146A05FA696DA3722A814C3AC5B9D104098567586E768F9E225617815",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\evidence_quality_contract.json",
+    "sha256": "F45202F0066D2E43AA32B5E74BC31043583D452082E6CE3DA2F47E393EE44DCD",
+    "actual_sha256": "F45202F0066D2E43AA32B5E74BC31043583D452082E6CE3DA2F47E393EE44DCD",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\feature_computation_contract.json",
+    "sha256": "CD4E0613C67B62215A1E0563A59A68404CC66CF81B83A9197A2765F9FAD61D5B",
+    "actual_sha256": "CD4E0613C67B62215A1E0563A59A68404CC66CF81B83A9197A2765F9FAD61D5B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\monthly_record_contract.json",
+    "sha256": "EAA413E8762416B1F644BE58AFFD9CCE5AFC056ED1C28168D16CAD3188050D83",
+    "actual_sha256": "EAA413E8762416B1F644BE58AFFD9CCE5AFC056ED1C28168D16CAD3188050D83",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\multi_account_policy.md",
+    "sha256": "EF0AC9C8B30902B9739F560A9BD376187BE582DDF24C7A656545C89A01D57EC9",
+    "actual_sha256": "EF0AC9C8B30902B9739F560A9BD376187BE582DDF24C7A656545C89A01D57EC9",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\phase2d_report.md",
+    "sha256": "B7018DB94426650A2A64ACD364B9A4F6DB722FBE113CFD4ED3777BE3E61A9AD0",
+    "actual_sha256": "B7018DB94426650A2A64ACD364B9A4F6DB722FBE113CFD4ED3777BE3E61A9AD0",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\phase2d_summary.json",
+    "sha256": "0A9BBBA502550425755A9EFF33EFDA1858FA38049CDA3C966F7BB2636D3C6840",
+    "actual_sha256": "0A9BBBA502550425755A9EFF33EFDA1858FA38049CDA3C966F7BB2636D3C6840",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\phase2d_test_results.json",
+    "sha256": "F7C76B02DB727143C68423129549E13CC3C93885EB2C606D2E592D1031DB7E9A",
+    "actual_sha256": "F7C76B02DB727143C68423129549E13CC3C93885EB2C606D2E592D1031DB7E9A",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\protected_hash_verification.json",
+    "sha256": "170FDDF74003AB0F93F1F7581E73B54106B0CE8E2B2AA79CE53A98C5632D33E6",
+    "actual_sha256": "170FDDF74003AB0F93F1F7581E73B54106B0CE8E2B2AA79CE53A98C5632D33E6",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\provenance_contract.json",
+    "sha256": "2B769E6F0FF2D584D79C097A9FC6C9EDE4DC0DAB0C19C5BD75E82794E6A0AC4B",
+    "actual_sha256": "2B769E6F0FF2D584D79C097A9FC6C9EDE4DC0DAB0C19C5BD75E82794E6A0AC4B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\pytest_results.xml",
+    "sha256": "88357237FFA25380BBC1D1CB6529C2049BFB89BF49E9CB489F2241B4A765728E",
+    "actual_sha256": "88357237FFA25380BBC1D1CB6529C2049BFB89BF49E9CB489F2241B4A765728E",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\repayment_status_taxonomy.json",
+    "sha256": "9CB2CB02E85A65965F68DB51A29794AF031DB01AC1A6960BCC78BDD1694E72BE",
+    "actual_sha256": "9CB2CB02E85A65965F68DB51A29794AF031DB01AC1A6960BCC78BDD1694E72BE",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\test_fixture_catalog.json",
+    "sha256": "5AC9CC748B68EE7CE95596E2FC12E89769046F8E3F284D4D112911B316BADABE",
+    "actual_sha256": "5AC9CC748B68EE7CE95596E2FC12E89769046F8E3F284D4D112911B316BADABE",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\uci_to_prism_semantic_mapping.csv",
+    "sha256": "96A0BFC71BA414DC6501D45E1CC4ABAA568412624529CA11F4257231D6D8D96B",
+    "actual_sha256": "96A0BFC71BA414DC6501D45E1CC4ABAA568412624529CA11F4257231D6D8D96B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2d\\validation_rules.json",
+    "sha256": "461962BC9A9968A07CD140A0362AB076102FC9E63A35C2992872478BB98CB8D4",
+    "actual_sha256": "461962BC9A9968A07CD140A0362AB076102FC9E63A35C2992872478BB98CB8D4",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\account_linkage_results.json",
+    "sha256": "DB6DEE4492F18E7EB6DEFEF514C91EF7D8A1BFB80F852B670097CF14E19F028D",
+    "actual_sha256": "DB6DEE4492F18E7EB6DEFEF514C91EF7D8A1BFB80F852B670097CF14E19F028D",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\feature_equivalence_results.json",
+    "sha256": "75B94A45F54C8CBE74EE4E516AAD382E68102D3525EA84EDA88DA75611016EA0",
+    "actual_sha256": "75B94A45F54C8CBE74EE4E516AAD382E68102D3525EA84EDA88DA75611016EA0",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\golden_fixture.json",
+    "sha256": "252FE6A54042674C6740B5CB80DDF2EC7F593C00D8F217AE96807A497FF683D6",
+    "actual_sha256": "252FE6A54042674C6740B5CB80DDF2EC7F593C00D8F217AE96807A497FF683D6",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\golden_fixture_hash.json",
+    "sha256": "DF5DFA5B7104BB1AF5EB53AFA987BAED2C902C9D763BA3B380FC1B7D0530165B",
+    "actual_sha256": "DF5DFA5B7104BB1AF5EB53AFA987BAED2C902C9D763BA3B380FC1B7D0530165B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\negative_fixture_results.json",
+    "sha256": "665140567460942A1C93D744597EA9B0BCF379C0AEB5DCAD50B91191DD5316E7",
+    "actual_sha256": "665140567460942A1C93D744597EA9B0BCF379C0AEB5DCAD50B91191DD5316E7",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\parsed_golden_evidence.json",
+    "sha256": "A73D2D2C8D2882F6453BD7BDA453761F66027C45A4E9C4E70A2175B1887AFD71",
+    "actual_sha256": "A73D2D2C8D2882F6453BD7BDA453761F66027C45A4E9C4E70A2175B1887AFD71",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\parser_capability_matrix.csv",
+    "sha256": "BEF58ACDDDD4489CA341567001FDC11A226BEEE87795A54B7A55C9206BF4A5EB",
+    "actual_sha256": "BEF58ACDDDD4489CA341567001FDC11A226BEEE87795A54B7A55C9206BF4A5EB",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\parser_contract.json",
+    "sha256": "1FB4BC89355DE761A2EC541A469B0B92B2C9E113C264105622ED473FBEB50991",
+    "actual_sha256": "1FB4BC89355DE761A2EC541A469B0B92B2C9E113C264105622ED473FBEB50991",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\phase2e_report.md",
+    "sha256": "025029D0FDAF9646BB5C9D4C2525C3F9C118E01BDA3970B2979062A928973748",
+    "actual_sha256": "025029D0FDAF9646BB5C9D4C2525C3F9C118E01BDA3970B2979062A928973748",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\phase2e_summary.json",
+    "sha256": "2747E04422C18F1BFC4A576BE2FA72D2FFB39A31CF5D91DDC5E09C67733EDF3A",
+    "actual_sha256": "2747E04422C18F1BFC4A576BE2FA72D2FFB39A31CF5D91DDC5E09C67733EDF3A",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\phase2e_test_results.json",
+    "sha256": "747AB345459D34EB1255ED24274257A7451804EF2AAD02B2C81AA904E3B42ED2",
+    "actual_sha256": "747AB345459D34EB1255ED24274257A7451804EF2AAD02B2C81AA904E3B42ED2",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\protected_hashes_after.json",
+    "sha256": "335A5A897EC563E79D1EAF554A537EAC57A274669027054E4A57629C1CFE7E70",
+    "actual_sha256": "335A5A897EC563E79D1EAF554A537EAC57A274669027054E4A57629C1CFE7E70",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\protected_hashes_before.json",
+    "sha256": "986C10038AC8F4D7FEDD1D69F540B1CAAE0249007DA02AAA904F1ED3F475877B",
+    "actual_sha256": "986C10038AC8F4D7FEDD1D69F540B1CAAE0249007DA02AAA904F1ED3F475877B",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\provenance_trace.json",
+    "sha256": "A78B76865E9235B2A288EB8355D605C23868EE8206655DB766CF2D58A87C464D",
+    "actual_sha256": "A78B76865E9235B2A288EB8355D605C23868EE8206655DB766CF2D58A87C464D",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\phase2\\outputs\\phase2e\\pytest_results.xml",
+    "sha256": "F73096AEE9D7FE406466C5C0A525518A8ABE45392A6A71572D637886DD2DCABE",
+    "actual_sha256": "F73096AEE9D7FE406466C5C0A525518A8ABE45392A6A71572D637886DD2DCABE",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\scoring\\artifacts\\binning.pkl",
+    "sha256": "C0752F03082FC5E80FD08ADAFB3AFA3AD93526DF53898BE32EAC207454198C76",
+    "actual_sha256": "C0752F03082FC5E80FD08ADAFB3AFA3AD93526DF53898BE32EAC207454198C76",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\scoring\\artifacts\\lr_model.pkl",
+    "sha256": "9670A955E46132180D6C2664C4298DD5126AB5C1214BC9C16F8EBCA5D1FD4015",
+    "actual_sha256": "9670A955E46132180D6C2664C4298DD5126AB5C1214BC9C16F8EBCA5D1FD4015",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\scoring\\artifacts\\manifest.json",
+    "sha256": "B7ACF498DC2523CB11FFFEFE2B12E5EE58E55BCAB54C231B39768DD671E11148",
+    "actual_sha256": "B7ACF498DC2523CB11FFFEFE2B12E5EE58E55BCAB54C231B39768DD671E11148",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\scoring\\artifacts\\pd_calibrator.pkl",
+    "sha256": "B80979E944D7F7835903BCAC41148734838360C86CE46A926F2280A2AB038299",
+    "actual_sha256": "B80979E944D7F7835903BCAC41148734838360C86CE46A926F2280A2AB038299",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\scoring\\artifacts\\pd_output.pkl",
+    "sha256": "15D39EFC3FC4B36C1165EC11DD34C81BA9BEBECCCDC9D990C65B678FC31732DA",
+    "actual_sha256": "15D39EFC3FC4B36C1165EC11DD34C81BA9BEBECCCDC9D990C65B678FC31732DA",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\scoring\\artifacts\\scored_output.pkl",
+    "sha256": "7B72B9760EF06A66EF5C40FA4D18E5E2BF865C2A867BE51B0AF2D4B194A738EB",
+    "actual_sha256": "7B72B9760EF06A66EF5C40FA4D18E5E2BF865C2A867BE51B0AF2D4B194A738EB",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\scoring\\artifacts\\shap_output.pkl",
+    "sha256": "9683C5755890D5010CF5247D365DABD5655A939033EE7CB51A05C5F90E66CDC3",
+    "actual_sha256": "9683C5755890D5010CF5247D365DABD5655A939033EE7CB51A05C5F90E66CDC3",
+    "unchanged": true
+  },
+  {
+    "relative_path": "backend\\scoring\\artifacts\\woe_datasets.pkl",
+    "sha256": "978646208F925A2CF77466586284696E510CE66335B229CAB0C1187FED85CCAC",
+    "actual_sha256": "978646208F925A2CF77466586284696E510CE66335B229CAB0C1187FED85CCAC",
+    "unchanged": true
+  },
+  {
+    "relative_path": "prism-frontend/src/pages/ResultsPage.jsx",
+    "sha256": "FE10B58C428C59C18922FAD6ED24F861DACFFE87B72C169C9EAA1BF56B7B8770",
+    "actual_sha256": "FE10B58C428C59C18922FAD6ED24F861DACFFE87B72C169C9EAA1BF56B7B8770",
+    "unchanged": true
+  }
+]

@@ -1,0 +1,12 @@
+Capability,Demo support,Production support
+Structured six-month card evidence,Experimental,No
+Controlled statement text,Phase 2E library only; not exposed by this API,No
+Explicit repayment-history records,Experimental,No
+Arbitrary PDF,No,No
+Credit-card OCR,No,No
+Evidence validation,Experimental verified,Existing production path separate
+Four behavioral features,Experimental verified,No
+Raw experimental PD,Shadow only,No
+PDO presentation score,Shadow only,No
+Contribution reasons,Shadow only,No
+Credit decision,No,No

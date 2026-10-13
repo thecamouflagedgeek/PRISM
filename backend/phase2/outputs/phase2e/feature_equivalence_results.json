@@ -1,0 +1,22 @@
+{
+  "actual": {
+    "mean_statement_balance": "350",
+    "months_with_delinquency": 3,
+    "payment_to_statement_ratio": "0.5",
+    "recent_delinquency_level": 3
+  },
+  "comparison": {
+    "mean_statement_balance": "Decimal exact equality",
+    "months_with_delinquency": "exact integer",
+    "payment_to_statement_ratio": "Decimal exact equality",
+    "recent_delinquency_level": "exact integer"
+  },
+  "expected_independently_specified": {
+    "mean_statement_balance": "350",
+    "months_with_delinquency": 3,
+    "payment_to_statement_ratio": "0.5",
+    "recent_delinquency_level": 3
+  },
+  "scorecard_executed": false,
+  "status": "PASS"
+}

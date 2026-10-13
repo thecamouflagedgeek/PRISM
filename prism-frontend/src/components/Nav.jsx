@@ -29,7 +29,7 @@ export function Nav({ currentPage, onLogoClick, onLogout }) {
       </div>
 
       {/* Step Progress */}
-      {currentPage !== "landing" && (
+      {currentPage !== "landing" && currentPage !== "dashboard" && currentPage !== "lenderDashboard" && (
         <div className="step-bar">
           {STEPS.map((step, i) => {
             const state =
@@ -96,7 +96,7 @@ export function Nav({ currentPage, onLogoClick, onLogout }) {
         )}
 
         {/* Results Page Logout Button */}
-        {currentPage === "results" && (
+        {(currentPage === "results" || currentPage === "dashboard" || currentPage === "lenderDashboard") && (
           <button
             className="btn-outline"
             onClick={onLogout}

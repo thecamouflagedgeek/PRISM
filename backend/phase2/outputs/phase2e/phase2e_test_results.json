@@ -1,0 +1,14 @@
+{
+  "phase1_attempted": false,
+  "phase1_reason": "Not attempted: known Python 3.12 unavailable and Python 3.14 lacks pytesseract/sklearn.",
+  "phase2_tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 206
+  },
+  "phase2e_specific_test_count": 67,
+  "pytest": "9.1.1",
+  "python": "3.14.5",
+  "suite_passed": true
+}

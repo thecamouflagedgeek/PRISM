@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:wght@300;400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Sans:wght@300;400;500;600&display=swap');
 
 :root {
   --cream:    #FAFAF7;
@@ -484,3 +484,10 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--cream); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* Reference design tokens are shared by borrower and lender pages. */
+:root{--surface:#fff;--accent:var(--orange);--accent-bg:#fff2eb;--text:var(--ink);--text-muted:var(--muted)}
+.app-root{background:var(--cream)}
+.dot-grid{background-size:22px 22px;background-image:radial-gradient(circle,rgba(0,0,0,.18) 1px,transparent 1px)}
+.nav{background:var(--cream);backdrop-filter:none}.nav-logo{font-size:22px}.nav .btn-outline{background:var(--cream)}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--orange);outline-offset:4px}
+@media(max-width:760px){.nav{padding:0 20px}.nav .step-bar{display:none}.nav{gap:12px}.dot-grid>div[style*="grid-template-columns: 1fr 1.2fr"]{grid-template-columns:1fr!important;padding:36px 22px!important;gap:32px!important}.dot-grid>div[style*="grid-template-columns: 1fr 1.2fr"]>div{position:static!important}.dot-grid h1.display{font-size:36px!important}}

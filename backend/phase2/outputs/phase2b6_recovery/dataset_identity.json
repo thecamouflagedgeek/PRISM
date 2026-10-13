@@ -1,0 +1,15 @@
+{
+  "borrower_id_column": "ID",
+  "column_count": 25,
+  "defaults": 6636,
+  "matches_original_audit": true,
+  "nondefaults": 23364,
+  "original_audit_sha256": "88bd2bd25327b52af2148b7437740aca427aaf8f0e52ad782ee8bbae44b509bd",
+  "resulting_borrower_count": 30000,
+  "row_count": 30000,
+  "row_exclusions": 0,
+  "sha256": "88BD2BD25327B52AF2148B7437740ACA427AAF8F0E52AD782EE8BBAE44B509BD",
+  "source_file": "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM\\backend\\phase2\\real_evidence\\inputs\\uci_default_of_credit_card_clients.csv",
+  "target_column": "default payment next month",
+  "unique_borrowers": 30000
+}

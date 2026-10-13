@@ -1,0 +1,2 @@
+# Optional dependency for rebuilding the fictional PDF archive.
+reportlab==5.0.1

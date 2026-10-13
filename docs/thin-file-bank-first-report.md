@@ -1,0 +1,12 @@
+# Bank-first thin-file recovery — 2026-10-11
+
+Implemented normal single-file uploads in the requested order: bank required, salary optional, utility optional, credit card optional. Removed dossier/month coverage gates from this flow. Bank-first assessments use PRISM_CASHFLOW_SNAPSHOT_V1 as the primary score, with optional eligible historical cards retained as a separate assessment. Partial optional cards do not show an insufficient-evidence result.
+
+The score is calculated from actual reconciled transaction patterns and available factors. Unknown income regularity for one month is excluded, with weights renormalized. Coverage is explicit. Invalid or unreadable bank files remain on upload with correction instructions and preserved selections. No fake numerical fallback or default PD is generated.
+
+Fresh browser acceptance passed all three journeys: application 154 bank-only March scored 696; 155 March plus salary/utility scored 696; 156 August plus salary/utility and one optional card scored 759. Each had one bank statement, eight transactions and one observed month. The incomplete card did not block the primary score. Tests also cover invalid-file correction, saved refresh, explanations, fraud review, baseline-preserving simulation, PDF download and authorized lender retrieval.
+
+Validation: nine targeted backend tests passed; 13 frontend unit tests passed; production build passed; three thin-file browser tests passed. Logs: thin-file-backend-tests.txt, thin-file-frontend-tests.txt, thin-file-build.txt and thin-file-browser-tests.txt. Sanitized evidence/screenshots/PDFs: live-demo/thin-file. Broader historical repository suite was not represented as green by these focused checks.
+
+The frozen card model and legacy history profile remain independent. Snapshot is a descriptive cash-flow score, not a validated credit-risk estimate, bureau score or RBI approval. Salary and utilities are supporting review evidence rather than automatic score bonuses. See backend/features/THIN_FILE_CASHFLOW_SNAPSHOT.md for the scoring contract.
+`nAn additional rerun of live-demo.spec.js stalled during isolated local server startup and was stopped. This bulk regression rerun is unverified; the completed three thin-file journeys and nine backend tests remain the evidence for this change. A final production build and 13 frontend tests also passed after clearing stale upload warnings and correcting bank-only action-plan wording.

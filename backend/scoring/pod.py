@@ -1,120 +1,314 @@
+
 """
 PRISM — Stage 6: Probability of Default (PD) Estimation
 =========================================================
-Literature basis:
-    Basel Committee (2004) — International Convergence of Capital Measurement
-                             and Capital Standards (Basel II), Annex 5
-    Bluhm, Overbeck & Wagner (2002) — Introduction to Credit Risk Modelling
-    Merton (1974) — On the Pricing of Corporate Debt (structural model foundation)
 
-What PD means in the scorecard context:
-    PD = P(borrower defaults within 12 months | observed features)
-       = σ(log-odds)
-       = 1 / (1 + exp(-log_odds))
+Stage 6 responsibilities:
+    1. Convert Logistic Regression output into raw PD.
+    2. Calibrate the PD using a separate calibration layer.
+    3. Validate calibrated PD against observed defaults.
+    4. Save the calibration model for inference-time scoring.
 
-Where log_odds = β₀ + Σ(β_i × WoE_i) from the fitted LR model.
+Architecture:
 
-Key Basel II IRB requirements for PD:
-    1. PD must be a long-run average default rate, not point-in-time.
-       (Our synthetic data approximates this — real deployment needs
-        through-the-cycle calibration.)
-    2. PD estimates must be validated annually against observed default rates.
-    3. Minimum PD floor: 0.03% for corporate/retail (Basel II Article 285).
-    4. PD must be stress-tested under adverse economic scenarios.
+    WoE features
+         ↓
+    Logistic Regression
+         ↓
+    Raw log-odds
+         ↓
+    PD Calibration
+         ↓
+    Calibrated log-odds
+         ↓
+    Calibrated PD
+         ↓
+    Stage 7 score scaling
+
+Important:
+    The calibration layer does NOT retrain the credit-risk model.
+    It only corrects systematic over/under-estimation of probabilities.
 """
 
+import os
 import numpy as np
 import pandas as pd
 import joblib
+
 from sklearn.linear_model import LogisticRegression
 
 
-PD_FLOOR = 0.0003   # Basel II minimum PD floor (0.03%)
-PD_CAP   = 0.9999   # Practical upper cap
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+
+PD_FLOOR = 0.0003
+PD_CAP = 0.9999
+
+_ARTIFACTS = os.path.join(
+    os.path.dirname(__file__),
+    "artifacts"
+)
 
 
-def compute_pd(
-    model: LogisticRegression,
-    X_woe: np.ndarray
-) -> np.ndarray:
-    """
-    Compute Probability of Default from WoE-transformed features.
-
-    PD = σ(log_odds) = 1 / (1 + exp(-log_odds))
-
-    Applies Basel II floor and practical ceiling.
-
-    Parameters
-    ----------
-    model : fitted LogisticRegression
-    X_woe : np.ndarray of shape (n_samples, n_features), WoE-transformed
-
-    Returns
-    -------
-    pd_values : np.ndarray of shape (n_samples,), values in [PD_FLOOR, PD_CAP]
-    """
-    raw_pd = model.predict_proba(X_woe)[:, 1]
-    return np.clip(raw_pd, PD_FLOOR, PD_CAP)
-
+# ---------------------------------------------------------------------------
+# Basic PD functions
+# ---------------------------------------------------------------------------
 
 def compute_log_odds(
-    model: LogisticRegression,
+    model,
     X_woe: np.ndarray
 ) -> np.ndarray:
     """
-    Extract raw log-odds from the LR model.
-    log_odds = β₀ + X_woe · β
+    Extract raw Logistic Regression log-odds.
 
-    This is the intermediate quantity used in Stage 7 for score scaling.
-    sklearn's decision_function returns exactly this.
+    log_odds = β0 + X_woe · β
     """
     return model.decision_function(X_woe)
 
 
+def sigmoid(log_odds: np.ndarray) -> np.ndarray:
+    """
+    Numerically stable sigmoid transformation.
+    """
+    log_odds = np.clip(log_odds, -500, 500)
+
+    return 1.0 / (1.0 + np.exp(-log_odds))
+
+
+def compute_pd(
+    model,
+    X_woe: np.ndarray
+) -> np.ndarray:
+    """
+    Compute raw Probability of Default from Logistic Regression.
+
+    This is the uncalibrated PD.
+    """
+    log_odds = compute_log_odds(model, X_woe)
+    raw_pd = sigmoid(log_odds)
+
+    return np.clip(raw_pd, PD_FLOOR, PD_CAP)
+
+
+# ---------------------------------------------------------------------------
+# PD calibration
+# ---------------------------------------------------------------------------
+
+def fit_pd_calibrator(
+    model,
+    X_calibration_woe: np.ndarray,
+    y_calibration: np.ndarray
+):
+    """
+    Fit a logistic calibration layer on raw model log-odds.
+
+    The calibration model learns:
+
+        calibrated_PD =
+            sigmoid(alpha + beta * raw_log_odds)
+
+    This allows both:
+        - intercept correction
+        - slope correction
+
+    The underlying WoE + Logistic Regression credit model is unchanged.
+    """
+
+    raw_log_odds = compute_log_odds(
+        model,
+        X_calibration_woe
+    ).reshape(-1, 1)
+
+    calibrator = LogisticRegression(
+        solver="lbfgs",
+        C=1.0,
+        max_iter=1000
+    )
+
+    calibrator.fit(
+        raw_log_odds,
+        y_calibration
+    )
+
+    return calibrator
+
+
+def calibrate_log_odds(
+    calibrator,
+    raw_log_odds: np.ndarray
+) -> np.ndarray:
+    """
+    Convert raw model log-odds into calibrated log-odds.
+
+    Because the calibration model is logistic regression:
+
+        calibrated_log_odds =
+            calibration_intercept
+            + calibration_slope * raw_log_odds
+    """
+
+    slope = float(calibrator.coef_[0][0])
+    intercept = float(calibrator.intercept_[0])
+
+    return intercept + slope * raw_log_odds
+
+
+def compute_calibrated_pd(
+    calibrator,
+    raw_log_odds: np.ndarray
+) -> np.ndarray:
+    """
+    Convert raw model log-odds into calibrated PD.
+    """
+
+    calibrated_log_odds = calibrate_log_odds(
+        calibrator,
+        raw_log_odds
+    )
+
+    calibrated_pd = sigmoid(
+        calibrated_log_odds
+    )
+
+    return np.clip(
+        calibrated_pd,
+        PD_FLOOR,
+        PD_CAP
+    )
+
+
+# ---------------------------------------------------------------------------
+# Convenience function
+# ---------------------------------------------------------------------------
+
+def compute_calibrated_pd_from_model(
+    model,
+    calibrator,
+    X_woe: np.ndarray
+):
+    """
+    Compute raw and calibrated PD together.
+
+    Returns
+    -------
+    raw_log_odds
+    calibrated_log_odds
+    raw_pd
+    calibrated_pd
+    """
+
+    raw_log_odds = compute_log_odds(
+        model,
+        X_woe
+    )
+
+    raw_pd = np.clip(
+        sigmoid(raw_log_odds),
+        PD_FLOOR,
+        PD_CAP
+    )
+
+    calibrated_log_odds = calibrate_log_odds(
+        calibrator,
+        raw_log_odds
+    )
+
+    calibrated_pd = np.clip(
+        sigmoid(calibrated_log_odds),
+        PD_FLOOR,
+        PD_CAP
+    )
+
+    return (
+        raw_log_odds,
+        calibrated_log_odds,
+        raw_pd,
+        calibrated_pd
+    )
+
+
+# ---------------------------------------------------------------------------
+# Odds
+# ---------------------------------------------------------------------------
+
 def pd_to_odds(pd_value: float) -> float:
     """
-    Convert PD to Odds (Good:Bad ratio).
-    Odds = (1 - PD) / PD
+    Convert PD into Good:Bad odds.
 
-    Used in PDO score scaling formula (Stage 7).
-    A borrower with PD=0.05 has odds = 19:1 (19 good for every 1 bad).
+    Odds = (1 - PD) / PD
     """
-    pd_value = np.clip(pd_value, PD_FLOOR, PD_CAP)
-    return (1 - pd_value) / pd_value
+
+    pd_value = float(
+        np.clip(
+            pd_value,
+            PD_FLOOR,
+            PD_CAP
+        )
+    )
+
+    return (1.0 - pd_value) / pd_value
 
 
 def pd_from_log_odds(log_odds: float) -> float:
     """
-    Single-value PD from log-odds (for inference-time use in scorer.py).
-    Equivalent to sklearn's predict_proba but for scalar input.
-    """
-    log_odds = max(min(log_odds, 500), -500)   # numerical safety
-    return 1 / (1 + np.exp(-log_odds))
+    Convert a single log-odds value into PD.
 
+    Used as a fallback utility.
+    """
+
+    log_odds = max(
+        min(
+            float(log_odds),
+            500
+        ),
+        -500
+    )
+
+    pd_value = 1.0 / (
+        1.0 + np.exp(-log_odds)
+    )
+
+    return float(
+        np.clip(
+            pd_value,
+            PD_FLOOR,
+            PD_CAP
+        )
+    )
+
+
+# ---------------------------------------------------------------------------
+# PD bands
+# ---------------------------------------------------------------------------
 
 def assign_pd_band(pd_value: float) -> str:
     """
-    Assign a PD band label per industry conventions.
-    These bands are used in the risk tier output (Stage 10).
+    Assign a descriptive PD band.
 
-    Bands aligned with Moody's/S&P rating philosophy:
-        AAA equivalent  : PD < 0.1%
-        Investment grade: PD < 5%
-        Sub-investment  : PD < 20%
-        Speculative     : PD < 40%
-        Distressed      : PD >= 40%
+    These are descriptive bands used by PRISM.
+    They are not external credit ratings.
     """
-    if pd_value < 0.001:
-        return "AAA-equivalent  (< 0.1%)"
-    elif pd_value < 0.05:
-        return "Investment Grade (< 5%)"
-    elif pd_value < 0.20:
-        return "Sub-investment  (< 20%)"
-    elif pd_value < 0.40:
-        return "Speculative     (< 40%)"
-    else:
-        return "Distressed      (≥ 40%)"
 
+    if pd_value < 0.001:
+        return "Very Low (< 0.1%)"
+
+    elif pd_value < 0.05:
+        return "Low (< 5%)"
+
+    elif pd_value < 0.20:
+        return "Moderate (< 20%)"
+
+    elif pd_value < 0.40:
+        return "High (< 40%)"
+
+    else:
+        return "Very High (>= 40%)"
+
+
+# ---------------------------------------------------------------------------
+# Calibration validation
+# ---------------------------------------------------------------------------
 
 def pd_validation_report(
     y_true: np.ndarray,
@@ -122,65 +316,242 @@ def pd_validation_report(
     n_buckets: int = 10
 ) -> pd.DataFrame:
     """
-    Calibration validation: compare predicted PD vs actual default rate
-    within each PD decile bucket.
-
-    Basel II requires predicted PD ≈ observed default rate within each bucket.
-    Significant divergence triggers a model recalibration requirement.
-
-    Returns a DataFrame showing:
-        bucket | avg_predicted_PD | observed_default_rate | difference
+    Compare predicted PD with observed default rate
+    across PD decile buckets.
     """
-    df = pd.DataFrame({"y": y_true, "pd": pd_values})
-    df["bucket"] = pd.qcut(df["pd"], n_buckets, labels=False, duplicates="drop")
 
-    report = df.groupby("bucket").agg(
-        n                     = ("y", "count"),
-        avg_predicted_pd      = ("pd", "mean"),
-        observed_default_rate = ("y", "mean")
-    ).reset_index(drop=True)
+    df = pd.DataFrame({
+        "y": np.asarray(y_true),
+        "pd": np.asarray(pd_values)
+    })
 
-    report["difference"]    = (
-        report["observed_default_rate"] - report["avg_predicted_pd"]
-    ).round(4)
+    df["bucket"] = pd.qcut(
+        df["pd"],
+        n_buckets,
+        labels=False,
+        duplicates="drop"
+    )
 
-    report["calibrated"]    = report["difference"].abs().apply(
+    report = (
+        df.groupby("bucket")
+        .agg(
+            n=("y", "count"),
+            avg_predicted_pd=("pd", "mean"),
+            observed_default_rate=("y", "mean")
+        )
+        .reset_index(drop=True)
+    )
+
+    report["difference"] = (
+        report["observed_default_rate"]
+        - report["avg_predicted_pd"]
+    )
+
+    report["calibrated"] = report["difference"].abs().apply(
         lambda d: "✓" if d < 0.05 else "✗ Recalibrate"
     )
 
     return report.round(4)
 
 
-# ── STANDALONE RUN ────────────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# Standalone Stage 6
+# ---------------------------------------------------------------------------
+
 if __name__ == "__main__":
-    # Load artifacts
-    model = joblib.load("artifacts/lr_model.pkl")
-    data  = joblib.load("artifacts/woe_datasets.pkl")
+
+    print("=" * 65)
+    print("PRISM — Stage 6: PD Estimation + Calibration")
+    print("=" * 65)
+
+    # -----------------------------------------------------------------------
+    # Load model and WoE datasets
+    # -----------------------------------------------------------------------
+
+    model_path = os.path.join(
+        _ARTIFACTS,
+        "lr_model.pkl"
+    )
+
+    data_path = os.path.join(
+        _ARTIFACTS,
+        "woe_datasets.pkl"
+    )
+
+    model = joblib.load(model_path)
+    data = joblib.load(data_path)
+
+    X_train_woe = data["X_train_woe"].values
+    y_train = data["y_train"].values
 
     X_test_woe = data["X_test_woe"].values
-    y_test     = data["y_test"].values
+    y_test = data["y_test"].values
 
-    print("Stage 6 — Computing PD on test set...")
-    pd_values  = compute_pd(model, X_test_woe)
-    log_odds   = compute_log_odds(model, X_test_woe)
+    # -----------------------------------------------------------------------
+    # Fit calibration layer
+    # -----------------------------------------------------------------------
 
-    print(f"\n  PD descriptive stats:")
-    print(f"    Mean PD : {pd_values.mean():.4f}")
-    print(f"    Min PD  : {pd_values.min():.4f}")
-    print(f"    Max PD  : {pd_values.max():.4f}")
-    print(f"    PD > 40%: {(pd_values > 0.4).sum()} borrowers")
+    print("\n[1] Fitting PD calibration layer...")
 
-    print(f"\n  Sample PD bands (first 5 borrowers):")
-    for i in range(5):
-        band = assign_pd_band(pd_values[i])
-        print(f"    Borrower {i+1}: PD={pd_values[i]:.4f}  →  {band}")
+    calibrator = fit_pd_calibrator(
+        model,
+        X_train_woe,
+        y_train
+    )
 
-    print("\nStage 6 — PD Calibration Validation Report:")
-    cal_report = pd_validation_report(y_test, pd_values)
-    print(cal_report.to_string(index=False))
+    calibration_intercept = float(
+        calibrator.intercept_[0]
+    )
 
-    # Save PD values for Stage 7
-    joblib.dump({"log_odds": log_odds, "pd_values": pd_values},
-                "artifacts/pd_output.pkl")
+    calibration_slope = float(
+        calibrator.coef_[0][0]
+    )
 
-    print("\nStage 6 complete.")
+    print(
+        f"  Calibration intercept : "
+        f"{calibration_intercept:.6f}"
+    )
+
+    print(
+        f"  Calibration slope     : "
+        f"{calibration_slope:.6f}"
+    )
+
+    # -----------------------------------------------------------------------
+    # Compute test PDs
+    # -----------------------------------------------------------------------
+
+    (
+        raw_log_odds,
+        calibrated_log_odds,
+        raw_pd,
+        calibrated_pd
+    ) = compute_calibrated_pd_from_model(
+        model,
+        calibrator,
+        X_test_woe
+    )
+
+    # -----------------------------------------------------------------------
+    # Basic statistics
+    # -----------------------------------------------------------------------
+
+    print("\n[2] Raw PD statistics")
+
+    print(
+        f"  Mean : {raw_pd.mean():.4f}"
+    )
+
+    print(
+        f"  Min  : {raw_pd.min():.4f}"
+    )
+
+    print(
+        f"  Max  : {raw_pd.max():.4f}"
+    )
+
+    print("\n[3] Calibrated PD statistics")
+
+    print(
+        f"  Mean : {calibrated_pd.mean():.4f}"
+    )
+
+    print(
+        f"  Min  : {calibrated_pd.min():.4f}"
+    )
+
+    print(
+        f"  Max  : {calibrated_pd.max():.4f}"
+    )
+
+    print(
+        f"\n  Actual test default rate : "
+        f"{y_test.mean():.4f}"
+    )
+
+    print(
+        f"  Raw PD gap               : "
+        f"{raw_pd.mean() - y_test.mean():.4f}"
+    )
+
+    print(
+        f"  Calibrated PD gap        : "
+        f"{calibrated_pd.mean() - y_test.mean():.4f}"
+    )
+
+    # -----------------------------------------------------------------------
+    # Calibration report
+    # -----------------------------------------------------------------------
+
+    print("\n[4] Raw PD Calibration Report")
+    print("-" * 65)
+
+    raw_report = pd_validation_report(
+        y_test,
+        raw_pd
+    )
+
+    print(
+        raw_report.to_string(index=False)
+    )
+
+    print("\n[5] Calibrated PD Calibration Report")
+    print("-" * 65)
+
+    calibrated_report = pd_validation_report(
+        y_test,
+        calibrated_pd
+    )
+
+    print(
+        calibrated_report.to_string(index=False)
+    )
+
+    # -----------------------------------------------------------------------
+    # Save calibrator
+    # -----------------------------------------------------------------------
+
+    calibrator_path = os.path.join(
+        _ARTIFACTS,
+        "pd_calibrator.pkl"
+    )
+
+    joblib.dump(
+        calibrator,
+        calibrator_path
+    )
+
+    print(
+        f"\n[6] Calibration model saved:"
+        f"\n    {calibrator_path}"
+    )
+
+    # -----------------------------------------------------------------------
+    # Save calibrated PD output
+    # -----------------------------------------------------------------------
+
+    pd_output = {
+        "raw_log_odds": raw_log_odds,
+        "calibrated_log_odds": calibrated_log_odds,
+        "raw_pd_values": raw_pd,
+        "pd_values": calibrated_pd,
+    }
+
+    pd_output_path = os.path.join(
+        _ARTIFACTS,
+        "pd_output.pkl"
+    )
+
+    joblib.dump(
+        pd_output,
+        pd_output_path
+    )
+
+    print(
+        f"\n[7] PD output saved:"
+        f"\n    {pd_output_path}"
+    )
+
+    print("\n" + "=" * 65)
+    print("STAGE 6 COMPLETE")
+    print("=" * 65)

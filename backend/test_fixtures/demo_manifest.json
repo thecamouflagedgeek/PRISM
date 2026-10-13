@@ -1,0 +1,150 @@
+{
+  "label": "FICTIONAL SYNTHETIC DEMO ONLY",
+  "cutoff_month": "2026-09",
+  "files": [
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-03.pdf",
+      "fixture": "aarav_page_repaired",
+      "sha256": "d2545fa28502c03a1f0f6cfaf96fe7b7b7fb9d1a5d40c21366b0329896622f61"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-04.pdf",
+      "fixture": "aarav_page_repaired",
+      "sha256": "d9f6d279a4617ce4e77cb2eab99ddd7addbd385ac3b6e1a4227ff3ec52fec756"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-05.pdf",
+      "fixture": "aarav_page_repaired",
+      "sha256": "d3731a1580dd507350388e95712b17ec64964bb130c9e43f583ee2c6546cfb44"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-06.pdf",
+      "fixture": "aarav_page_repaired",
+      "sha256": "23a66b8b032cfc452b88b30164ae44b61c0ec8a6a3905d592282b791cb4787a3"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-07.pdf",
+      "fixture": "aarav_page_repaired",
+      "sha256": "388a10594b006f3098a88ff704943f473be5aaa3bb49998baa72eeb542042d41"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-08.pdf",
+      "fixture": "aarav_page_repaired",
+      "sha256": "1dc3b2ac996a8dfdf7750e3a1466f447b8ca6cbbaae69365c96f358243610641"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-03.pdf",
+      "fixture": "aarav_original",
+      "sha256": "4a99ca44164d19c043e49180d92e405aedaac7ec02425efc1a92d5dac4846dbe"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-04.pdf",
+      "fixture": "aarav_original",
+      "sha256": "d653570549504842772ab16c84d179b6de8eb813ed0586ab70d7cc6b89cb86ef"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-05.pdf",
+      "fixture": "aarav_original",
+      "sha256": "e6078d4041e74d507d0a32fbe78b49dc9278cecec7b591236cf2f6f4fb761eed"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-06.pdf",
+      "fixture": "aarav_original",
+      "sha256": "7dbdc3d2ab8387f824c761ec3919c89fa60a6e862d06f8108b93add78af4edbb"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-07.pdf",
+      "fixture": "aarav_original",
+      "sha256": "e8e35ff4217d84cfd9f19a439765cc91b2ac09ef4023d53a5cb87fccc1092c9e"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-08.pdf",
+      "fixture": "aarav_original",
+      "sha256": "d71275830056e9dff9c2a5daf1909410fc8e4f6c35c57e384b29fdccfe42db36"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-03.pdf",
+      "fixture": "aarav_original",
+      "sha256": "2454e580858937f5060036e2953df3af805607291920bcdd2334a5243412b3b6"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-04.pdf",
+      "fixture": "aarav_original",
+      "sha256": "ef19a84e372d79018a12127fdb4b9cdf17f95198606bc2cbe77e3fbe806f26fd"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-05.pdf",
+      "fixture": "aarav_original",
+      "sha256": "3abd7e385b800caabccbf74e50d5b1ba0026c0244b889313b201a1aa48c9adb4"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-06.pdf",
+      "fixture": "aarav_original",
+      "sha256": "39840b87b3aad994204b6d484645252bef68c238fcdfcdea66e061415be08b3d"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-07.pdf",
+      "fixture": "aarav_original",
+      "sha256": "50a558b0715dbc0cde47713a4a694506153c943eeb4196190c7f476c9bd49186"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-08.pdf",
+      "fixture": "aarav_original",
+      "sha256": "ce6d9fdc8c1533dd996beccdef36fefe700a41801a5f553c076afd5033b8c39f"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-03.pdf",
+      "fixture": "aarav_original",
+      "sha256": "cb67894287156629a93e5086e0fae60a2d2403533a45604c56ea588f725acad5"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-04.pdf",
+      "fixture": "aarav_original",
+      "sha256": "e099162e092ee133fd3245c3d77a9f13c468e1be32bf1490049961fc372760de"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-05.pdf",
+      "fixture": "aarav_original",
+      "sha256": "e03f20b82efeea9a124b7e7c4710b3d8be5910ed20e94b27bea9a33d09d815a7"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-06.pdf",
+      "fixture": "aarav_original",
+      "sha256": "fa01004b0045c76e4ea9ad564363a69a73c38b1376ac192ce8fb0c1e0e7364b2"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-07.pdf",
+      "fixture": "aarav_original",
+      "sha256": "6898ca7021b3de893e9a2f7d987a9d718842e97ced1ac8ff06df72e83a9e34da"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-08.pdf",
+      "fixture": "aarav_original",
+      "sha256": "17778252a0eae5f9f9c4617d3f7415a3772cc65d1f803618ebf91e9c313bb190"
+    }
+  ]
+}

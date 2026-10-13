@@ -1,0 +1,788 @@
+{
+  "credit_account_evidence": {
+    "account_reference": "fixture-card-001",
+    "account_state": "UNKNOWN",
+    "borrower_reference": "synthetic-borrower-001",
+    "conflicts": [],
+    "consent": {
+      "expires_at": null,
+      "granted_at": "2026-01-01T00:00:00+00:00",
+      "scopes": [
+        "CREDIT_CARD_STATEMENTS",
+        "BUREAU_REPAYMENT_HISTORY"
+      ],
+      "state": "GRANTED",
+      "version": "synthetic-phase2e-v1",
+      "withdrawn_at": null
+    },
+    "coverage_end_month_exclusive": "2026-07",
+    "coverage_start_month": "2026-01",
+    "currency": "USD",
+    "evidence_sources": [
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-01"
+        ],
+        "role": "PRIMARY_ACCOUNT_SOURCE",
+        "source_document_id": "stmt-2026-01",
+        "source_type": "CREDIT_CARD_STATEMENT"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-02"
+        ],
+        "role": "PRIMARY_ACCOUNT_SOURCE",
+        "source_document_id": "stmt-2026-02",
+        "source_type": "CREDIT_CARD_STATEMENT"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-03"
+        ],
+        "role": "PRIMARY_ACCOUNT_SOURCE",
+        "source_document_id": "stmt-2026-03",
+        "source_type": "CREDIT_CARD_STATEMENT"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-04"
+        ],
+        "role": "PRIMARY_ACCOUNT_SOURCE",
+        "source_document_id": "stmt-2026-04",
+        "source_type": "CREDIT_CARD_STATEMENT"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-05"
+        ],
+        "role": "PRIMARY_ACCOUNT_SOURCE",
+        "source_document_id": "stmt-2026-05",
+        "source_type": "CREDIT_CARD_STATEMENT"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-06"
+        ],
+        "role": "PRIMARY_ACCOUNT_SOURCE",
+        "source_document_id": "stmt-2026-06",
+        "source_type": "CREDIT_CARD_STATEMENT"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-01"
+        ],
+        "role": "SUPPORTING_SOURCE",
+        "source_document_id": "repay-2026-01",
+        "source_type": "BUREAU_HISTORY"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-02"
+        ],
+        "role": "SUPPORTING_SOURCE",
+        "source_document_id": "repay-2026-02",
+        "source_type": "BUREAU_HISTORY"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-03"
+        ],
+        "role": "SUPPORTING_SOURCE",
+        "source_document_id": "repay-2026-03",
+        "source_type": "BUREAU_HISTORY"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-04"
+        ],
+        "role": "SUPPORTING_SOURCE",
+        "source_document_id": "repay-2026-04",
+        "source_type": "BUREAU_HISTORY"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-05"
+        ],
+        "role": "SUPPORTING_SOURCE",
+        "source_document_id": "repay-2026-05",
+        "source_type": "BUREAU_HISTORY"
+      },
+      {
+        "account_link_confidence": 1.0,
+        "account_reference": "fixture-card-001",
+        "authenticated": true,
+        "record_ids": [
+          "2026-06"
+        ],
+        "role": "SUPPORTING_SOURCE",
+        "source_document_id": "repay-2026-06",
+        "source_type": "BUREAU_HISTORY"
+      }
+    ],
+    "masked_account_number": "****1234",
+    "monthly_records": [
+      {
+        "account_reference": "fixture-card-001",
+        "due_date": null,
+        "minimum_amount_due": null,
+        "payment_amount": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "50",
+              "original_value": "50",
+              "page_or_record_id": "2026-01",
+              "source_document_id": "stmt-2026-01",
+              "source_field": "payment_amount",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "50"
+        },
+        "payment_date": null,
+        "repayment_status": {
+          "days_past_due": null,
+          "delinquency_level": 0,
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "normalized",
+              "normalized_value": {
+                "delinquency_level": 0,
+                "status": "CURRENT"
+              },
+              "original_value": {
+                "delinquency_severity": 0,
+                "source_code": "bureau-fixture:0",
+                "status": "CURRENT"
+              },
+              "page_or_record_id": "2026-01",
+              "source_document_id": "repay-2026-01",
+              "source_field": "repayment_status",
+              "source_record_ids": [],
+              "source_type": "BUREAU_HISTORY"
+            }
+          ],
+          "source_code": "bureau-fixture:0",
+          "state": "PRESENT",
+          "status": "CURRENT"
+        },
+        "source_document_ids": [
+          "stmt-2026-01",
+          "repay-2026-01"
+        ],
+        "statement_balance": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "100",
+              "original_value": "100",
+              "page_or_record_id": "2026-01",
+              "source_document_id": "stmt-2026-01",
+              "source_field": "statement_balance",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "100"
+        },
+        "statement_month": "2026-01",
+        "total_amount_due": null,
+        "unresolved_conflict": false
+      },
+      {
+        "account_reference": "fixture-card-001",
+        "due_date": null,
+        "minimum_amount_due": null,
+        "payment_amount": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "100",
+              "original_value": "100",
+              "page_or_record_id": "2026-02",
+              "source_document_id": "stmt-2026-02",
+              "source_field": "payment_amount",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "100"
+        },
+        "payment_date": null,
+        "repayment_status": {
+          "days_past_due": null,
+          "delinquency_level": 1,
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "normalized",
+              "normalized_value": {
+                "delinquency_level": 1,
+                "status": "DELINQUENT"
+              },
+              "original_value": {
+                "delinquency_severity": 1,
+                "source_code": "bureau-fixture:1",
+                "status": "DELINQUENT"
+              },
+              "page_or_record_id": "2026-02",
+              "source_document_id": "repay-2026-02",
+              "source_field": "repayment_status",
+              "source_record_ids": [],
+              "source_type": "BUREAU_HISTORY"
+            }
+          ],
+          "source_code": "bureau-fixture:1",
+          "state": "PRESENT",
+          "status": "DELINQUENT"
+        },
+        "source_document_ids": [
+          "stmt-2026-02",
+          "repay-2026-02"
+        ],
+        "statement_balance": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "200",
+              "original_value": "200",
+              "page_or_record_id": "2026-02",
+              "source_document_id": "stmt-2026-02",
+              "source_field": "statement_balance",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "200"
+        },
+        "statement_month": "2026-02",
+        "total_amount_due": null,
+        "unresolved_conflict": false
+      },
+      {
+        "account_reference": "fixture-card-001",
+        "due_date": null,
+        "minimum_amount_due": null,
+        "payment_amount": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "150",
+              "original_value": "150",
+              "page_or_record_id": "2026-03",
+              "source_document_id": "stmt-2026-03",
+              "source_field": "payment_amount",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "150"
+        },
+        "payment_date": null,
+        "repayment_status": {
+          "days_past_due": null,
+          "delinquency_level": 0,
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "normalized",
+              "normalized_value": {
+                "delinquency_level": 0,
+                "status": "CURRENT"
+              },
+              "original_value": {
+                "delinquency_severity": 0,
+                "source_code": "bureau-fixture:0",
+                "status": "CURRENT"
+              },
+              "page_or_record_id": "2026-03",
+              "source_document_id": "repay-2026-03",
+              "source_field": "repayment_status",
+              "source_record_ids": [],
+              "source_type": "BUREAU_HISTORY"
+            }
+          ],
+          "source_code": "bureau-fixture:0",
+          "state": "PRESENT",
+          "status": "CURRENT"
+        },
+        "source_document_ids": [
+          "stmt-2026-03",
+          "repay-2026-03"
+        ],
+        "statement_balance": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "300",
+              "original_value": "300",
+              "page_or_record_id": "2026-03",
+              "source_document_id": "stmt-2026-03",
+              "source_field": "statement_balance",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "300"
+        },
+        "statement_month": "2026-03",
+        "total_amount_due": null,
+        "unresolved_conflict": false
+      },
+      {
+        "account_reference": "fixture-card-001",
+        "due_date": null,
+        "minimum_amount_due": null,
+        "payment_amount": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "200",
+              "original_value": "200",
+              "page_or_record_id": "2026-04",
+              "source_document_id": "stmt-2026-04",
+              "source_field": "payment_amount",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "200"
+        },
+        "payment_date": null,
+        "repayment_status": {
+          "days_past_due": null,
+          "delinquency_level": 2,
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "normalized",
+              "normalized_value": {
+                "delinquency_level": 2,
+                "status": "DELINQUENT"
+              },
+              "original_value": {
+                "delinquency_severity": 2,
+                "source_code": "bureau-fixture:2",
+                "status": "DELINQUENT"
+              },
+              "page_or_record_id": "2026-04",
+              "source_document_id": "repay-2026-04",
+              "source_field": "repayment_status",
+              "source_record_ids": [],
+              "source_type": "BUREAU_HISTORY"
+            }
+          ],
+          "source_code": "bureau-fixture:2",
+          "state": "PRESENT",
+          "status": "DELINQUENT"
+        },
+        "source_document_ids": [
+          "stmt-2026-04",
+          "repay-2026-04"
+        ],
+        "statement_balance": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "400",
+              "original_value": "400",
+              "page_or_record_id": "2026-04",
+              "source_document_id": "stmt-2026-04",
+              "source_field": "statement_balance",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "400"
+        },
+        "statement_month": "2026-04",
+        "total_amount_due": null,
+        "unresolved_conflict": false
+      },
+      {
+        "account_reference": "fixture-card-001",
+        "due_date": null,
+        "minimum_amount_due": null,
+        "payment_amount": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "250",
+              "original_value": "250",
+              "page_or_record_id": "2026-05",
+              "source_document_id": "stmt-2026-05",
+              "source_field": "payment_amount",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "250"
+        },
+        "payment_date": null,
+        "repayment_status": {
+          "days_past_due": null,
+          "delinquency_level": 0,
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "normalized",
+              "normalized_value": {
+                "delinquency_level": 0,
+                "status": "CURRENT"
+              },
+              "original_value": {
+                "delinquency_severity": 0,
+                "source_code": "bureau-fixture:0",
+                "status": "CURRENT"
+              },
+              "page_or_record_id": "2026-05",
+              "source_document_id": "repay-2026-05",
+              "source_field": "repayment_status",
+              "source_record_ids": [],
+              "source_type": "BUREAU_HISTORY"
+            }
+          ],
+          "source_code": "bureau-fixture:0",
+          "state": "PRESENT",
+          "status": "CURRENT"
+        },
+        "source_document_ids": [
+          "stmt-2026-05",
+          "repay-2026-05"
+        ],
+        "statement_balance": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "500",
+              "original_value": "500",
+              "page_or_record_id": "2026-05",
+              "source_document_id": "stmt-2026-05",
+              "source_field": "statement_balance",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "500"
+        },
+        "statement_month": "2026-05",
+        "total_amount_due": null,
+        "unresolved_conflict": false
+      },
+      {
+        "account_reference": "fixture-card-001",
+        "due_date": null,
+        "minimum_amount_due": null,
+        "payment_amount": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "300",
+              "original_value": "300",
+              "page_or_record_id": "2026-06",
+              "source_document_id": "stmt-2026-06",
+              "source_field": "payment_amount",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "300"
+        },
+        "payment_date": null,
+        "repayment_status": {
+          "days_past_due": null,
+          "delinquency_level": 3,
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "normalized",
+              "normalized_value": {
+                "delinquency_level": 3,
+                "status": "DELINQUENT"
+              },
+              "original_value": {
+                "delinquency_severity": 3,
+                "source_code": "bureau-fixture:3",
+                "status": "DELINQUENT"
+              },
+              "page_or_record_id": "2026-06",
+              "source_document_id": "repay-2026-06",
+              "source_field": "repayment_status",
+              "source_record_ids": [],
+              "source_type": "BUREAU_HISTORY"
+            }
+          ],
+          "source_code": "bureau-fixture:3",
+          "state": "PRESENT",
+          "status": "DELINQUENT"
+        },
+        "source_document_ids": [
+          "stmt-2026-06",
+          "repay-2026-06"
+        ],
+        "statement_balance": {
+          "currency": "USD",
+          "provenance": [
+            {
+              "derivation_method": null,
+              "extraction_confidence": 1.0,
+              "extraction_method": "controlled_fixture_fields",
+              "input_fields": [],
+              "normalization_transform": "Decimal currency amount",
+              "normalized_value": "600",
+              "original_value": "600",
+              "page_or_record_id": "2026-06",
+              "source_document_id": "stmt-2026-06",
+              "source_field": "statement_balance",
+              "source_record_ids": [],
+              "source_type": "CREDIT_CARD_STATEMENT"
+            }
+          ],
+          "reason": null,
+          "state": "PRESENT",
+          "value": "600"
+        },
+        "statement_month": "2026-06",
+        "total_amount_due": null,
+        "unresolved_conflict": false
+      }
+    ],
+    "prediction_cutoff_month": "2026-07",
+    "product_type": "CREDIT_CARD",
+    "provider_name": "Example Bank",
+    "validation_state": "UNVALIDATED"
+  },
+  "eligibility": {
+    "blocking_reasons": [],
+    "eligible_for_feature_computation": true,
+    "eligible_for_phase2b6_scorecard": true,
+    "warnings": [
+      "PHASE_2B6_INCONCLUSIVE_EXTERNAL_VALIDATION_ABSENT"
+    ]
+  },
+  "features": {
+    "blockers": [],
+    "provenance": {
+      "mean_statement_balance": {
+        "derivation_method": "phase2b6_frozen_formula_v1",
+        "input_fields": [
+          "statement_balance"
+        ],
+        "source_record_ids": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      },
+      "months_with_delinquency": {
+        "derivation_method": "phase2b6_frozen_formula_v1",
+        "input_fields": [
+          "repayment_status.delinquency_level"
+        ],
+        "source_record_ids": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      },
+      "payment_to_statement_ratio": {
+        "derivation_method": "phase2b6_frozen_formula_v1",
+        "input_fields": [
+          "payment_amount",
+          "statement_balance"
+        ],
+        "source_record_ids": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      },
+      "recent_delinquency_level": {
+        "derivation_method": "phase2b6_frozen_formula_v1",
+        "input_fields": [
+          "repayment_status.delinquency_level"
+        ],
+        "source_record_ids": [
+          "2026-06"
+        ]
+      }
+    },
+    "state": "COMPUTABLE",
+    "values": {
+      "mean_statement_balance": "350",
+      "months_with_delinquency": 3,
+      "payment_to_statement_ratio": "0.5",
+      "recent_delinquency_level": 3
+    }
+  },
+  "parse_states": {
+    "repayment_history": [
+      "PARSED",
+      "PARSED",
+      "PARSED",
+      "PARSED",
+      "PARSED",
+      "PARSED"
+    ],
+    "statements": [
+      "PARTIALLY_PARSED",
+      "PARTIALLY_PARSED",
+      "PARTIALLY_PARSED",
+      "PARTIALLY_PARSED",
+      "PARTIALLY_PARSED",
+      "PARTIALLY_PARSED"
+    ]
+  },
+  "validation": {
+    "blockers": [],
+    "months": [
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06"
+    ],
+    "state": "COMPUTABLE",
+    "valid": true
+  }
+}

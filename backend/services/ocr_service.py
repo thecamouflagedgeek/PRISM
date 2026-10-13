@@ -1,31 +1,84 @@
 import os
+import shutil
+import tempfile
+import pikepdf
 import re
+import shutil
+import tempfile
+import pikepdf
 import pdfplumber
 import pytesseract
 
-pytesseract.pytesseract.tesseract_cmd = (
-    r"D:\tesseract\tesseract.exe"
+_TESSERACT_CANDIDATES = (
+    os.getenv("TESSERACT_CMD"),
+    shutil.which("tesseract"),
+    r"C:\Program Files\Tesseract-OCR\tesseract.exe",
 )
+_TESSERACT_PATH = next((p for p in _TESSERACT_CANDIDATES if p and os.path.isfile(p)), None)
+if _TESSERACT_PATH:
+    pytesseract.pytesseract.tesseract_cmd = _TESSERACT_PATH
 
 from pdf2image import convert_from_path
 
 
 class OCRService:
 
-    def extract_text(self, pdf_path: str):
+    def _decrypt_if_needed(self, pdf_path: str, password: str = None):
+        if password is None:
+            return pdf_path, False
+        try:
+            with pikepdf.open(pdf_path, password=password) as pdf:
+                if not pdf.is_encrypted:
+                    return pdf_path, False
+                tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+                tmp.close()
+                pdf.save(tmp.name)
+                return tmp.name, True
+        except pikepdf.PasswordError as exc:
+            raise ValueError("Incorrect password for encrypted PDF") from exc
 
-        text = self.extract_text_from_pdfplumber(
-            pdf_path
-        )
+    def extract_text(self, pdf_path: str, password: str = None):
+        return self.extract_text_with_metadata(pdf_path, password=password)[0]
 
-        if len(text.strip()) > 100:
-            return self.clean_text(text)
+    def extract_text_with_metadata(self, pdf_path: str, password: str = None):
+        """Return text plus a 0–1 native/OCR extraction confidence estimate."""
+        readable_path, is_temp = self._decrypt_if_needed(pdf_path, password)
+        try:
+            try:
+                text = self.extract_text_from_pdfplumber(readable_path)
+            except Exception:
+                text = ""
 
-        text = self.extract_using_tesseract(
-            pdf_path
-        )
+            if len(text.strip()) > 100:
+                return self.clean_text(text), 1.0
 
-        return self.clean_text(text)
+            poppler_cmd = shutil.which("pdftoppm")
+            poppler_dir = os.getenv("POPPLER_PATH") or (os.path.dirname(poppler_cmd) if poppler_cmd else None)
+            pages = convert_from_path(readable_path, poppler_path=poppler_dir)
+            texts, confidences = [], []
+            for page in pages:
+                data = pytesseract.image_to_data(page, output_type=pytesseract.Output.DICT)
+                texts.append(pytesseract.image_to_string(page))
+                for value in data.get("conf", []):
+                    try:
+                        numeric_confidence = float(value)
+                    except (TypeError, ValueError):
+                        continue
+                    if numeric_confidence >= 0:
+                        confidences.append(numeric_confidence)
+            text = self.clean_text("\n\f\n".join(texts))
+            confidence = (sum(confidences) / len(confidences) / 100.0) if confidences else 0.0
+            return text, confidence
+        finally:
+            if is_temp:
+                try:
+                    os.remove(readable_path)
+                except OSError:
+                    pass
+
+    def extract_text_from_pdf(self, pdf_path: str, password: str = None):
+        """Compatibility interface used by the shared ingestion pipeline."""
+        return self.extract_text(pdf_path, password=password)
 
     def extract_text_from_pdfplumber(
         self,

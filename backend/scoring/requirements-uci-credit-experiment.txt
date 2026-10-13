@@ -1,0 +1,7 @@
+# Reproducible environment for uci_credit_experiment.py (Python 3.12)
+numpy==2.5.1
+pandas==3.0.5
+scikit-learn==1.9.0
+scipy==1.18.0
+matplotlib==3.11.1
+xlrd==2.0.1

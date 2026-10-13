@@ -1,0 +1,220 @@
+{
+  "all_fail_closed": true,
+  "scenario_count": 19,
+  "scenarios": [
+    {
+      "blocking_reasons": [
+        "MISSING_REPAYMENT_STATUS_EVIDENCE"
+      ],
+      "case": "statement_only",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "EXACTLY_SIX_MONTHS_REQUIRED",
+        "MONTH_WINDOW_OR_CONTINUITY_INVALID"
+      ],
+      "case": "missing_month",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "DUPLICATE_MONTH",
+        "MONTH_WINDOW_OR_CONTINUITY_INVALID"
+      ],
+      "case": "duplicate_month",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "MISSING_REPAYMENT_STATUS_EVIDENCE"
+      ],
+      "case": "missing_status",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "MISSING_STATEMENT_BALANCE"
+      ],
+      "case": "missing_balance",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "MISSING_PAYMENT_AMOUNT"
+      ],
+      "case": "missing_payment",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "CONSENT_REQUIRED"
+      ],
+      "case": "consent_missing",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "CONSENT_WITHDRAWN"
+      ],
+      "case": "consent_withdrawn",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "CONSENT_REQUIRED"
+      ],
+      "case": "wrong_consent_scope",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "MULTI_ACCOUNT_AGGREGATION_UNRESOLVED"
+      ],
+      "case": "account_mismatch",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "ACCOUNT_LINK_UNCERTAIN"
+      ],
+      "case": "low_link_confidence",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "CONFLICTING_EVIDENCE"
+      ],
+      "case": "conflicting_status",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "CONSENT_REQUIRED",
+        "UNSUPPORTED_PRODUCT"
+      ],
+      "case": "unsupported_product",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "MULTI_ACCOUNT_AGGREGATION_UNRESOLVED"
+      ],
+      "case": "multiple_accounts",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "ZERO_DENOMINATOR"
+      ],
+      "case": "zero_denominator",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "INVALID_EVIDENCE"
+      ],
+      "case": "invalid_numeric",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "MONTH_WINDOW_OR_CONTINUITY_INVALID",
+        "FUTURE_OR_PARTIAL_MONTH",
+        "MISSING_REPAYMENT_STATUS_EVIDENCE"
+      ],
+      "case": "future_record",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "ANCHOR_IDENTITY_UNRESOLVED"
+      ],
+      "case": "incomplete_provenance",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    },
+    {
+      "blocking_reasons": [
+        "CONSENT_REQUIRED"
+      ],
+      "case": "invalid_consent_timezone",
+      "http_status": 200,
+      "pd_absent": true,
+      "reason_codes_empty": true,
+      "score_absent": true,
+      "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+Capability,Structured,Controlled text,OCR,Production
+Account ID,Implemented,Implemented,Deferred,No
+Statement month,Implemented,Implemented,Deferred,No
+Balance,Implemented,Implemented,Deferred,No
+Payment,Implemented,Implemented,Deferred,No
+Repayment status,Explicit field only,Explicit label only,Deferred,No
+Provenance,Implemented,Implemented,Deferred,No

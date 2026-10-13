@@ -1,0 +1,5 @@
+{
+  "canonicalization": "UTF-8 JSON, sorted keys, compact separators, no trailing newline",
+  "fixture_id": "phase2e-golden-card-001",
+  "sha256": "F03B320882A39415B1A8966BD990A6C05C78172C5158E53B65EFB065FD6E58BE"
+}

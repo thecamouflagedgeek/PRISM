@@ -1,0 +1,445 @@
+{
+  "synthetic_fixture_version": "1",
+  "profiles": [
+    {
+      "profile": "consistent",
+      "synthetic_only": true,
+      "prediction_cutoff_month": "2026-10",
+      "files": [
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\consistent_2026-04.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\consistent_2026-05.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\consistent_2026-06.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\consistent_2026-07.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\consistent_2026-08.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\consistent_2026-09.pdf"
+      ],
+      "statement_ground_truth": [
+        {
+          "account_reference": "SYNTHETIC-CONSISTENT-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****1001",
+          "currency": "INR",
+          "statement_month": "2026-04",
+          "statement_balance": "1200",
+          "payment_amount": "900.0",
+          "repayment_status": {
+            "status": "CURRENT",
+            "delinquency_severity": 0,
+            "source_code": "SYNTHETIC_LEVEL_0"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-CONSISTENT-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****1001",
+          "currency": "INR",
+          "statement_month": "2026-05",
+          "statement_balance": "1300",
+          "payment_amount": "1040.0",
+          "repayment_status": {
+            "status": "CURRENT",
+            "delinquency_severity": 0,
+            "source_code": "SYNTHETIC_LEVEL_0"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-CONSISTENT-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****1001",
+          "currency": "INR",
+          "statement_month": "2026-06",
+          "statement_balance": "1100",
+          "payment_amount": "935.0",
+          "repayment_status": {
+            "status": "CURRENT",
+            "delinquency_severity": 0,
+            "source_code": "SYNTHETIC_LEVEL_0"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-CONSISTENT-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****1001",
+          "currency": "INR",
+          "statement_month": "2026-07",
+          "statement_balance": "1400",
+          "payment_amount": "980.0",
+          "repayment_status": {
+            "status": "CURRENT",
+            "delinquency_severity": 0,
+            "source_code": "SYNTHETIC_LEVEL_0"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-CONSISTENT-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****1001",
+          "currency": "INR",
+          "statement_month": "2026-08",
+          "statement_balance": "1250",
+          "payment_amount": "1125.0",
+          "repayment_status": {
+            "status": "CURRENT",
+            "delinquency_severity": 0,
+            "source_code": "SYNTHETIC_LEVEL_0"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-CONSISTENT-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****1001",
+          "currency": "INR",
+          "statement_month": "2026-09",
+          "statement_balance": "1350",
+          "payment_amount": "1080.0",
+          "repayment_status": {
+            "status": "CURRENT",
+            "delinquency_severity": 0,
+            "source_code": "SYNTHETIC_LEVEL_0"
+          }
+        }
+      ],
+      "feature_vector": {
+        "recent_delinquency_level": "0",
+        "months_with_delinquency": "0",
+        "payment_to_statement_ratio": "0.7973684210526315789473684211",
+        "mean_statement_balance": "1266.666666666666666666666667"
+      },
+      "feature_order": [
+        "recent_delinquency_level",
+        "months_with_delinquency",
+        "payment_to_statement_ratio",
+        "mean_statement_balance"
+      ],
+      "woe_bins": {
+        "recent_delinquency_level": 0,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 4,
+        "mean_statement_balance": 0
+      },
+      "woe_values": {
+        "recent_delinquency_level": 0.35422892674623363,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.4835611264358745,
+        "mean_statement_balance": -0.18768027859219305
+      },
+      "pd": 0.1705106271229297,
+      "uncapped_score": 498.02168723446505,
+      "reason_codes": [
+        {
+          "code": "mean_statement_balance",
+          "contribution": 0.5621423708655136
+        }
+      ],
+      "artifact_sha256": "A8F64F289D76DBA2B766F85739CEA9B59AC0D8285C7F0531B387ADBBA1EEF6EC",
+      "limitations": [
+        "SYNTHETIC_TEST_DATA",
+        "NOT_FOR_CREDIT_DECISION"
+      ]
+    },
+    {
+      "profile": "moderate",
+      "synthetic_only": true,
+      "prediction_cutoff_month": "2026-10",
+      "files": [
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\moderate_2026-04.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\moderate_2026-05.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\moderate_2026-06.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\moderate_2026-07.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\moderate_2026-08.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\moderate_2026-09.pdf"
+      ],
+      "statement_ground_truth": [
+        {
+          "account_reference": "SYNTHETIC-MODERATE-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****2002",
+          "currency": "INR",
+          "statement_month": "2026-04",
+          "statement_balance": "2400",
+          "payment_amount": "1200.0",
+          "repayment_status": {
+            "status": "CURRENT",
+            "delinquency_severity": 0,
+            "source_code": "SYNTHETIC_LEVEL_0"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-MODERATE-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****2002",
+          "currency": "INR",
+          "statement_month": "2026-05",
+          "statement_balance": "2650",
+          "payment_amount": "927.5",
+          "repayment_status": {
+            "status": "DELINQUENT",
+            "delinquency_severity": 1,
+            "source_code": "SYNTHETIC_LEVEL_1"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-MODERATE-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****2002",
+          "currency": "INR",
+          "statement_month": "2026-06",
+          "statement_balance": "2500",
+          "payment_amount": "2000.0",
+          "repayment_status": {
+            "status": "CURRENT",
+            "delinquency_severity": 0,
+            "source_code": "SYNTHETIC_LEVEL_0"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-MODERATE-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****2002",
+          "currency": "INR",
+          "statement_month": "2026-07",
+          "statement_balance": "2900",
+          "payment_amount": "1305.0",
+          "repayment_status": {
+            "status": "CURRENT",
+            "delinquency_severity": 0,
+            "source_code": "SYNTHETIC_LEVEL_0"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-MODERATE-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****2002",
+          "currency": "INR",
+          "statement_month": "2026-08",
+          "statement_balance": "2750",
+          "payment_amount": "825.0",
+          "repayment_status": {
+            "status": "DELINQUENT",
+            "delinquency_severity": 2,
+            "source_code": "SYNTHETIC_LEVEL_2"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-MODERATE-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****2002",
+          "currency": "INR",
+          "statement_month": "2026-09",
+          "statement_balance": "3100",
+          "payment_amount": "1860.0",
+          "repayment_status": {
+            "status": "DELINQUENT",
+            "delinquency_severity": 1,
+            "source_code": "SYNTHETIC_LEVEL_1"
+          }
+        }
+      ],
+      "feature_vector": {
+        "recent_delinquency_level": "1",
+        "months_with_delinquency": "3",
+        "payment_to_statement_ratio": "0.4980061349693251533742331288",
+        "mean_statement_balance": "2716.666666666666666666666667"
+      },
+      "feature_order": [
+        "recent_delinquency_level",
+        "months_with_delinquency",
+        "payment_to_statement_ratio",
+        "mean_statement_balance"
+      ],
+      "woe_bins": {
+        "recent_delinquency_level": 0,
+        "months_with_delinquency": 1,
+        "payment_to_statement_ratio": 3,
+        "mean_statement_balance": 0
+      },
+      "woe_values": {
+        "recent_delinquency_level": 0.35422892674623363,
+        "months_with_delinquency": -1.3538771425779765,
+        "payment_to_statement_ratio": 0.40889681863656524,
+        "mean_statement_balance": -0.18768027859219305
+      },
+      "pd": 0.41258498858897064,
+      "uncapped_score": 409.3880353960783,
+      "reason_codes": [
+        {
+          "code": "months_with_delinquency",
+          "contribution": 0.8733442754752132
+        },
+        {
+          "code": "mean_statement_balance",
+          "contribution": 0.5621423708655136
+        }
+      ],
+      "artifact_sha256": "A8F64F289D76DBA2B766F85739CEA9B59AC0D8285C7F0531B387ADBBA1EEF6EC",
+      "limitations": [
+        "SYNTHETIC_TEST_DATA",
+        "NOT_FOR_CREDIT_DECISION"
+      ]
+    },
+    {
+      "profile": "repeated",
+      "synthetic_only": true,
+      "prediction_cutoff_month": "2026-10",
+      "files": [
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\repeated_2026-04.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\repeated_2026-05.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\repeated_2026-06.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\repeated_2026-07.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\repeated_2026-08.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\repeated_2026-09.pdf",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\repeated_2026-09_scanned.png",
+        "C:\\Users\\hp\\Desktop\\VSC\\Fellowship\\PRISM_INTEGRATED\\backend\\phase2\\outputs\\synthetic_statement_fixtures\\repeated_2026-09_scanned.pdf"
+      ],
+      "statement_ground_truth": [
+        {
+          "account_reference": "SYNTHETIC-REPEATED-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****3003",
+          "currency": "INR",
+          "statement_month": "2026-04",
+          "statement_balance": "8400",
+          "payment_amount": "1680.0",
+          "repayment_status": {
+            "status": "DELINQUENT",
+            "delinquency_severity": 3,
+            "source_code": "SYNTHETIC_LEVEL_3"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-REPEATED-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****3003",
+          "currency": "INR",
+          "statement_month": "2026-05",
+          "statement_balance": "9100",
+          "payment_amount": "1365.0",
+          "repayment_status": {
+            "status": "DELINQUENT",
+            "delinquency_severity": 4,
+            "source_code": "SYNTHETIC_LEVEL_4"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-REPEATED-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****3003",
+          "currency": "INR",
+          "statement_month": "2026-06",
+          "statement_balance": "9800",
+          "payment_amount": "980.0",
+          "repayment_status": {
+            "status": "DELINQUENT",
+            "delinquency_severity": 5,
+            "source_code": "SYNTHETIC_LEVEL_5"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-REPEATED-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****3003",
+          "currency": "INR",
+          "statement_month": "2026-07",
+          "statement_balance": "10200",
+          "payment_amount": "1836.0",
+          "repayment_status": {
+            "status": "DELINQUENT",
+            "delinquency_severity": 4,
+            "source_code": "SYNTHETIC_LEVEL_4"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-REPEATED-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****3003",
+          "currency": "INR",
+          "statement_month": "2026-08",
+          "statement_balance": "11100",
+          "payment_amount": "888.0",
+          "repayment_status": {
+            "status": "DELINQUENT",
+            "delinquency_severity": 6,
+            "source_code": "SYNTHETIC_LEVEL_6"
+          }
+        },
+        {
+          "account_reference": "SYNTHETIC-REPEATED-CARD",
+          "product_type": "CREDIT_CARD",
+          "provider": "PRISM Synthetic Issuer",
+          "masked_account_number": "****3003",
+          "currency": "INR",
+          "statement_month": "2026-09",
+          "statement_balance": "12000",
+          "payment_amount": "1440.0",
+          "repayment_status": {
+            "status": "DELINQUENT",
+            "delinquency_severity": 9,
+            "source_code": "SYNTHETIC_LEVEL_9"
+          }
+        }
+      ],
+      "feature_vector": {
+        "recent_delinquency_level": "9",
+        "months_with_delinquency": "6",
+        "payment_to_statement_ratio": "0.1351320132013201320132013201",
+        "mean_statement_balance": "10100"
+      },
+      "feature_order": [
+        "recent_delinquency_level",
+        "months_with_delinquency",
+        "payment_to_statement_ratio",
+        "mean_statement_balance"
+      ],
+      "woe_bins": {
+        "recent_delinquency_level": 1,
+        "months_with_delinquency": 1,
+        "payment_to_statement_ratio": 2,
+        "mean_statement_balance": 1
+      },
+      "woe_values": {
+        "recent_delinquency_level": -2.0895984742813423,
+        "months_with_delinquency": -1.3538771425779765,
+        "payment_to_statement_ratio": -0.05524090079340384,
+        "mean_statement_balance": 0.02174343357602067
+      },
+      "pd": 0.7502095441100636,
+      "uncapped_score": 304.57483214861884,
+      "reason_codes": [
+        {
+          "code": "recent_delinquency_level",
+          "contribution": 1.501338351969542
+        },
+        {
+          "code": "months_with_delinquency",
+          "contribution": 0.8733442754752132
+        },
+        {
+          "code": "payment_to_statement_ratio",
+          "contribution": 0.03861463617147797
+        }
+      ],
+      "artifact_sha256": "A8F64F289D76DBA2B766F85739CEA9B59AC0D8285C7F0531B387ADBBA1EEF6EC",
+      "limitations": [
+        "SYNTHETIC_TEST_DATA",
+        "NOT_FOR_CREDIT_DECISION"
+      ]
+    }
+  ]
+}

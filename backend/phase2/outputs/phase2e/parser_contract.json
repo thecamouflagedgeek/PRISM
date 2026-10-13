@@ -1,0 +1,33 @@
+{
+  "accepted_inputs": [
+    "structured Python mapping / JSON object of extracted statement fields",
+    "EXPERIMENTAL_FIXTURE_FORMAT controlled label/value text"
+  ],
+  "explicit_status_only": true,
+  "fields": [
+    "pseudonymous borrower reference supplied by caller",
+    "account reference",
+    "product type",
+    "provider",
+    "masked account id",
+    "ISO currency (controlled allowlist)",
+    "statement month",
+    "statement balance",
+    "confirmed applied payment",
+    "explicit status/severity if present",
+    "source metadata/provenance"
+  ],
+  "isolation": "backend/phase2/credit_parser only; no production imports or routes",
+  "missing_status": "MISSING; never inferred from amount",
+  "name": "PRISM experimental credit-card evidence parser",
+  "no_scoring": true,
+  "not_supported": [
+    "arbitrary issuer PDF",
+    "OCR",
+    "image statements",
+    "production deployment"
+  ],
+  "output": "PARSED/PARTIALLY_PARSED/UNSUPPORTED/INVALID extraction result; final assembly emits the Phase 2D CreditAccountEvidence contract only",
+  "supplementary_source": "structured bureau/lender-style explicit repayment history, linked by account/provider/product/month and confidence",
+  "version": "phase2e-v1"
+}

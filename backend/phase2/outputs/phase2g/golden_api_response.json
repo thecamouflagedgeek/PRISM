@@ -1,0 +1,66 @@
+{
+  "decision_use": "NOT_FOR_CREDIT_DECISION",
+  "eligibility": {
+    "blocking_reasons": [],
+    "eligible": true,
+    "warnings": [
+      "PHASE_2B6_INCONCLUSIVE_EXTERNAL_VALIDATION_ABSENT"
+    ]
+  },
+  "evidence": {
+    "account_reference": "fixture-card-001",
+    "masked_account_number": "****1234",
+    "months_validated": 6,
+    "prediction_cutoff": "2026-07",
+    "product_type": "CREDIT_CARD",
+    "provider": "Example Bank",
+    "repayment_history_source_available": true
+  },
+  "features": {
+    "mean_statement_balance": 350.0,
+    "months_with_delinquency": 3.0,
+    "payment_to_statement_ratio": 0.5,
+    "recent_delinquency_level": 3.0
+  },
+  "limitations": [
+    "NOT_EXTERNALLY_VALIDATED",
+    "NOT_CURRENT_MARKET_VALIDATED",
+    "NOT_INDIAN_MARKET_VALIDATED",
+    "NOT_PRODUCTION_APPROVED"
+  ],
+  "model_status": "PHASE_2B6_INCONCLUSIVE",
+  "reason_codes": [
+    {
+      "code": "recent_delinquency_level",
+      "contribution": 1.501338351969542,
+      "direction": "increases_default_logit",
+      "label": "Recent repayment delinquency"
+    },
+    {
+      "code": "months_with_delinquency",
+      "contribution": 0.8733442754752132,
+      "direction": "increases_default_logit",
+      "label": "Repeated repayment delinquency"
+    },
+    {
+      "code": "mean_statement_balance",
+      "contribution": 0.5621423708655136,
+      "direction": "increases_default_logit",
+      "label": "Average statement balance"
+    }
+  ],
+  "scorecard": {
+    "experimental_shadow_score": 282.73056512249605,
+    "good_bad_odds": 0.24596746406142594,
+    "logit": 1.40255601170979,
+    "pdo_presentation_only": true,
+    "raw_pd": 0.8025891757561177,
+    "score_label": "Experimental Shadow Score"
+  },
+  "status": "EXPERIMENTAL_SHADOW_SCORE",
+  "trace_id": "187d5415ddde8160671eb530",
+  "validation_scope": [
+    "ENGINEERING_VERIFIED",
+    "MATHEMATICALLY_RECONSTRUCTED"
+  ]
+}

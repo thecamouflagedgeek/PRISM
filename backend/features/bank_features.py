@@ -10,6 +10,10 @@ EMI_KEYWORDS = [
 SALARY_KEYWORDS = [
     "salary","sal","payroll","wages","salary credit","salary transfer",
 ]
+class BankFeatureEngineerError(ValueError):
+    """Feature extraction error surfaced by the optional document pipeline."""
+
+
 class BankFeatureEngineer:
 
     def __init__(self, df: pd.DataFrame):
@@ -53,7 +57,7 @@ class BankFeatureEngineer:
             .sum())
 
         if monthly_credit.empty:
-            return 0.0
+            return None
         return round(float(monthly_credit.mean()), 2)
 
     def cashflow_cv(self) -> float:
@@ -63,11 +67,11 @@ class BankFeatureEngineer:
             .sum())
 
         if len(monthly_cashflow) < 2:
-            return 0.0
+            return None
         mean = monthly_cashflow.mean()
         std = monthly_cashflow.std()
         if mean == 0:
-            return 0.0
+            return None
         return round(float(std / mean), 4)
 
     def min_balance_l3m(self) -> float:
@@ -76,9 +80,10 @@ class BankFeatureEngineer:
 
         last_3m = self.df[
             self.df["date"] >= latest_date - pd.DateOffset(months=3)]
-        if last_3m.empty:
-            return 0.0
-        return round(float(last_3m["closing_balance"].min()), 2)
+        balances = last_3m["closing_balance"].dropna()
+        if balances.empty:
+            return None
+        return round(float(balances.min()), 2)
 
     def credit_debit_ratio(self) -> float:
         total_credit = self.df[
@@ -88,7 +93,7 @@ class BankFeatureEngineer:
             self.df["type"] == "DR"
         ]["amount"].sum()
         if total_debit == 0:
-            return 0.0
+            return None
 
         return round(float(total_credit / total_debit), 4)
 
@@ -130,7 +135,7 @@ class BankFeatureEngineer:
         ]["amount"].sum()
         salary_total = salary_credits["amount"].sum()
         if salary_total == 0:
-            return 0.0
+            return None
         return round(float(all_credits / salary_total), 4)
 
     def build_features(self) -> Dict:

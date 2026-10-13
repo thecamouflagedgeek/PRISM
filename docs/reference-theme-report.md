@@ -1,0 +1,5 @@
+# Shared reference theme — 2026-10-11
+
+Applied the supplied consent-screen design language to the shared PRISM UI: cream dotted paper, Syne headings, black text, orange emphasis, pale orange selected states, white rounded cards and pill buttons. Removed the green assessment theme. Upload, results, cash-flow details, simulation and fraud panels now use the shared palette; lender pages retain existing reference-compatible shared tokens. Demo and evidence-lab controls/cards now share the same typography, rounding and emphasis. PageShell uses static reference dot paper instead of an animated glow canvas. Consent columns collapse on mobile.
+
+Scoring, bank-first requirements, consent logic and backend code were unchanged. Final production build passed. Three fresh thin-file browser journeys passed in 34.1 seconds after this styling change, including the score, refresh, fraud, explanation, simulation, PDF and lender retrieval. Desktop results screenshot reviewed under docs/live-demo/thin-file/bank-only/results.png. Mobile rules were implemented but no new mobile screenshot was captured in this run.

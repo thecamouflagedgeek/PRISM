@@ -7,6 +7,9 @@ Backward compatible: outputs identical feature dicts to existing PRISM scoring e
 """
 
 import re
+import os
+import hmac
+import hashlib
 import pandas as pd
 from dataclasses import dataclass, field
 from typing import Dict, Any, List, Optional, Tuple
@@ -148,8 +151,7 @@ DATE_PATTERNS = [
 
 # Matches Indian lakh notation (1,00,000) and standard (10,000) with optional decimals
 AMOUNT_PATTERN = re.compile(
-    r"\b(?:\d{1,2},)?(?:\d{2},)*\d{3}(?:\.\d{1,2})?\b"
-    r"|\b\d{1,6}\.\d{2}\b"
+    r"(?<![\w,.])(?:\d{1,3}(?:,\d{2,3})+(?:\.\d{1,2})?|\d+\.\d{1,2})(?![\w,.])"
 )
 
 
@@ -170,12 +172,12 @@ def find_all_amounts(text: str) -> List[float]:
             results.append(float(r.replace(",", "")))
         except ValueError:
             pass
-    return sorted(results, reverse=True)
+    return results
 
 
 def find_amount(text: str) -> Optional[float]:
     amounts = find_all_amounts(text)
-    return amounts[0] if amounts else None
+    return max(amounts) if amounts else None
 
 
 def synonym_present(text_lower: str, synonyms: List[str]) -> bool:
@@ -195,8 +197,27 @@ class TextExtractor:
         self.ocr_engine = ocr_engine
         self.poppler_path = poppler_path
         self.tesseract_cmd = tesseract_cmd
+        self.last_metadata = {"method": "none", "text_length": 0, "ocr_used": False}
 
-    def extract(self, file_path: str) -> str:
+    def extract(self, file_path: str, password: str = None) -> str:
+        if file_path.lower().endswith((".jpg", ".jpeg", ".png")):
+            from PIL import Image
+            import pytesseract
+            with Image.open(file_path) as image:
+                text = pytesseract.image_to_string(image)
+                data = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT)
+            confidences = []
+            for value in data.get("conf", []):
+                try:
+                    number = float(value)
+                except (TypeError, ValueError):
+                    continue
+                if number >= 0:
+                    confidences.append(number)
+            self.last_metadata = self._safe_source_metadata(text, "ocr_image", True, file_path)
+            self.last_metadata["ocr_confidence"] = sum(confidences) / len(confidences) / 100 if confidences else 0.0
+            return re.sub(r"\n+", "\n", re.sub(r" +", " ", text)).strip()
+
         text = ""
         ocr_used = False
 
@@ -217,18 +238,127 @@ class TextExtractor:
 
         if len(text.strip()) < 50 and self.ocr_engine:
             try:
-                text = self.ocr_engine.extract_text_from_pdf(file_path)
+                confidence = None
+                if hasattr(self.ocr_engine, "extract_text_with_metadata"):
+                    try:
+                        text, confidence = self.ocr_engine.extract_text_with_metadata(file_path, password=password)
+                    except TypeError:
+                        text, confidence = self.ocr_engine.extract_text_with_metadata(file_path)
+                elif hasattr(self.ocr_engine, "ocr_pdf"):
+                    pages, confidence = self.ocr_engine.ocr_pdf(file_path)
+                    text = "\n".join(pages)
+                elif hasattr(self.ocr_engine, "extract_text_from_pdf"):
+                    try:
+                        text = self.ocr_engine.extract_text_from_pdf(file_path, password=password)
+                    except TypeError:
+                        text = self.ocr_engine.extract_text_from_pdf(file_path)
+                else:
+                    text = self.ocr_engine.extract_text(file_path)
+                if isinstance(text, tuple):
+                    text = text[0]
                 ocr_used = True
             except Exception:
                 pass
 
         # OCR output skips normalize() stripping — just clean whitespace
         if ocr_used:
+            self.last_metadata = self._safe_source_metadata(text, "ocr", True, file_path)
+            self.last_metadata["ocr_confidence"] = float(confidence) if "confidence" in locals() and confidence is not None else 0.0
             text = re.sub(r" +", " ", text)
             text = re.sub(r"\n+", "\n", text)
             return text.strip()
 
-        return self.normalize(text)
+        normalized = self.normalize(text)
+        self.last_metadata = self._safe_source_metadata(text, "native_text" if normalized else "none", False, file_path)
+        return normalized
+
+    @staticmethod
+    def _safe_source_metadata(text: str, method: str, ocr_used: bool, file_path: str | None = None) -> dict:
+        """Record only non-reversible account tokens and explicit source metadata."""
+        account_token = None
+        account_reference_salt = os.getenv("PRISM_ACCOUNT_REFERENCE_SALT")
+        references = re.findall(r"^\s*Account reference:\s*([A-Za-z0-9-]+)\s*$", text, re.I | re.M)
+        if len(set(references)) == 1 and account_reference_salt:
+            account_token = hmac.new(account_reference_salt.encode(), references[0].encode(), hashlib.sha256).hexdigest()
+        numeric_references = set()
+        for line in text.splitlines():
+            if synonym_present(line.lower(), BANK_SYNONYMS["account_number"]):
+                numbers = re.findall(r"\b\d{9,18}\b", line)
+                numeric_references.update(numbers)
+        if len(numeric_references) == 1 and account_reference_salt:
+            account_token = hmac.new(account_reference_salt.encode(), next(iter(numeric_references)).encode(), hashlib.sha256).hexdigest()
+        if len(numeric_references) > 1 or len(set(references)) > 1:
+            account_token = None
+        currencies = set()
+        if re.search(r"\bINR\b|\bRs\.?\s?|₹", text, re.I): currencies.add("INR")
+        # Native Indian payment rails are an explicit currency-context signal
+        # when statement exports omit a printed currency symbol/code.
+        if re.search(r"\b(?:UPI|NEFT|IMPS|RTGS|IFSC)\b", text, re.I): currencies.add("INR")
+        for code in ("USD", "EUR", "GBP"):
+            if re.search(rf"\b{code}\b", text, re.I): currencies.add(code)
+        page_count = max(1, text.count("\f") + 1)
+        if file_path and file_path.lower().endswith(".pdf"):
+            try:
+                import fitz
+                with fitz.open(file_path) as document:
+                    page_count = len(document)
+            except Exception:
+                pass
+        page_texts = text.split("\f")
+        pages_with_text = sum(bool(page.strip()) for page in page_texts)
+        statement_period = None
+        for line in text.splitlines():
+            if not re.search(r"statement.*?period|period\s*(?:from|:)|from\s+.*\bto\b", line, re.I):
+                continue
+            matches = []
+            for pattern in DATE_PATTERNS:
+                matches.extend((m.start(), m.end(), m.group(0)) for m in pattern.finditer(line))
+            # Two-digit patterns also match prefixes of four-digit dates.
+            selected = []
+            for start_at, end_at, value in sorted(matches, key=lambda item:(item[0], -(item[1]-item[0]))):
+                if not any(start_at < right and end_at > left for left,right,_ in selected):
+                    selected.append((start_at,end_at,value))
+            matches = [value for _,_,value in selected]
+            if len(matches) >= 2:
+                start = pd.to_datetime(matches[0], errors="coerce", format="%Y-%m-%d" if re.match(r"^\d{4}-\d{2}-\d{2}$", matches[0]) else None, dayfirst=True)
+                end = pd.to_datetime(matches[1], errors="coerce", format="%Y-%m-%d" if re.match(r"^\d{4}-\d{2}-\d{2}$", matches[1]) else None, dayfirst=True)
+                if pd.notna(start) and pd.notna(end) and start <= end:
+                    statement_period = {"start": start.date().isoformat(), "end": end.date().isoformat()}
+                    break
+        opening_balance = None
+        for line in text.splitlines():
+            if re.search(r"\b(?:opening\s+balance|open\s+bal|op\s+bal|brought\s+forward|balance\s+b/f)\b", line, re.I):
+                amounts = find_all_amounts(line)
+                if amounts:
+                    opening_balance = clean_amount(amounts[-1])
+                    break
+        statement_closing_balance = None
+        for line in text.splitlines():
+            if re.search(r"\b(?:closing\s+balance|close\s+bal|cl\s+bal|carried\s+forward|balance\s+c/f)\b", line, re.I):
+                amounts = find_all_amounts(line)
+                if amounts:
+                    statement_closing_balance = clean_amount(amounts[-1])
+                    break
+        declared_pages = []
+        for page_no, total in re.findall(r"\b(?:page|pg)\s*(\d+)\s*(?:of|/)\s*(\d+)\b", text, re.I):
+            declared_pages.append((int(page_no), int(total)))
+        pages_complete = None
+        if declared_pages:
+            totals = {total for _, total in declared_pages}
+            pages_complete = (len(totals) == 1 and len(page_texts) == next(iter(totals))
+                and {page for page, _ in declared_pages} == set(range(1, next(iter(totals)) + 1)))
+        bank_label = re.search(r'^\s*(State Bank of India|HDFC Bank|ICICI Bank|Axis Bank|Kotak Mahindra Bank|Bank of Maharashtra)\b', text, re.I | re.M)
+        result = {"detected_bank":bank_label.group(1) if bank_label else None,
+                  "method": method, "text_length": len(text.strip()), "ocr_used": ocr_used,
+                  "page_count": page_count, "currency": next(iter(currencies)) if len(currencies) == 1 else None,
+                  "currency_ambiguous": len(currencies) > 1,
+                  "account_reference_token": account_token,
+                  "pages_with_text": pages_with_text, "statement_period": statement_period,
+                  "opening_balance": float(opening_balance) if opening_balance is not None else None,
+                  "statement_closing_balance": float(statement_closing_balance) if statement_closing_balance is not None else None,
+                  "declared_page_sequence_complete": pages_complete,
+                  "declared_page_count": next(iter({total for _, total in declared_pages})) if declared_pages and len({total for _, total in declared_pages}) == 1 else None}
+        return result
 
     def normalize(self, text: str) -> str:
         if not text:
@@ -236,7 +366,7 @@ class TextExtractor:
         # Preserve ₹ % ° and Indian financial characters; only strip true garbage
         text = re.sub(r"[^\x00-\x7F₹%°]", " ", text)
         # Normalize currency markers to empty (amounts handled separately)
-        text = re.sub(r"(Rs\.?|INR|₹)\s*", "", text, flags=re.IGNORECASE)
+        text = re.sub(r"\b(?:Rs\.?|INR)[ \t]*|₹[ \t]*", "", text, flags=re.IGNORECASE)
         # Normalize spaces and newlines
         text = re.sub(r" +", " ", text)
         text = re.sub(r"\n+", "\n", text)
@@ -306,6 +436,46 @@ class BankExtractor(BaseExtractor):
         found, missing, diagnostics = [], [], []
         text_lower = text.lower()
 
+        header = next((i for i, line in enumerate(lines) if re.match(
+            r"^Date\s+Narration\s+Debit\s+Credit\s+Balance\b", line, re.I)), None)
+        if header is not None:
+            # Preserve explicit column roles and '-' placeholders; narration is
+            # never used to guess the direction or value of a transaction.
+            rows = []
+            continuation = re.sub(r"^Date\s+Narration\s+Debit\s+Credit\s+Balance\s*", "", lines[header], flags=re.I)
+            amount = r"(?:\d[\d,]*\.\d{2}|-)"
+            row_pattern = re.compile(rf"^(\d{{2}}/\d{{2}}/\d{{4}})\s+(.+?)\s+({amount})\s+({amount})\s+({amount})$")
+            for line_no, line in enumerate(lines[header + 1:], start=header + 2):
+                match = row_pattern.fullmatch(line.strip())
+                if match:
+                    date, narration, debit, credit, balance = match.groups()
+                    if balance == '-' or (debit == '-') == (credit == '-'):
+                        raise ValueError("Ambiguous debit/credit table row")
+                    rows.append({"date": date, "narration": (continuation + ' ' + narration).strip(),
+                        "debit": None if debit == '-' else float(debit.replace(',', '')),
+                        "credit": None if credit == '-' else float(credit.replace(',', '')),
+                        "closing_balance": float(balance.replace(',', '')),
+                        "source_page": 1 + sum(s.count('\f') for s in lines[:line_no-1]),
+                        "source_line": line_no})
+                    continuation = ""
+                elif re.match(r"^\d{2}/\d{2}/\d{4}\b", line):
+                    raise ValueError("Malformed explicit transaction row")
+                else:
+                    continuation = (continuation + ' ' + line.strip()).strip()
+            declared = re.search(r"Transaction count:\s*(\d+)", text, re.I)
+            if declared and int(declared[1]) != len(rows):
+                raise ValueError("Declared transaction count does not match extracted rows")
+            if rows:
+                required = ["transactions", "closing_balance", "opening_balance", "account_reference"]
+                found = ["transactions", "closing_balance"]
+                if re.search(r"Opening balance:\s*[\d,]+\.\d{2}", text, re.I): found.append("opening_balance")
+                if re.search(r"Account reference:\s*\S+", text, re.I): found.append("account_reference")
+                coverage = len(found) / len(required)
+                return ExtractionResult(doc_type="BANK", data=self._build_df(rows), confidence=coverage,
+                    quality_score=coverage, entities_found=found,
+                    missing_entities=[k for k in required if k not in found],
+                    diagnostics=["Explicit debit/credit/balance table; required field coverage measured"])
+
         # --- Early exit: if strong utility signals are present, yield low confidence ---
         utility_signal_count = synonym_score(text_lower, UTILITY_DISCRIMINATIVE)
         if utility_signal_count >= 2:
@@ -342,7 +512,11 @@ class BankExtractor(BaseExtractor):
 
         # --- Parse transactions ---
         rows = []
-        for line in lines:
+        source_page = 1
+        for source_line, line in enumerate(lines, start=1):
+            if "\f" in line:
+                source_page += line.count("\f")
+                line = line.replace("\f", " ")
             date = find_date(line)
             if not date:
                 continue
@@ -386,6 +560,8 @@ class BankExtractor(BaseExtractor):
                 "debit": debit,
                 "credit": credit,
                 "closing_balance": balance,
+                "source_page": source_page,
+                "source_line": source_line,
             })
 
         if rows:
@@ -451,7 +627,7 @@ class BankExtractor(BaseExtractor):
 
         df["amount"] = df.apply(
             lambda r: r["credit"] if pd.notna(r.get("credit")) and r.get("credit", 0) > 0
-            else (r["debit"] if pd.notna(r.get("debit")) else 0),
+            else (r["debit"] if pd.notna(r.get("debit")) else None),
             axis=1
         )
 
@@ -464,7 +640,7 @@ class BankExtractor(BaseExtractor):
 
         df["type"] = df.apply(detect_type, axis=1)
 
-        final = df[["date", "amount", "type", "narration", "closing_balance"]].copy()
+        final = df[["date", "amount", "type", "narration", "closing_balance", "source_page", "source_line"]].copy()
         final = final.dropna(subset=["date"]).reset_index(drop=True)
         return final
 
@@ -740,13 +916,13 @@ class UniversalParser:
         self.evaluator = ConfidenceEvaluator()
         self.validator = ValidationPipeline()
 
-    def process(self, file_path: str) -> Tuple[str, Any]:
+    def process(self, file_path: str, password: str = None) -> Tuple[str, Any]:
         """
         Returns (doc_type, mapped_data) where mapped_data is a DataFrame
         compatible with the existing PRISM feature engineering layer.
         """
         # Stage A: Extract & normalize text
-        text = self.extractor.extract(file_path)
+        text = self.extractor.extract(file_path, password=password)
 
         # Only reject if ALL extraction strategies (including OCR) produced nothing
         if not text.strip():
@@ -760,5 +936,15 @@ class UniversalParser:
 
         # Stage E: Validate
         self.validator.validate(result)
+
+        self.last_metadata = {
+            **self.extractor.last_metadata,
+            "document_type": result.doc_type,
+            "extraction_confidence": float(result.confidence),
+            "quality_score": float(result.quality_score),
+            "entities_found": list(result.entities_found),
+            "missing_entities": list(result.missing_entities),
+            "diagnostics": list(result.diagnostics),
+        }
 
         return result.doc_type, result.data

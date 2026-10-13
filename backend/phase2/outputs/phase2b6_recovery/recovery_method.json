@@ -1,0 +1,39 @@
+{
+  "base_feature_runner": "backend/phase2/real_evidence/run_phase2b5r.py",
+  "cross_validation_fits_run": 0,
+  "final_fit_call": "fit_spec(X.iloc[dev], y.iloc[dev], X.iloc[test], FEATURES, PRIMARY)",
+  "final_fit_count": 1,
+  "final_selected_feature_order": [
+    "recent_delinquency_level",
+    "months_with_delinquency",
+    "payment_to_statement_ratio",
+    "mean_statement_balance"
+  ],
+  "historical_final_feature_order": [
+    "recent_delinquency_level",
+    "months_with_delinquency",
+    "payment_to_statement_ratio",
+    "mean_statement_balance"
+  ],
+  "primary_config": {
+    "correlation_cap": 0.9,
+    "iv_floor": 0.01,
+    "l2": 1.0,
+    "max_bins": 5,
+    "min_bad": 25,
+    "min_bin_share": 0.02,
+    "min_good": 25
+  },
+  "score_calibration": "not applied; calibration intercept/slope is a test diagnostic only",
+  "score_scaling_in_original_phase2b6": "not present; original runner reports raw LR probabilities only",
+  "sensitivity_fits_run": 0,
+  "source_feature_pool": [
+    "worst_delinquency_level",
+    "months_with_delinquency",
+    "recent_delinquency_level",
+    "mean_statement_balance",
+    "payment_to_statement_ratio"
+  ],
+  "source_runner": "backend/phase2/real_evidence/run_phase2b6.py",
+  "test_used_for_fit_or_selection": false
+}

@@ -1,0 +1,270 @@
+{
+  "absolute_errors": {
+    "logit": 0.0,
+    "pd": 0.0,
+    "score": 0.0
+  },
+  "all_phase2e_negative_cases_fail_closed": true,
+  "anchor_errors": {
+    "10:1": 0.0,
+    "20:1": 0.0,
+    "40:1": 0.0
+  },
+  "anchors": {
+    "10:1": 550.0,
+    "20:1": 600.0,
+    "40:1": 650.0
+  },
+  "anchors_passed": true,
+  "bin_assignments": {
+    "mean_statement_balance": 0,
+    "months_with_delinquency": 1,
+    "payment_to_statement_ratio": 3,
+    "recent_delinquency_level": 1
+  },
+  "boundary_tests": [
+    {
+      "boundary": 1.0,
+      "epsilon": 1e-09,
+      "expected_bins": [
+        0,
+        0,
+        1
+      ],
+      "feature": "recent_delinquency_level",
+      "observed_bins": [
+        0,
+        0,
+        1
+      ],
+      "passed": true,
+      "values": [
+        0.9999999999999999,
+        1.0,
+        1.0000000000000002
+      ]
+    },
+    {
+      "boundary": 1.0,
+      "epsilon": 1e-09,
+      "expected_bins": [
+        0,
+        0,
+        1
+      ],
+      "feature": "months_with_delinquency",
+      "observed_bins": [
+        0,
+        0,
+        1
+      ],
+      "passed": true,
+      "values": [
+        0.9999999999999999,
+        1.0,
+        1.0000000000000002
+      ]
+    },
+    {
+      "boundary": 0.03970137750280616,
+      "epsilon": 1e-09,
+      "expected_bins": [
+        0,
+        0,
+        1
+      ],
+      "feature": "payment_to_statement_ratio",
+      "observed_bins": [
+        0,
+        0,
+        1
+      ],
+      "passed": true,
+      "values": [
+        0.039701377502806154,
+        0.03970137750280616,
+        0.03970137750280617
+      ]
+    },
+    {
+      "boundary": 0.06032254575963966,
+      "epsilon": 1e-09,
+      "expected_bins": [
+        1,
+        1,
+        2
+      ],
+      "feature": "payment_to_statement_ratio",
+      "observed_bins": [
+        1,
+        1,
+        2
+      ],
+      "passed": true,
+      "values": [
+        0.060322545759639655,
+        0.06032254575963966,
+        0.06032254575963967
+      ]
+    },
+    {
+      "boundary": 0.2040156495459412,
+      "epsilon": 1e-09,
+      "expected_bins": [
+        2,
+        2,
+        3
+      ],
+      "feature": "payment_to_statement_ratio",
+      "observed_bins": [
+        2,
+        2,
+        3
+      ],
+      "passed": true,
+      "values": [
+        0.20401564954594117,
+        0.2040156495459412,
+        0.20401564954594123
+      ]
+    },
+    {
+      "boundary": 0.7971475131053173,
+      "epsilon": 1e-09,
+      "expected_bins": [
+        3,
+        3,
+        4
+      ],
+      "feature": "payment_to_statement_ratio",
+      "observed_bins": [
+        3,
+        3,
+        4
+      ],
+      "passed": true,
+      "values": [
+        0.7971475131053172,
+        0.7971475131053173,
+        0.7971475131053174
+      ]
+    },
+    {
+      "boundary": 2857.2000000000003,
+      "epsilon": 2.8572000000000004e-06,
+      "expected_bins": [
+        0,
+        0,
+        1
+      ],
+      "feature": "mean_statement_balance",
+      "observed_bins": [
+        0,
+        0,
+        1
+      ],
+      "passed": true,
+      "values": [
+        2857.2,
+        2857.2000000000003,
+        2857.2000000000007
+      ]
+    },
+    {
+      "boundary": 72616.93333333335,
+      "epsilon": 7.261693333333336e-05,
+      "expected_bins": [
+        1,
+        1,
+        2
+      ],
+      "feature": "mean_statement_balance",
+      "observed_bins": [
+        1,
+        1,
+        2
+      ],
+      "passed": true,
+      "values": [
+        72616.93333333333,
+        72616.93333333335,
+        72616.93333333336
+      ]
+    }
+  ],
+  "boundary_tests_passed": true,
+  "calibration_applied": false,
+  "coefficients": {
+    "mean_statement_balance": -2.995212789975563,
+    "months_with_delinquency": -0.6450690745928691,
+    "payment_to_statement_ratio": -0.6990225651079325,
+    "recent_delinquency_level": -0.718481742041798
+  },
+  "feature_order": [
+    "recent_delinquency_level",
+    "months_with_delinquency",
+    "payment_to_statement_ratio",
+    "mean_statement_balance"
+  ],
+  "fraud_score_combined": false,
+  "golden_feature_values": {
+    "mean_statement_balance": "350",
+    "months_with_delinquency": "3",
+    "payment_to_statement_ratio": "0.5",
+    "recent_delinquency_level": "3"
+  },
+  "good_bad_odds": 0.24596746406142594,
+  "independent_reconstruction": {
+    "bins": {
+      "mean_statement_balance": 0,
+      "months_with_delinquency": 1,
+      "payment_to_statement_ratio": 3,
+      "recent_delinquency_level": 1
+    },
+    "contributions": {
+      "mean_statement_balance": 0.5621423708655136,
+      "months_with_delinquency": 0.8733442754752132,
+      "payment_to_statement_ratio": -0.28582810302780487,
+      "recent_delinquency_level": 1.501338351969542
+    },
+    "good_bad_odds": 0.24596746406142594,
+    "logit": 1.40255601170979,
+    "pd": 0.8025891757561177,
+    "score": 282.73056512249605,
+    "woe": {
+      "mean_statement_balance": -0.18768027859219305,
+      "months_with_delinquency": -1.3538771425779765,
+      "payment_to_statement_ratio": 0.40889681863656524,
+      "recent_delinquency_level": -2.0895984742813423
+    }
+  },
+  "intercept": -1.248440883572674,
+  "logit": 1.40255601170979,
+  "max_reconstruction_error": 0.0,
+  "model_status": "PHASE_2B6_INCONCLUSIVE",
+  "original_phase2b6_final_estimator_persisted": false,
+  "pd": 0.8025891757561177,
+  "phase2b6_raw_pd_source": "recovered frozen coefficients and bins; no calibration",
+  "phase2e_negative_cases": 18,
+  "phase2f_training_calls": 0,
+  "production_integration": false,
+  "production_status": "UNVERIFIED_REAL_WORLD",
+  "reason_code_traceable": true,
+  "reason_codes": [
+    "recent_delinquency_level",
+    "months_with_delinquency",
+    "mean_statement_balance"
+  ],
+  "recovered_artifact_origin": "preceding Phase 2B.6-R reproduction output; original Phase 2B.6 procedure and development rows",
+  "reference_reproduction": "RUN_IN_REPORT_BUILDER",
+  "retraining_or_training_operation": false,
+  "risk_tier": null,
+  "shadow_pdo_score": 282.73056512249605,
+  "status": "PASS",
+  "woe_values": {
+    "mean_statement_balance": -0.18768027859219305,
+    "months_with_delinquency": -1.3538771425779765,
+    "payment_to_statement_ratio": 0.40889681863656524,
+    "recent_delinquency_level": -2.0895984742813423
+  }
+}

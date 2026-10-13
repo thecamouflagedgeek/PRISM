@@ -1,0 +1,17 @@
+{
+  "automated_frontend_test_framework_present": false,
+  "command": "node node_modules/vite/bin/vite.js build (project-local Vite; npm launcher is broken on this host)",
+  "log": "backend/phase2/outputs/phase2g/frontend_build.log",
+  "manual_route_render": {
+    "method": "local browser DOM inspection",
+    "verified": true,
+    "visible": "Experimental Credit Evidence Lab, experimental warning, and Run Verified Example action"
+  },
+  "manual_visual_review": "route loaded; golden button interaction not run against a live backend",
+  "npm_run_build_launcher": "failed: missing global npm-cli.js",
+  "production_build_passed": true,
+  "warnings": [
+    "Existing index.css has a PostCSS @import ordering warning.",
+    "Browserslist data is stale."
+  ]
+}

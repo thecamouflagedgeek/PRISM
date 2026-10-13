@@ -1,0 +1,215 @@
+{
+  "borrower_account_count": 1,
+  "borrower_reference": "synthetic-borrower-001",
+  "consent": {
+    "granted_at": "2026-01-01T00:00:00Z",
+    "scopes": [
+      "BUREAU_REPAYMENT_HISTORY",
+      "CREDIT_CARD_STATEMENTS"
+    ],
+    "state": "GRANTED"
+  },
+  "prediction_cutoff_month": "2026-07",
+  "repayment_history": [
+    {
+      "account_reference": "fixture-card-001",
+      "delinquency_severity": 0,
+      "month": "2026-01",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "repayment_status": "CURRENT",
+      "source_code": "bureau-fixture:0",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "repay-2026-01"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "delinquency_severity": 1,
+      "month": "2026-02",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "repayment_status": "DELINQUENT",
+      "source_code": "bureau-fixture:1",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "repay-2026-02"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "delinquency_severity": 0,
+      "month": "2026-03",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "repayment_status": "CURRENT",
+      "source_code": "bureau-fixture:0",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "repay-2026-03"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "delinquency_severity": 2,
+      "month": "2026-04",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "repayment_status": "DELINQUENT",
+      "source_code": "bureau-fixture:2",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "repay-2026-04"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "delinquency_severity": 0,
+      "month": "2026-05",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "repayment_status": "CURRENT",
+      "source_code": "bureau-fixture:0",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "repay-2026-05"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "delinquency_severity": 3,
+      "month": "2026-06",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "repayment_status": "DELINQUENT",
+      "source_code": "bureau-fixture:3",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "repay-2026-06"
+      }
+    }
+  ],
+  "statements": [
+    {
+      "account_reference": "fixture-card-001",
+      "currency": "USD",
+      "masked_account_number": "****1234",
+      "payment_amount": "50",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "stmt-2026-01"
+      },
+      "statement_balance": "100",
+      "statement_month": "2026-01"
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "currency": "USD",
+      "masked_account_number": "****1234",
+      "payment_amount": "100",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "stmt-2026-02"
+      },
+      "statement_balance": "200",
+      "statement_month": "2026-02"
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "currency": "USD",
+      "masked_account_number": "****1234",
+      "payment_amount": "150",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "stmt-2026-03"
+      },
+      "statement_balance": "300",
+      "statement_month": "2026-03"
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "currency": "USD",
+      "masked_account_number": "****1234",
+      "payment_amount": "200",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "stmt-2026-04"
+      },
+      "statement_balance": "400",
+      "statement_month": "2026-04"
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "currency": "USD",
+      "masked_account_number": "****1234",
+      "payment_amount": "250",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "stmt-2026-05"
+      },
+      "statement_balance": "500",
+      "statement_month": "2026-05"
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "currency": "USD",
+      "masked_account_number": "****1234",
+      "payment_amount": "300",
+      "product_type": "CREDIT_CARD",
+      "provider": "Example Bank",
+      "source_metadata": {
+        "account_link_confidence": 1.0,
+        "authenticated": true,
+        "extraction_confidence": 1.0,
+        "extraction_method": "controlled_fixture_fields",
+        "source_document_id": "stmt-2026-06"
+      },
+      "statement_balance": "600",
+      "statement_month": "2026-06"
+    }
+  ]
+}

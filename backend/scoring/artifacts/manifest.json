@@ -1,0 +1,16 @@
+{
+  "model_version": "prism-scorecard-existing-2026-10-phase1",
+  "model_validation_status": "UNVERIFIED_REAL_WORLD",
+  "phase_1_runtime_status": "VERIFIED",
+  "training_data_status": "SYNTHETIC_TRAINING_DATA",
+  "active_artifact_directory": "backend/scoring/artifacts",
+  "feature_schema": ["credit_debit_ratio", "cashflow_cv", "net_to_gross_ratio", "utility_stability", "min_balance"],
+  "artifacts": {
+    "lr_model.pkl": "9670a955e46132180d6c2664c4298dd5126ab5c1214bc9c16f8ebca5d1fd4015",
+    "binning.pkl": "c0752f03082fc5e80fd08adafb3afa3ad93526df53898be32eac207454198c76"
+  },
+  "woe_status": "FITTED_TRAINING_BINS_ONLY",
+  "calibration_status": "NOT_APPLIED_UNVERIFIED_PROVENANCE",
+  "scorecard_constants": {"pdo": 50, "base_score": 600, "base_good_bad_odds": 20, "minimum_score": 300, "maximum_score": 900},
+  "provenance_note": "Available training code generates synthetic data; this model output is not validated for real-world credit decisions."
+}

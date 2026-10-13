@@ -1,29 +1,89 @@
-# Virtual environments
-venv/
+# Python virtual environments
 .venv/
+**/.venv/
+venv/
+**/venv/
+/backend/.venv/
 env/
+**/env/
 ocr-env/
+**/ocr-env/
 backend/ocr-env/
 
-# Python
+# Python temporary files
 __pycache__/
+.pytest_cache/
+**/.pytest-temp-*/
+**/.pytest_cache/
+**/.pytest-tmp/
 *.pyc
 *.pyo
 
-# Environment variables
+# Local secrets
 .env
+.env.*
+!.env.example
 
-# OCR temp files
-temp_page.jpg
-backend/temp_page.jpg
+# Local application storage
+/backend/storage/
+/data/testing/
+/backend/phase4/data/
 
-# IDE
+# Private financial documents
+/data/real world/
+/backend/phase2/real_evidence/inputs/
+
+# Generated output
+/output/
+
+# Generated logs
+*.log
+/backend/phase2/outputs/**/pytest*.xml
+
+# Local browser-test output
+**/test-results/
+**/playwright-report/
+**/playwright/.cache/
+
+# Generated document previews and browser evidence (keep source fixtures elsewhere)
+/docs/live-demo/
+/docs/recovery-pdf-preview/
+/docs/validated-dossier-preview/
+/docs/original-reproduction-2026-10-11.txt
+/docs/recovery-broad-suite-final.txt
+/docs/recovery-broad-suite.txt
+/docs/recovery-targeted-final.txt
+/docs/thin-file-dossier-regression.txt
+/docs/recovery-lender-browser.jpg
+/docs/recovery-lender-explanation.jpg
+/docs/recovery-original-browser.jpg
+/docs/dossier-folder-build.txt
+/docs/downloads-folder-browser-test.txt
+/docs/downloads-manual-browser-test.txt
+/docs/live-demo-browser-tests.txt
+/docs/live-demo-targeted-tests.txt
+/docs/real-bank-browser-manual.txt
+/docs/real-bank-browser-review.txt
+/docs/real-bank-build.txt
+/docs/real-bank-frontend-tests.txt
+/docs/real-bank-targeted-tests.txt
+/docs/recovery-broad-suite-triage.txt
+/docs/thin-file-backend-tests.txt
+/docs/thin-file-browser-tests.txt
+/docs/thin-file-build.txt
+/docs/thin-file-frontend-tests.txt
+/docs/ui-refresh-backend-tests.txt
+/docs/ui-refresh-browser-test.txt
+/docs/ui-refresh-build.txt
+/docs/ui-refresh-frontend-tests.txt
+/docs/ui-refresh-negative-browser-test.txt
+/docs/validated-dossier-backend-tests.txt
+/docs/validated-dossier-browser-tests.txt
+
+# Local editor and operating-system files
 .vscode/
 .idea/
-
-# Logs
-*.log
-
-# OS files
 .DS_Store
 Thumbs.db
+temp_page.jpg
+/backend/temp_page.jpg

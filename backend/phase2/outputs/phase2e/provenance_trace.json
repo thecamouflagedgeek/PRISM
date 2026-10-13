@@ -1,0 +1,281 @@
+{
+  "account_reference": "fixture-card-001",
+  "features": {
+    "mean_statement_balance": {
+      "derivation_method": "phase2b6_frozen_formula_v1",
+      "input_fields": [
+        "statement_balance"
+      ],
+      "source_record_ids": [
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06"
+      ],
+      "value": "350"
+    },
+    "months_with_delinquency": {
+      "derivation_method": "phase2b6_frozen_formula_v1",
+      "input_fields": [
+        "repayment_status.delinquency_level"
+      ],
+      "source_record_ids": [
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06"
+      ],
+      "value": "3"
+    },
+    "payment_to_statement_ratio": {
+      "derivation_method": "phase2b6_frozen_formula_v1",
+      "input_fields": [
+        "payment_amount",
+        "statement_balance"
+      ],
+      "source_record_ids": [
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06"
+      ],
+      "value": "0.5"
+    },
+    "recent_delinquency_level": {
+      "derivation_method": "phase2b6_frozen_formula_v1",
+      "input_fields": [
+        "repayment_status.delinquency_level"
+      ],
+      "source_record_ids": [
+        "2026-06"
+      ],
+      "value": "3"
+    }
+  },
+  "fixture_id": "phase2e-golden-card-001",
+  "months": [
+    {
+      "account_reference": "fixture-card-001",
+      "balance": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-01",
+            "field": "statement_balance",
+            "source_record": "2026-01"
+          }
+        ],
+        "value": "100"
+      },
+      "month": "2026-01",
+      "payment": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-01",
+            "field": "payment_amount",
+            "source_record": "2026-01"
+          }
+        ],
+        "value": "50"
+      },
+      "repayment_status": {
+        "severity": 0,
+        "source_fields": [
+          {
+            "document_id": "repay-2026-01",
+            "field": "repayment_status",
+            "source_record": "2026-01"
+          }
+        ],
+        "status": "CURRENT"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "balance": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-02",
+            "field": "statement_balance",
+            "source_record": "2026-02"
+          }
+        ],
+        "value": "200"
+      },
+      "month": "2026-02",
+      "payment": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-02",
+            "field": "payment_amount",
+            "source_record": "2026-02"
+          }
+        ],
+        "value": "100"
+      },
+      "repayment_status": {
+        "severity": 1,
+        "source_fields": [
+          {
+            "document_id": "repay-2026-02",
+            "field": "repayment_status",
+            "source_record": "2026-02"
+          }
+        ],
+        "status": "DELINQUENT"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "balance": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-03",
+            "field": "statement_balance",
+            "source_record": "2026-03"
+          }
+        ],
+        "value": "300"
+      },
+      "month": "2026-03",
+      "payment": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-03",
+            "field": "payment_amount",
+            "source_record": "2026-03"
+          }
+        ],
+        "value": "150"
+      },
+      "repayment_status": {
+        "severity": 0,
+        "source_fields": [
+          {
+            "document_id": "repay-2026-03",
+            "field": "repayment_status",
+            "source_record": "2026-03"
+          }
+        ],
+        "status": "CURRENT"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "balance": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-04",
+            "field": "statement_balance",
+            "source_record": "2026-04"
+          }
+        ],
+        "value": "400"
+      },
+      "month": "2026-04",
+      "payment": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-04",
+            "field": "payment_amount",
+            "source_record": "2026-04"
+          }
+        ],
+        "value": "200"
+      },
+      "repayment_status": {
+        "severity": 2,
+        "source_fields": [
+          {
+            "document_id": "repay-2026-04",
+            "field": "repayment_status",
+            "source_record": "2026-04"
+          }
+        ],
+        "status": "DELINQUENT"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "balance": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-05",
+            "field": "statement_balance",
+            "source_record": "2026-05"
+          }
+        ],
+        "value": "500"
+      },
+      "month": "2026-05",
+      "payment": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-05",
+            "field": "payment_amount",
+            "source_record": "2026-05"
+          }
+        ],
+        "value": "250"
+      },
+      "repayment_status": {
+        "severity": 0,
+        "source_fields": [
+          {
+            "document_id": "repay-2026-05",
+            "field": "repayment_status",
+            "source_record": "2026-05"
+          }
+        ],
+        "status": "CURRENT"
+      }
+    },
+    {
+      "account_reference": "fixture-card-001",
+      "balance": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-06",
+            "field": "statement_balance",
+            "source_record": "2026-06"
+          }
+        ],
+        "value": "600"
+      },
+      "month": "2026-06",
+      "payment": {
+        "source_fields": [
+          {
+            "document_id": "stmt-2026-06",
+            "field": "payment_amount",
+            "source_record": "2026-06"
+          }
+        ],
+        "value": "300"
+      },
+      "repayment_status": {
+        "severity": 3,
+        "source_fields": [
+          {
+            "document_id": "repay-2026-06",
+            "field": "repayment_status",
+            "source_record": "2026-06"
+          }
+        ],
+        "status": "DELINQUENT"
+      }
+    }
+  ],
+  "stages": [
+    "synthetic source statement records + explicit repayment records",
+    "normalized monthly CreditMonthlyRecord objects",
+    "Phase 2D validation",
+    "feature input lineage",
+    "frozen feature values"
+  ]
+}

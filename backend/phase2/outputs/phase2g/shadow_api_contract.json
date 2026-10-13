@@ -1,0 +1,51 @@
+{
+  "PDO_is_presentation_only": true,
+  "calibration": false,
+  "debug_route": "POST /experimental/shadow-assess/debug",
+  "failure": {
+    "eligible": false,
+    "reason_codes": [],
+    "scorecard": null,
+    "status": "INSUFFICIENT_EXPERIMENTAL_EVIDENCE"
+  },
+  "feature_flag": {
+    "default": false,
+    "disabled_code": "EXPERIMENTAL_FEATURE_DISABLED",
+    "disabled_status": 404,
+    "name": "ENABLE_EXPERIMENTAL_SHADOW_SCORING"
+  },
+  "frozen_scorecard_artifact": "backend/phase2/outputs/phase2f/frozen_shadow_scorecard.json",
+  "golden_fixture_route": "GET /experimental/shadow-golden-request",
+  "input": {
+    "caller_feature_vector": "not accepted",
+    "consent": "CREDIT_CARD_STATEMENTS required; BUREAU_REPAYMENT_HISTORY additionally required when repayment-history records are supplied",
+    "explicit_repayment_history": "required if statements do not contain status",
+    "prediction_cutoff_month": "required",
+    "six_month_credit_card_statement_evidence": "required for eligible result",
+    "structured_evidence_only": true
+  },
+  "model_fitting": false,
+  "no_lending_decision": true,
+  "no_pdf_or_ocr": true,
+  "no_persistent_evidence_storage": true,
+  "no_risk_tier": true,
+  "phase2b6_status": "PHASE_2B6_INCONCLUSIVE",
+  "production_status": "UNVERIFIED_REAL_WORLD",
+  "purpose": "Evidence-first experimental shadow scoring demonstration.",
+  "route": "POST /experimental/shadow-assess",
+  "success_response_fields": [
+    "status",
+    "decision_use",
+    "eligibility",
+    "evidence",
+    "features",
+    "scorecard.raw_pd",
+    "scorecard.good_bad_odds",
+    "scorecard.experimental_shadow_score",
+    "reason_codes",
+    "trace_id",
+    "model_status",
+    "validation_scope",
+    "limitations"
+  ]
+}

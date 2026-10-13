@@ -1,388 +1,72 @@
+import { useState } from 'react';
+import { Nav } from '../components/Nav';
+import { API_BASE_URL } from '../api';
+import { normalizeAssessmentResponse } from '../assessmentContract';
+import { api } from '../services/api';
+import BankCashflowAssessment from '../components/BankCashflowAssessment';
+import './AssessmentUI.css';
 
-import { useState } from "react";
-import { Nav } from "../components/Nav";
+const labels = {recent_delinquency_level:'Latest repayment status',months_with_delinquency:'Months with missed or late payments',payment_to_statement_ratio:'Payments relative to statement balances',mean_statement_balance:'Average statement balance'};
+const format = value => value == null ? 'Unavailable' : Number(value).toLocaleString('en-IN',{maximumFractionDigits:3});
+const humanize = value => String(value || '').replaceAll('_',' ').toLowerCase();
+const fields = [{key:'recent_delinquency_level',label:'Recent delinquency level',step:1,min:0,max:9,hint:'Recorded repayment severity. Past history cannot be rewritten.'},{key:'months_with_delinquency',label:'Months with delinquency',step:1,min:0,max:6,hint:'Within the six-month observation window.'},{key:'payment_to_statement_ratio',label:'Payment-to-statement ratio',step:.01,min:0,hint:'0.9 means payments equal 90% of statement balances; this is not card utilisation.'},{key:'mean_statement_balance',label:'Mean statement balance (training units)',step:.01,hint:'Keep the same units as the uploaded statements.'}];
 
-const BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
-
-const TIER_CONFIG = {
-  "Low":       { color: "#16A34A", bg: "#F0FDF4", ring: "#86EFAC", label: "Low Risk" },
-  "Medium":    { color: "#D97706", bg: "#FFFBEB", ring: "#FCD34D", label: "Medium Risk" },
-  "High":      { color: "#DC2626", bg: "#FEF2F2", ring: "#FCA5A5", label: "High Risk" },
-  "Very High": { color: "#7C3AED", bg: "#F5F3FF", ring: "#C4B5FD", label: "Very High Risk" },
-};
-
-export default function ResultsPage({ go, session, result, setError }) {
-  const [whatIf,    setWhatIf]    = useState(null);
-  const [overrides, setOverrides] = useState({});
-  const [tab,       setTab]       = useState("score");
-
-  const tier   = TIER_CONFIG[result?.risk_tier] || TIER_CONFIG["Medium"];
-  const score  = result?.risk_score || 0;
-  const pct    = ((score - 300) / 600);
-  const circ   = 2 * Math.PI * 80;
-  const dash   = circ * (1 - pct);
-
-  const handleWhatIf = async () => {
-    try {
-      const res = await fetch(`${BASE}/assess/whatif`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Session-ID": session.id },
-        body: JSON.stringify({ overrides }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail?.message || "What-if failed");
-      setWhatIf(data);
-    } catch (e) { setError(e.message); }
-  };
-
+export default function ResultsPage({go,session,result,setError}) {
+  const [tab,setTab] = useState('overview');
+  const [overrides,setOverrides] = useState({});
+  const [whatIf,setWhatIf] = useState(null);
+  const [busy,setBusy] = useState(false);
+  const [pdfBusy,setPdfBusy] = useState(false);
   if (!result) return null;
-  console.log(result);
+  const assessment = normalizeAssessmentResponse(result.optional_credit_assessment || result);
+  const bank = result.assessment_type === 'BANK_CASHFLOW_EXPERIMENTAL' ? result : result.bank_cashflow_assessment;
+  const bankFirst = result.assessment_type === 'BANK_CASHFLOW_EXPERIMENTAL' && bank?.score != null;
+  const fraud = bank?.fraud_findings || result.fraud_findings || result.fraud_risk;
+  const flags = fraud?.flags || result.fraud_flags || [];
+  const reasons = result.reason_codes || [];
+  const documents = result.document_findings?.documents || [];
+  const maxContribution = Math.max(...Object.values(assessment.feature_contributions).map(v=>Math.abs(Number(v))),.001);
+  const gapMessages = {EXACTLY_SIX_MONTHS_REQUIRED:'Add all six monthly card statements for the same account.',MONTH_WINDOW_OR_CONTINUITY_INVALID:'Check that the statement months are consecutive and match the selected historical cutoff.',PAYMENT_DUE_DATE_NOT_AFTER_STATEMENT_DATE:'Correct the statement and payment-due dates before uploading again.',STATEMENT_PAGE_COVERAGE_NOT_VERIFIED:'Include every numbered page of each bank statement.'};
+  const gaps = result.data_sufficiency?.reasons || result.eligibility?.blocking_reasons || [];
+  const plan = [];
+  if (assessment.scoreable && Number(assessment.feature_values.months_with_delinquency)>0) plan.push({title:'Build a consistent repayment record',why:`${format(assessment.feature_values.months_with_delinquency)} of six months contain recorded delinquency.`,action:'Set a due-date reminder and review automatic payment arrangements. Future on-time payments can improve the observed history; past records remain unchanged.'});
+  if (assessment.scoreable && Number(assessment.feature_values.payment_to_statement_ratio)<1) plan.push({title:'Review statement repayments',why:`Recorded payments equal ${(Number(assessment.feature_values.payment_to_statement_ratio)*100).toFixed(1)}% of statement balances.`,action:'Review outstanding dues with your issuer and plan affordable repayments. Use the simulator to explore different payment ratios.'});
+  if (bank?.financial_metrics?.average_monthly_expenses != null) plan.push({title:'Protect your monthly surplus',why:`Average income ${format(bank.financial_metrics.average_monthly_income)}; expenses ${format(bank.financial_metrics.average_monthly_expenses)} ${bank.currency || ''}.`,action:'Review recurring spending and retain a cash buffer before taking on additional debt.'});
+  if (!plan.length) plan.push({title:'Keep your records complete',why:'Reliable explanations depend on verified, current evidence.',action:'Check your statement months, account references and payment records, and review your official credit report for errors.'});
+  const simulate = async () => { setBusy(true); try {const scenario={...assessment.feature_values,...overrides}; let response;
+    if (assessment.assessment_id && session?.session_id) response=await api.borrowerWhatIf(assessment.assessment_id,session.session_id,scenario);
+    else {const res=await fetch(`${API_BASE_URL}/experimental/shadow-simulate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({baseline:assessment.feature_values,scenario})});response=await res.json();if(!res.ok)throw new Error(response.detail?.message||'Simulation failed');}
+    setWhatIf(response);
+  } catch(error){setError(error.message);} finally{setBusy(false);} };
+  const download = async () => {setPdfBusy(true);try {const blob=await api.assessmentPdf(assessment.assessment_id,session.session_id);const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=`prism-assessment-${assessment.assessment_id}.pdf`;link.click();URL.revokeObjectURL(url);}catch(error){setError(error.message);}finally{setPdfBusy(false);} };
+  return <div className="assessment-ui results-reference"><Nav currentPage="results" onLogoClick={()=>go('landing')} onLogout={()=>{localStorage.clear();go('landing');}}/><main className="assessment-shell">
+    <header className="assessment-topline"><div><div className="assessment-eyebrow">Your financial picture {bankFirst&&<span className="status-pill" data-testid="assessment-state" style={{marginLeft:12}}>Assessment Ready</span>}</div><h1>Assessment overview</h1><p>Application {result.application_id || '—'}{result.document_findings?.assessment_timing==='HISTORICAL_SNAPSHOT' ? ` · Historical snapshot before ${result.document_findings.prediction_cutoff_month}` : ''}</p></div><div className="assessment-actions"><button className="btn-outline" onClick={()=>go('dashboard')}>Back to dashboard</button><button className="btn-outline" onClick={()=>go('upload')}>Update documents for this application</button>{assessment.scoreable && <button className="btn-outline" disabled={pdfBusy} onClick={download}>{pdfBusy?'Preparing report…':'Download persisted assessment PDF'}</button>}</div></header>
+    {bankFirst ? <section data-testid="scorecard-summary" data-state="scored" className="results-hero"><article className="score-profile"><ScoreGauge score={bank.score}/><div className="score-profile-copy"><div className="assessment-eyebrow">Your observed financial patterns</div><h2>{bank.model_version==='BANK_FINANCIAL_HEALTH_INDEX_V1'?'Bank Financial Health Index':'PRISM cash-flow score'}</h2><span className="status-pill">{bank.coverage?.history_depth==='LIMITED'?'Limited history':'Extended history'}</span><div className="score-scale"><div className="score-scale-labels"><span>300</span><span>450</span><span>600</span><span>750</span><span>900</span></div><div className="score-scale-track"><span style={{left:`${Math.max(0,Math.min(100,(bank.score-300)/6))}%`}}/></div></div><p>{bank.months_observed} observed month{bank.months_observed===1?'':'s'} · {bank.transaction_count} transactions</p><small>300–900 observed-pattern score · not a bureau score or PD</small></div></article><aside className="results-metrics"><div><small>Measured factors</small><strong>{bank.coverage?.available_factors ?? Object.values(bank.feature_values||{}).filter(value=>value!=null).length}<span> / 5</span></strong></div><div><small>Income consistency</small><strong className="text-metric">{bank.feature_values?.income_regularity==null?'Not yet observed':'Across months'}</strong></div><div><small>Fraud signals flagged</small><strong>{fraud?flags.length:'—'}</strong></div></aside></section> : <>
+    <section data-testid="scorecard-summary" data-state={assessment.scoreable?'scored':'review-required'} className="score-summary-grid">
+      <div className="score-tile credit"><h2>Experimental credit-card score</h2><div className="score-number" data-testid="credit-score">{assessment.scoreable?assessment.score.toFixed(2):'Pending evidence'}</div><small>Uncapped research score · no bureau-score equivalence</small><div className="score-subline"><div><small>Raw, uncalibrated PD</small><p>{assessment.scoreable?`${(assessment.probability_of_default*100).toFixed(2)}%`:'Not calculated'}</p></div><div><small>Validated features</small><p>{Math.round(assessment.feature_coverage*4)} / 4</p></div></div></div>
+      <div className="score-tile"><h2>Bank Financial Health Index</h2><div className="score-number" data-testid="bank-index">{bank?.score ?? 'Pending evidence'}</div><small>300–900 descriptive index · no PD produced</small><div className="score-subline"><div><small>Statement months</small><p>{bank?.months_observed ?? '—'}</p></div><div><small>Transactions reviewed</small><p>{bank?.transaction_count ?? '—'}</p></div><div><small>Evidence</small><p>{bank?.score!=null?'Validated':'Needs attention'}</p></div></div></div>
+    </section>
+    </>}
+    {bankFirst && assessment.scoreable && <section className="assessment-panel" style={{marginTop:18}}><h3>Additional credit-card history assessment</h3><p>Separate frozen research score: <strong data-testid="credit-score">{assessment.score.toFixed(2)}</strong> · raw uncalibrated PD {(assessment.probability_of_default*100).toFixed(2)}%. This optional result does not change your cash-flow score.</p></section>}
+    <p className="assessment-note">PRISM describes observed financial patterns. This is not a validated default-risk model, a lending decision or an RBI-approved score.</p>
+    {!bankFirst && !assessment.scoreable && result.assessment_type!=='BANK_CASHFLOW_EXPERIMENTAL' && <section className="assessment-panel"><div data-testid="assessment-state" className="assessment-eyebrow">{result.status==='AUTHENTICATION_REQUIRED'?'Sign in required':result.processing_error?'Processing Failed':'Review Required'}</div><h2>Complete your evidence</h2><p>{result.processing_error || 'The uploaded card history is incomplete. Add the missing evidence to calculate the credit assessment.'}</p><ul>{gaps.map(reason=><li key={reason}>{gapMessages[reason]||humanize(reason)}</li>)}</ul><button className="btn-outline" onClick={()=>go(result.status==='AUTHENTICATION_REQUIRED'?'login':'upload')}>Return to {result.status==='AUTHENTICATION_REQUIRED'?'login':'upload'}</button></section>}
+    <div className="assessment-tabs" role="tablist" aria-label="Assessment sections">{[['overview','Your next steps'],['score','Why this score'],['features','Features'],['fraud','Fraud flags'],['whatif','What-if'],['rights','Borrower rights']].map(([key,label])=><button role="tab" id={`tab-${key}`} aria-controls={`panel-${key}`} aria-selected={tab===key} key={key} onClick={()=>setTab(key)}>{label}</button>)}</div>
+    <section role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
+    {tab==='overview' && <section className="assessment-panel"><div className="assessment-eyebrow">A practical action plan</div><h2>Focus on what you can improve</h2><p>Based on your observed {bankFirst ? 'cash-flow patterns' : 'repayment history and cash flow'}. These steps do not guarantee a score increase or loan approval.</p><div className="assessment-grid" style={{marginTop:20}}>{plan.slice(0,3).map((step,i)=><article className="action-step" key={step.title}><span className="step-marker">{i+1}</span><h3>{step.title}</h3><p>{step.why}</p><p>{step.action}</p></article>)}</div>{(result.improvement_recommendations||[]).length>0 && <details className="technical-details"><summary>Assessment recommendations</summary>{result.improvement_recommendations.map((item,i)=><p key={i}>{item.message || String(item)}</p>)}</details>}</section>}
+    {tab==='score' && bankFirst && <section className="assessment-panel"><h2>Patterns behind your cash-flow score</h2><p>Available patterns are weighted into a descriptive score. Missing factors are omitted and the remaining weights are renormalized. These points are not credit-model logit contributions.</p>{(bank.feature_contributions||[]).map(factor=><div className="feature-row" key={factor.feature}><div><h3>{humanize(factor.feature)}</h3><p>Observed pattern value: {Number(factor.value).toFixed(3)}</p></div><strong>{Number(factor.score_contribution).toFixed(2)} points</strong><small>{factor.direction==='ADVERSE'?'Area to improve':'Supports the observed score'} · weight {(Number(factor.weight)*100).toFixed(1)}%</small></div>)}<h3 style={{marginTop:22}}>What to work on</h3>{(bank.recommendations||[]).map((recommendation,index)=><p key={index}>{recommendation}</p>)}<small>Base 300 + factor points = {bank.score}. No missing income consistency or debt history is assumed.</small></section>}
+    {tab==='score' && (!bankFirst || assessment.scoreable) && <section className="assessment-panel"><h2>What shaped the credit score</h2><p>Signed contributions are changes to the model’s default log-odds, not score points or causal effects. A positive contribution raises the model’s estimated default propensity; a negative contribution lowers it.</p>{Object.entries(assessment.feature_contributions).map(([key,value])=><div className="feature-row" key={key}><div><h3>{labels[key]||humanize(key)}</h3><p>Observed: {key==='payment_to_statement_ratio'?`${(Number(assessment.feature_values[key])*100).toFixed(1)}%`:format(assessment.feature_values[key])}</p></div><strong style={{color:Number(value)>0?'#a96f2b':'#2a7251'}}>{Number(value)>0?'+':''}{Number(value).toFixed(4)} logit</strong><div><small>{Number(value)>0?'Raises model default propensity':'Lowers model default propensity'}</small><div className="effect-bar"><span style={{width:`${Math.abs(Number(value))/maxContribution*100}%`,background:Number(value)>0?'#c99b61':'#69a88a'}}/></div></div></div>)}<h3 style={{marginTop:24}}>Reason codes</h3>{reasons.length?reasons.map((reason,i)=><div className="empty-state" style={{marginTop:12}} key={i}><h3>{reason.label||labels[reason.code]||humanize(reason.code)}</h3><p>{reason.direction==='increases_default_logit'?'This observed factor increases the model’s default propensity.':'Review this factor alongside the full repayment history.'}</p><small>Reason: {reason.code} · contribution {Number(reason.contribution).toFixed(4)} logit</small></div>):<p>No adverse reason codes were returned.</p>}</section>}
+    {tab==='features' && bankFirst && <section className="assessment-panel"><h2>Your bank statement patterns</h2><div className="assessment-table-wrap"><table className="assessment-table"><thead><tr><th>Pattern</th><th>Value</th><th>Coverage</th></tr></thead><tbody>{Object.entries(bank.feature_values||{}).map(([key,value])=><tr key={key}><td>{humanize(key)}</td><td>{format(value)}</td><td>{value==null?'Not observed; omitted from scoring':'Measured from uploaded activity'}</td></tr>)}</tbody></table></div>{bank.coverage?.balance_verification_scope==='OBSERVED_SUCCESSIVE_RUNNING_BALANCES' && <p>Successive transaction balances checked. This statement has no labelled opening or closing balance; the score covers the uploaded activity.</p>}<p>Statement scope: {bank.coverage?.scope}. {bank.coverage?.page_completeness_verified?'Declared page sequence checked.':'Only supplied pages were reviewed; full statement completeness is not certified.'}</p>{result.optional_document_review&&<p>{result.optional_document_review.message}</p>}{(bank.supporting_documents||[]).map((doc,i)=><p key={i}>{doc.file_name}: supporting document reviewed separately.</p>)}</section>}
+    {tab==='features' && (!bankFirst || assessment.scoreable) && <section className="assessment-panel"><h2>Evidence behind the assessment</h2><p>Only these four credit-account features enter the frozen model. Salary, utilities, bank cash flow and fraud checks are reviewed separately.</p><div className="assessment-table-wrap"><table className="assessment-table"><thead><tr><th>Feature</th><th>Observed value</th><th>WoE</th><th>Logit contribution</th></tr></thead><tbody>{Object.entries(assessment.feature_values).map(([key,value])=><tr key={key}><td>{labels[key]}</td><td>{format(value)}</td><td>{format(assessment.woe_values[key])}</td><td>{format(assessment.feature_contributions[key])}</td></tr>)}</tbody></table></div>{documents.length>0 && <><h3 style={{margin:'24px 0 12px'}}>Statement review</h3><div className="assessment-table-wrap"><table className="assessment-table"><thead><tr><th>Document</th><th>Month</th><th>Pages</th><th>Result</th></tr></thead><tbody>{documents.map((doc,i)=><tr key={doc.document_id||i}><td>{doc.file_name}</td><td>{doc.fields?.statement_month||'—'}</td><td>{doc.page_count} / {doc.declared_page_count??'Unconfirmed'}</td><td>{doc.validation_result==='VALID'?'Validated':humanize(doc.validation_result)}</td></tr>)}</tbody></table></div></>}<details className="technical-details"><summary>Technical provenance and validation</summary><pre>{JSON.stringify({feature_trace:result.feature_trace,evidence:result.evidence_validation,documents:result.document_findings},null,2)}</pre></details></section>}
+    {tab==='fraud' && <section className="assessment-panel"><div className="assessment-eyebrow">Independent document and transaction review</div><h2>Fraud &amp; integrity checks</h2><p>Heuristic signals indicate items to review. They do not prove fraud and do not change either displayed score.</p>{fraud?<><div className="metric-grid"><div><small>Review status</small><strong>{humanize(fraud.fraud_status)}</strong></div><div><small>Signals flagged</small><strong>{flags.length}</strong></div><div><small>Rows reviewed</small><strong>{fraud.coverage?.transactions_reviewed??'Not recorded'}</strong></div><div><small>Engine</small><strong>{fraud.engine_version||'Not recorded'}</strong></div></div><p>Identity and loan-stacking checks: {fraud.coverage?.identity_and_loan_stacking||'Coverage not recorded for this assessment'}. Transaction findings are separate from identity verification.</p>{flags.length?flags.map((flag,i)=><article className="fraud-item" key={i}><span className="status-pill review">{humanize(flag.severity)||'Review'}</span><h3 style={{marginTop:10}}>{humanize(flag.rule||flag.type)}</h3><p>{flag.message||flag.detail}</p><details className="technical-details"><summary>Flag evidence</summary><pre>{JSON.stringify(flag.evidence||{},null,2)}</pre></details></article>):<div className="empty-state">No transaction rules flagged the supplied records. This does not establish authenticity.</div>}</>:<div className="empty-state"><h3>Fraud review is not available for this saved assessment</h3><p>Upload bank statements again to run the transaction engine. Identity verification and document authenticity are not inferred from a credit score.</p></div>}{bank?.evidence && <details className="technical-details"><summary>Statement integrity checks</summary><div className="assessment-table-wrap"><table className="assessment-table"><tbody>{[['Account linkage','account_linked'],['Balance reconciliation','balance_reconciled'],['Declared pages complete','page_coverage_complete'],['Full-month coverage','complete_month_coverage'],['Transaction order','transaction_order_valid']].map(([name,key])=><tr key={key}><td>{name}</td><td>{bank.evidence[key]===true?'Passed':bank.evidence[key]===false?'Needs review':'Not assessed'}</td></tr>)}</tbody></table></div></details>}</section>}
+    {tab==='whatif' && <section className="assessment-panel"><div className="assessment-eyebrow">Explore a scenario</div><h2>What-if Simulator</h2><p>Explore hypothetical changes without altering your saved score. Card simulation is available only when an additional card-history assessment exists.</p>{assessment.scoreable?<><div className="assessment-form-grid">{fields.map(field=><label key={field.key}>{field.label}<input aria-label={field.label} type="number" step={field.step} min={field.min} max={field.max} value={overrides[field.key]??assessment.feature_values[field.key]??''} onChange={e=>setOverrides(prev=>({...prev,[field.key]:e.target.value===''?assessment.feature_values[field.key]:Number(e.target.value)}))}/><small>{field.hint}</small></label>)}</div><div className="assessment-actions"><button className="btn-primary" disabled={busy} onClick={simulate}>{busy?'Calculating…':'Simulate →'}</button><button className="btn-outline" onClick={()=>{setOverrides({});setWhatIf(null);}}>Reset to persisted baseline</button></div>{whatIf && <div className="simulation-result"><div className="metric-grid"><div><small>Base score</small><strong>{whatIf.baseline.scorecard.experimental_shadow_score.toFixed(1)}</strong></div><div><small>Scenario score</small><strong>{whatIf.scenario.scorecard.experimental_shadow_score.toFixed(1)}</strong></div><div><small>Change</small><strong>{whatIf.delta.score>=0?'+':''}{whatIf.delta.score.toFixed(1)} pts</strong></div></div><p>Baseline PD {(whatIf.baseline.scorecard.raw_pd*100).toFixed(2)}% · Scenario PD {(whatIf.scenario.scorecard.raw_pd*100).toFixed(2)}% · Δ {(whatIf.delta.raw_pd*100).toFixed(2)} percentage points</p><small>Hypothetical only. Your saved assessment remains unchanged.</small></div>}</>:<div className="empty-state">Use the bank cash-flow simulator below to explore income, expenses and cash-buffer changes. No card account is required.</div>}</section>}
+    {tab==='rights' && <section className="assessment-panel"><div className="assessment-eyebrow">RBI borrower protections</div><h2>Your rights when considering credit</h2><p>PRISM’s experimental score has no RBI eligibility band. These protections apply independently of the score; lenders assess applications under their own policies.</p><div className="assessment-grid" style={{marginTop:20}}><article className="action-step"><h3>Check your official credit report</h3><p>Request one free full credit report per calendar year from each credit information company holding your history. Review repayment entries and dispute errors.</p><a className="regulatory-link" href="https://www.rbi.org.in/Scripts/NotificationUser.aspx?Id=10590&Mode=0" target="_blank" rel="noreferrer">RBI: free annual credit report ↗</a></article><article className="action-step"><h3>Understand the borrowing cost</h3><p>For digital lending, review the lender’s Key Facts Statement, annual percentage rate, charges and repayment terms before agreeing. Check the disclosed cooling-off option.</p><a className="regulatory-link" href="https://www.rbi.org.in/Scripts/NotificationUser.aspx?Id=12848&Mode=0" target="_blank" rel="noreferrer">RBI: Digital Lending Directions ↗</a></article><article className="action-step"><h3>Know how to raise a complaint</h3><p>Contact the regulated lender’s grievance officer first. If unresolved after 30 days, or you receive an unsatisfactory response, review eligibility for RBI’s complaint process.</p><a className="regulatory-link" href="https://cms.rbi.org.in/" target="_blank" rel="noreferrer">RBI Complaint Management System ↗</a></article></div><p style={{marginTop:20}}>For this assessment: {Number(assessment.feature_values.months_with_delinquency)>0?'review the reported delinquency entries against your issuer records before relying on them.':'review your official credit history before applying.'} These are PRISM next steps, not an RBI recommendation for a particular score.</p><small>Sources checked 11 October 2026. This prototype does not establish regulatory compliance or replace the lender’s assessment.</small></section>}
+    </section>
+    <BankCashflowAssessment data={bank} session={session} setError={setError}/>
+    <details className="technical-details"><summary>Assessment details and limitations</summary><p>The credit-card research model remains inconclusive. Raw PD is uncalibrated and not validated for Indian lending. Synthetic records establish a software demonstration, not borrower creditworthiness. Bank health is a descriptive fixed-weight index; fraud review is heuristic.</p><p>Credit assessment: {assessment.assessment_id||'Not generated'}. Bank assessment: {bank?.assessment_id||'Not generated'}.</p>{(result.warnings||[]).map((warning,i)=><p key={i}>{warning}</p>)}</details>
+  </main></div>;
+}
 
-  return (
-    <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
-      <Nav currentPage="results" onLogoClick={() => go("landing")}  onLogout={() => {
-    localStorage.clear();
-    go("landing");
-  }}/>
-
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "48px 48px 80px" }}>
-
-        {/* ── Page header ── */}
-        <div className="fade-up" style={{ marginBottom: 36,
-          display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: "var(--orange)",
-              textTransform: "uppercase", letterSpacing: "0.1em",
-              fontFamily: "'Syne', sans-serif", marginBottom: 6 }}>Assessment Complete</div>
-            <h1 className="heading" style={{ fontSize: 34, color: "var(--ink)" }}>
-              Credit Risk Assessment
-            </h1>
-            <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>
-              Borrower: <strong style={{ color: "var(--ink)" }}>{session?.borrowerId}</strong>
-              {result.assessed_at && ` · ${new Date(result.assessed_at).toLocaleString("en-IN")}`}
-            </div>
-          </div>
-          <button className="btn-outline" onClick={() => go("login")} style={{ fontSize: 13 }}>
-            ← New Assessment
-          </button>
-        </div>
-
-        {/* ── Score hero ── */}
-        <div className="fade-up-1" style={{ background: "var(--white)",
-          border: "1px solid var(--border)", borderRadius: 24,
-          padding: "36px 40px", marginBottom: 24,
-          display: "grid", gridTemplateColumns: "auto 1fr auto", gap: 40,
-          alignItems: "center" }}>
-
-          {/* SVG ring */}
-          <div style={{ position: "relative", width: 180, height: 180, flexShrink: 0 }}>
-            <svg width="180" height="180" viewBox="0 0 180 180">
-              <circle cx="90" cy="90" r="80" className="score-ring-track" />
-              <circle cx="90" cy="90" r="80" className="score-ring-fill"
-                stroke={tier.color}
-                strokeDasharray={circ}
-                strokeDashoffset={dash} />
-            </svg>
-            <div style={{ position: "absolute", inset: 0, display: "flex",
-              flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-              <div className="display" style={{ fontSize: 40, color: "var(--ink)",
-                lineHeight: 1 }}>{score}</div>
-              <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>/ 900</div>
-            </div>
-          </div>
-
-          {/* Tier + details */}
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-              <span className="tier-badge" style={{ background: tier.bg, color: tier.color,
-                border: `1px solid ${tier.ring}` }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: tier.color }} />
-                {tier.label}
-              </span>
-              {result.review_required && (
-                <span className="tier-badge" style={{ background: "#FFFBEB", color: "#D97706",
-                  border: "1px solid #FCD34D" }}>
-                  ⚠ Review Required
-                </span>
-              )}
-              {result.data_quality?.thin_file && (
-                <span className="tier-badge" style={{ background: "#F5F3FF", color: "#7C3AED",
-                  border: "1px solid #C4B5FD" }}>
-                  Thin File
-                </span>
-              )}
-            </div>
-
-            <div style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.7, maxWidth: 400 }}>
-              {result.data_quality?.thin_file_note ||
-                `Score computed from ${result.data_quality?.feature_coverage}% feature coverage.`}
-            </div>
-
-            {/* Score scale bar */}
-            <div style={{ marginTop: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between",
-                fontSize: 10, color: "var(--muted)", marginBottom: 4 }}>
-                <span>300 · Very High</span><span>450 · High</span>
-                <span>600 · Medium</span><span>750 · Low</span><span>900</span>
-              </div>
-              <div style={{ background: "var(--border)", borderRadius: 4, height: 8,
-                position: "relative", overflow: "visible" }}>
-                <div style={{ position: "absolute", inset: 0, borderRadius: 4,
-                  background: "linear-gradient(90deg, #DC2626 0%, #F59E0B 40%, #22C55E 100%)" }} />
-                <div style={{ position: "absolute", top: -3, borderRadius: "50%",
-                  width: 14, height: 14, background: "var(--ink)",
-                  border: "2px solid var(--white)", boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-                  left: `calc(${pct * 100}% - 7px)`, transition: "left 1s ease" }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Confidence */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16,
-            padding: "0 0 0 32px", borderLeft: "1px solid var(--border)" }}>
-            {[
-  {
-    label: "Confidence",
-    value:
-      result.confidence_score != null
-        ? `${(result.confidence_score * 100).toFixed(0)}%`
-        : "N/A",
-  },
-  {
-    label: "Coverage",
-    value:
-      result.data_quality?.feature_coverage != null
-        ? `${result.data_quality.feature_coverage}%`
-        : "N/A",
-  },
-  {
-    label: "Fraud flags",
-    value: result.fraud_flags?.length ?? 0,
-  },
-].map(({ label, value }) => (
-              <div key={label}>
-                <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 500,
-                  textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>{label}</div>
-                <div className="heading" style={{ fontSize: 22, color: "var(--ink)" }}>{value}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Tab nav ── */}
-        <div className="fade-up-2" style={{ display: "flex", gap: 4, marginBottom: 20,
-          background: "var(--white)", border: "1px solid var(--border)",
-          borderRadius: 12, padding: 4, width: "fit-content" }}>
-          {[
-            { key: "score",    label: "Why this score" },
-            { key: "features",  label: "Features" },
-            { key: "fraud",     label: `Fraud flags ${result.fraud_flags?.length ? `(${result.fraud_flags.length})` : ""}` },
-            { key: "whatif",    label: "What-if" },
-          ].map(({ key, label }) => (
-            <button key={key} onClick={() => setTab(key)}
-              style={{ padding: "8px 18px", borderRadius: 9, border: "none", cursor: "pointer",
-                fontSize: 13, fontWeight: 500, transition: "all 0.15s",
-                background: tab === key ? "var(--ink)" : "transparent",
-                color: tab === key ? "var(--white)" : "var(--muted)" }}>
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* ── Tab panels ── */}
-        <div className="fade-up-3">
-
-          {/* SHAP reasons */}
-          {tab === "score" && (
-            <div className="card">
-              <div className="heading" style={{ fontSize: 20, marginBottom: 24 }}>Why this score</div>
-              {result.shap_reasons?.length > 0 ? result.shap_reasons.map((r, i) => {
-                const maxPts = Math.max(...result.shap_reasons.map(x => Math.abs(x.impact_pts)));
-                const barW   = Math.abs(r.impact_pts) / maxPts * 100;
-                return (
-                  <div key={i} style={{ padding: "16px 0",
-                    borderBottom: i < result.shap_reasons.length - 1 ? "1px solid var(--border)" : "none" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between",
-                      alignItems: "center", marginBottom: 8 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div style={{ width: 10, height: 10, borderRadius: "50%", flexShrink: 0,
-                          background: r.direction === "positive" ? "var(--green)" : "var(--red)" }} />
-                        <span style={{ fontSize: 14, fontWeight: 500, color: "var(--ink)" }}>
-                          {r.factor}
-                        </span>
-                        <span style={{ fontSize: 11, padding: "1px 7px", borderRadius: 50,
-                          background: "var(--cream)", color: "var(--muted)",
-                          border: "1px solid var(--border)" }}>{r.source}</span>
-                      </div>
-                      <span style={{ fontSize: 14, fontWeight: 700,
-                        fontFamily: "'Syne', sans-serif",
-                        color: r.direction === "positive" ? "var(--green)" : "var(--red)" }}>
-                        {r.impact_pts > 0 ? "+" : ""}{r.impact_pts} pts
-                      </span>
-                    </div>
-                    <div className="shap-bar-bg">
-                      <div className="shap-bar-fill" style={{
-                        width: `${barW}%`,
-                        background: r.direction === "positive" ? "var(--green)" : "var(--red)"
-                      }} />
-                    </div>
-                  </div>
-                );
-              }) : (
-                <div style={{ color: "var(--muted)", fontSize: 14 }}>No reason codes available.</div>
-              )}
-            </div>
-          )}
-
-          {/* Features */}
-          {tab === "features" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {[
-                { key: "bank",    label: "Bank Statement Features",  color: "var(--orange)" },
-                { key: "salary",  label: "Salary Features",          color: "var(--purple)" },
-                { key: "utility", label: "Utility Features",         color: "var(--green)"  },
-              ].map(({ key, label, color }) => result.features?.[key] && (
-                <div key={key} className="card">
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: color }} />
-                    <div className="heading" style={{ fontSize: 16 }}>{label}</div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
-                    {Object.entries(result.features[key]).map(([k, v]) => (
-                      <div key={k} style={{ padding: "12px 14px", borderRadius: 10,
-                        background: "var(--cream)", border: "1px solid var(--border)" }}>
-                        <div style={{ fontSize: 11, color: "var(--muted)", marginBottom: 4,
-                          fontFamily: "'Syne', sans-serif", textTransform: "uppercase",
-                          letterSpacing: "0.05em" }}>{k.replace(/_/g, " ")}</div>
-                        <div style={{ fontSize: 16, fontWeight: 600, color: "var(--ink)" }}>
-                          {v === null || v === undefined ? "—"
-                            : typeof v === "boolean" ? (v ? "Yes" : "No")
-                            : typeof v === "number" ? (Number.isInteger(v) ? v : Number(v).toFixed(3))
-                            : String(v)}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Fraud */}
-          {tab === "fraud" && (
-            <div className="card">
-              <div className="heading" style={{ fontSize: 20, marginBottom: 20 }}>Fraud flags</div>
-              {result.fraud_flags?.length > 0 ? result.fraud_flags.map((f, i) => (
-                <div key={i} style={{ padding: "16px 18px", borderRadius: 12, marginBottom: 10,
-                  background: f.severity === "High" ? "#FEF2F2" : "#FFFBEB",
-                  border: `1px solid ${f.severity === "High" ? "#FCA5A5" : "#FCD34D"}` }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px",
-                      borderRadius: 50, background: f.severity === "High" ? "#DC2626" : "#D97706",
-                      color: "#fff" }}>{f.severity}</span>
-                    <span style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>
-                      {f.type.replace(/_/g, " ")}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 13, color: "var(--muted)" }}>{f.detail}</div>
-                </div>
-              )) : (
-                <div style={{ display: "flex", gap: 10, alignItems: "center",
-                  color: "var(--green)", fontSize: 15, padding: "8px 0" }}>
-                  <span style={{ fontSize: 20 }}>✓</span>
-                  No fraud flags detected. Profile appears clean.
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* What-if */}
-          {tab === "whatif" && (
-            <div className="card">
-              <div className="heading" style={{ fontSize: 20, marginBottom: 6 }}>What-if Simulation</div>
-              <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 24 }}>
-                Override feature values to simulate how your score would change.
-              </p>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16,
-                marginBottom: 20 }}>
-                {[
-                  { key: "cashflow_cv",          label: "Cashflow CV",          type: "number", step: "0.1", min: 0, max: 3, placeholder: "0.00–3.00" },
-                  { key: "credit_debit_ratio",   label: "Credit / Debit Ratio", type: "number", step: "0.1", min: 0, max: 5, placeholder: "0.00–5.00" },
-                  { key: "net_to_gross_ratio",   label: "Net / Gross Ratio",    type: "number", step: "0.01",min: 0, max: 1, placeholder: "0.00–1.00" },
-                  { key: "pf_contribution_flag", label: "PF Contribution",      type: "checkbox" },
-                ].map(({ key, label, type, step, min, max, placeholder }) => (
-                  <div key={key}>
-                    <label style={{ fontSize: 13, fontWeight: 500, color: "var(--ink2)",
-                      display: "block", marginBottom: 6 }}>{label}</label>
-                    {type === "checkbox" ? (
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <input type="checkbox" style={{ width: 18, height: 18, accentColor: "var(--orange)" }}
-                          checked={overrides[key] || false}
-                          onChange={e => setOverrides(o => ({ ...o, [key]: e.target.checked }))} />
-                        <span style={{ fontSize: 13, color: "var(--muted)" }}>
-                          {overrides[key] ? "Yes — PF being deducted" : "No PF contribution"}
-                        </span>
-                      </div>
-                    ) : (
-                      <input type="number" step={step} min={min} max={max}
-                        placeholder={placeholder}
-                        className="input-field"
-                        onChange={e => setOverrides(o => ({
-                          ...o, [key]: parseFloat(e.target.value) || undefined
-                        }))} />
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <button className="btn-primary" onClick={handleWhatIf}
-                style={{ background: "var(--orange)", marginBottom: whatIf ? 20 : 0 }}>
-                Simulate →
-              </button>
-
-              {whatIf && (
-                <div style={{ padding: "20px 22px", borderRadius: 14, marginTop: 8,
-                  background: whatIf.delta >= 0 ? "#F0FDF4" : "#FEF2F2",
-                  border: `1px solid ${whatIf.delta >= 0 ? "#86EFAC" : "#FCA5A5"}` }}>
-                  <div style={{ display: "flex", gap: 32, alignItems: "center", flexWrap: "wrap" }}>
-                    {[
-                      { label: "Base score",  val: whatIf.base_score, color: "var(--ink)" },
-                      { label: "→",            val: null, color: "var(--muted)" },
-                      { label: "New score",   val: whatIf.new_score,  color: whatIf.delta >= 0 ? "var(--green)" : "var(--red)" },
-                      { label: "Change",      val: `${whatIf.delta >= 0 ? "+" : ""}${whatIf.delta} pts`, color: whatIf.delta >= 0 ? "var(--green)" : "var(--red)" },
-                    ].map(({ label, val, color }, i) => (
-                      <div key={i} style={{ textAlign: "center" }}>
-                        <div style={{ fontSize: 11, color: "var(--muted)", textTransform: "uppercase",
-                          letterSpacing: "0.08em", marginBottom: 4 }}>{label}</div>
-                        {val !== null && (
-                          <div className="heading" style={{ fontSize: 28, color }}>{val}</div>
-                        )}
-                      </div>
-                    ))}
-                    {whatIf.delta_tier && (
-                      <div style={{ fontSize: 13, color: "var(--muted)", flex: 1 }}>
-                        Tier change: <strong style={{ color: "var(--ink)" }}>{whatIf.delta_tier}</strong>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* ── Warnings ── */}
-        {result.warnings?.length > 0 && (
-          <div className="fade-up-4" style={{ marginTop: 20, padding: "16px 20px",
-            borderRadius: 12, background: "#FFFBEB", border: "1px solid #FCD34D" }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: "#D97706", marginBottom: 6,
-              textTransform: "uppercase", letterSpacing: "0.06em" }}>Data quality notes</div>
-            {result.warnings.map((w, i) => (
-              <div key={i} style={{ fontSize: 13, color: "#92400E", padding: "2px 0" }}>• {w}</div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+function ScoreGauge({score}) {
+ const proportion=Math.max(0,Math.min(1,(score-300)/600));
+ return <div className="score-gauge" data-testid="bank-index"><svg viewBox="0 0 200 170" aria-hidden="true"><path d="M 29 142 A 82 82 0 1 1 171 142" pathLength="100" className="gauge-track"/><path d="M 29 142 A 82 82 0 1 1 171 142" pathLength="100" className="gauge-value" strokeDasharray={`${proportion*100} 100`}/></svg><div className="gauge-number"><strong data-testid="primary-score">{score}</strong><small>out of 900</small></div></div>;
 }

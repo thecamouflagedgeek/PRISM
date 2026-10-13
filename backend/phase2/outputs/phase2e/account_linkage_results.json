@@ -1,0 +1,19 @@
+{
+  "bureau_account_mismatch": {
+    "result": "ACCOUNT_LINK_UNCERTAIN"
+  },
+  "low_confidence": {
+    "result": "ACCOUNT_LINK_UNCERTAIN"
+  },
+  "matching_account_month": {
+    "policy": "account reference + normalized provider + product + month + confidence >= 0.95",
+    "result": "PASS"
+  },
+  "multiple_accounts": "kept as separate CreditAccountEvidence; no aggregate emitted",
+  "statement_account_mismatch": {
+    "result": "ACCOUNT_LINK_UNCERTAIN"
+  },
+  "statement_bureau_month_mismatch": {
+    "result": "ACCOUNT_LINK_UNCERTAIN"
+  }
+}

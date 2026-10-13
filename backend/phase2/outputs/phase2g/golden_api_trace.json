@@ -1,0 +1,510 @@
+{
+  "decision_use": "NOT_FOR_CREDIT_DECISION",
+  "eligibility": {
+    "blocking_reasons": [],
+    "eligible": true,
+    "warnings": [
+      "PHASE_2B6_INCONCLUSIVE_EXTERNAL_VALIDATION_ABSENT"
+    ]
+  },
+  "evidence": {
+    "account_reference": "fixture-card-001",
+    "masked_account_number": "****1234",
+    "months_validated": 6,
+    "prediction_cutoff": "2026-07",
+    "product_type": "CREDIT_CARD",
+    "provider": "Example Bank",
+    "repayment_history_source_available": true
+  },
+  "features": {
+    "mean_statement_balance": 350.0,
+    "months_with_delinquency": 3.0,
+    "payment_to_statement_ratio": 0.5,
+    "recent_delinquency_level": 3.0
+  },
+  "limitations": [
+    "NOT_EXTERNALLY_VALIDATED",
+    "NOT_CURRENT_MARKET_VALIDATED",
+    "NOT_INDIAN_MARKET_VALIDATED",
+    "NOT_PRODUCTION_APPROVED"
+  ],
+  "model_status": "PHASE_2B6_INCONCLUSIVE",
+  "reason_codes": [
+    {
+      "code": "recent_delinquency_level",
+      "contribution": 1.501338351969542,
+      "direction": "increases_default_logit",
+      "label": "Recent repayment delinquency"
+    },
+    {
+      "code": "months_with_delinquency",
+      "contribution": 0.8733442754752132,
+      "direction": "increases_default_logit",
+      "label": "Repeated repayment delinquency"
+    },
+    {
+      "code": "mean_statement_balance",
+      "contribution": 0.5621423708655136,
+      "direction": "increases_default_logit",
+      "label": "Average statement balance"
+    }
+  ],
+  "scorecard": {
+    "experimental_shadow_score": 282.73056512249605,
+    "good_bad_odds": 0.24596746406142594,
+    "logit": 1.40255601170979,
+    "pdo_presentation_only": true,
+    "raw_pd": 0.8025891757561177,
+    "score_label": "Experimental Shadow Score"
+  },
+  "status": "EXPERIMENTAL_SHADOW_SCORE",
+  "trace": {
+    "account_reference": "fixture-card-001",
+    "artifact_sha256": "DE1C1106759ED00F53F208C5185D63B3D8D22DB477D3A3EFD36132B5830E4CA6",
+    "bin_assignments": {
+      "mean_statement_balance": 0,
+      "months_with_delinquency": 1,
+      "payment_to_statement_ratio": 3,
+      "recent_delinquency_level": 1
+    },
+    "borrower_reference": "synthetic-borrower-001",
+    "calibration_applied": false,
+    "coefficients": {
+      "mean_statement_balance": -2.995212789975563,
+      "months_with_delinquency": -0.6450690745928691,
+      "payment_to_statement_ratio": -0.6990225651079325,
+      "recent_delinquency_level": -0.718481742041798
+    },
+    "eligibility": {
+      "blocking_reasons": [],
+      "eligible": true
+    },
+    "feature_contributions": {
+      "mean_statement_balance": 0.5621423708655136,
+      "months_with_delinquency": 0.8733442754752132,
+      "payment_to_statement_ratio": -0.28582810302780487,
+      "recent_delinquency_level": 1.501338351969542
+    },
+    "feature_provenance": {
+      "mean_statement_balance": {
+        "derivation_method": "phase2b6_frozen_formula_v1",
+        "input_fields": [
+          "statement_balance"
+        ],
+        "source_record_ids": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      },
+      "months_with_delinquency": {
+        "derivation_method": "phase2b6_frozen_formula_v1",
+        "input_fields": [
+          "repayment_status.delinquency_level"
+        ],
+        "source_record_ids": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      },
+      "payment_to_statement_ratio": {
+        "derivation_method": "phase2b6_frozen_formula_v1",
+        "input_fields": [
+          "payment_amount",
+          "statement_balance"
+        ],
+        "source_record_ids": [
+          "2026-01",
+          "2026-02",
+          "2026-03",
+          "2026-04",
+          "2026-05",
+          "2026-06"
+        ]
+      },
+      "recent_delinquency_level": {
+        "derivation_method": "phase2b6_frozen_formula_v1",
+        "input_fields": [
+          "repayment_status.delinquency_level"
+        ],
+        "source_record_ids": [
+          "2026-06"
+        ]
+      }
+    },
+    "feature_states": {
+      "mean_statement_balance": "VALID",
+      "months_with_delinquency": "VALID",
+      "payment_to_statement_ratio": "VALID",
+      "recent_delinquency_level": "VALID"
+    },
+    "feature_trace": {
+      "mean_statement_balance": {
+        "bin": {
+          "bin_id": 0,
+          "interval_closure": "[-inf, upper]",
+          "iv_contribution": 0.007411363888728245,
+          "lower_bound": "-Infinity",
+          "missing_bin": false,
+          "observed_training_default_rate": 0.2552083333333333,
+          "training_count": 4800,
+          "training_default_count": 1225,
+          "training_nondefault_count": 3575,
+          "upper_bound": 2857.2000000000003,
+          "woe": -0.18768027859219305
+        },
+        "bin_id": 0,
+        "coefficient": -2.995212789975563,
+        "contribution": 0.5621423708655136,
+        "feature_provenance": {
+          "derivation_method": "phase2b6_frozen_formula_v1",
+          "input_fields": [
+            "statement_balance"
+          ],
+          "source_record_ids": [
+            "2026-01",
+            "2026-02",
+            "2026-03",
+            "2026-04",
+            "2026-05",
+            "2026-06"
+          ]
+        },
+        "raw_feature_value": "350",
+        "woe": -0.18768027859219305
+      },
+      "months_with_delinquency": {
+        "bin": {
+          "bin_id": 1,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.4490782480252702,
+          "lower_bound": 1.0,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.5238305383936452,
+          "training_count": 4532,
+          "training_default_count": 2374,
+          "training_nondefault_count": 2158,
+          "upper_bound": "Infinity",
+          "woe": -1.3538771425779765
+        },
+        "bin_id": 1,
+        "coefficient": -0.6450690745928691,
+        "contribution": 0.8733442754752132,
+        "feature_provenance": {
+          "derivation_method": "phase2b6_frozen_formula_v1",
+          "input_fields": [
+            "repayment_status.delinquency_level"
+          ],
+          "source_record_ids": [
+            "2026-01",
+            "2026-02",
+            "2026-03",
+            "2026-04",
+            "2026-05",
+            "2026-06"
+          ]
+        },
+        "raw_feature_value": "3",
+        "woe": -1.3538771425779765
+      },
+      "payment_to_statement_ratio": {
+        "bin": {
+          "bin_id": 3,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.028677649778309916,
+          "lower_bound": 0.2040156495459412,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.1587335774283868,
+          "training_count": 4643,
+          "training_default_count": 737,
+          "training_nondefault_count": 3906,
+          "upper_bound": 0.7971475131053173,
+          "woe": 0.40889681863656524
+        },
+        "bin_id": 3,
+        "coefficient": -0.6990225651079325,
+        "contribution": -0.28582810302780487,
+        "feature_provenance": {
+          "derivation_method": "phase2b6_frozen_formula_v1",
+          "input_fields": [
+            "payment_amount",
+            "statement_balance"
+          ],
+          "source_record_ids": [
+            "2026-01",
+            "2026-02",
+            "2026-03",
+            "2026-04",
+            "2026-05",
+            "2026-06"
+          ]
+        },
+        "raw_feature_value": "0.5",
+        "woe": 0.40889681863656524
+      },
+      "recent_delinquency_level": {
+        "bin": {
+          "bin_id": 1,
+          "interval_closure": "(lower, upper]",
+          "iv_contribution": 0.5981046710758414,
+          "lower_bound": 1.0,
+          "missing_bin": false,
+          "observed_training_default_rate": 0.6966653274407393,
+          "training_count": 2489,
+          "training_default_count": 1734,
+          "training_nondefault_count": 755,
+          "upper_bound": "Infinity",
+          "woe": -2.0895984742813423
+        },
+        "bin_id": 1,
+        "coefficient": -0.718481742041798,
+        "contribution": 1.501338351969542,
+        "feature_provenance": {
+          "derivation_method": "phase2b6_frozen_formula_v1",
+          "input_fields": [
+            "repayment_status.delinquency_level"
+          ],
+          "source_record_ids": [
+            "2026-06"
+          ]
+        },
+        "raw_feature_value": "3",
+        "woe": -2.0895984742813423
+      }
+    },
+    "feature_values": {
+      "mean_statement_balance": "350",
+      "months_with_delinquency": "3",
+      "payment_to_statement_ratio": "0.5",
+      "recent_delinquency_level": "3"
+    },
+    "fraud_score_combined": false,
+    "good_bad_odds": 0.24596746406142594,
+    "intercept": -1.248440883572674,
+    "logit": 1.40255601170979,
+    "normalized_months": [
+      {
+        "delinquency_level": 0,
+        "month": "2026-01",
+        "payment_amount": "50",
+        "repayment_status": "CURRENT",
+        "source_record_ids": [
+          "stmt-2026-01",
+          "repay-2026-01"
+        ],
+        "statement_balance": "100"
+      },
+      {
+        "delinquency_level": 1,
+        "month": "2026-02",
+        "payment_amount": "100",
+        "repayment_status": "DELINQUENT",
+        "source_record_ids": [
+          "stmt-2026-02",
+          "repay-2026-02"
+        ],
+        "statement_balance": "200"
+      },
+      {
+        "delinquency_level": 0,
+        "month": "2026-03",
+        "payment_amount": "150",
+        "repayment_status": "CURRENT",
+        "source_record_ids": [
+          "stmt-2026-03",
+          "repay-2026-03"
+        ],
+        "statement_balance": "300"
+      },
+      {
+        "delinquency_level": 2,
+        "month": "2026-04",
+        "payment_amount": "200",
+        "repayment_status": "DELINQUENT",
+        "source_record_ids": [
+          "stmt-2026-04",
+          "repay-2026-04"
+        ],
+        "statement_balance": "400"
+      },
+      {
+        "delinquency_level": 0,
+        "month": "2026-05",
+        "payment_amount": "250",
+        "repayment_status": "CURRENT",
+        "source_record_ids": [
+          "stmt-2026-05",
+          "repay-2026-05"
+        ],
+        "statement_balance": "500"
+      },
+      {
+        "delinquency_level": 3,
+        "month": "2026-06",
+        "payment_amount": "300",
+        "repayment_status": "DELINQUENT",
+        "source_record_ids": [
+          "stmt-2026-06",
+          "repay-2026-06"
+        ],
+        "statement_balance": "600"
+      }
+    ],
+    "pd": 0.8025891757561177,
+    "prediction_cutoff": "2026-07",
+    "reason_codes": [
+      {
+        "code": "recent_delinquency_level",
+        "contribution": 1.501338351969542,
+        "direction": "increases_default_logit",
+        "label": "Recent repayment delinquency",
+        "trace": {
+          "bin": {
+            "bin_id": 1,
+            "interval_closure": "(lower, upper]",
+            "iv_contribution": 0.5981046710758414,
+            "lower_bound": 1.0,
+            "missing_bin": false,
+            "observed_training_default_rate": 0.6966653274407393,
+            "training_count": 2489,
+            "training_default_count": 1734,
+            "training_nondefault_count": 755,
+            "upper_bound": "Infinity",
+            "woe": -2.0895984742813423
+          },
+          "bin_id": 1,
+          "coefficient": -0.718481742041798,
+          "contribution": 1.501338351969542,
+          "feature_provenance": {
+            "derivation_method": "phase2b6_frozen_formula_v1",
+            "input_fields": [
+              "repayment_status.delinquency_level"
+            ],
+            "source_record_ids": [
+              "2026-06"
+            ]
+          },
+          "raw_feature_value": "3",
+          "woe": -2.0895984742813423
+        }
+      },
+      {
+        "code": "months_with_delinquency",
+        "contribution": 0.8733442754752132,
+        "direction": "increases_default_logit",
+        "label": "Repeated repayment delinquency",
+        "trace": {
+          "bin": {
+            "bin_id": 1,
+            "interval_closure": "(lower, upper]",
+            "iv_contribution": 0.4490782480252702,
+            "lower_bound": 1.0,
+            "missing_bin": false,
+            "observed_training_default_rate": 0.5238305383936452,
+            "training_count": 4532,
+            "training_default_count": 2374,
+            "training_nondefault_count": 2158,
+            "upper_bound": "Infinity",
+            "woe": -1.3538771425779765
+          },
+          "bin_id": 1,
+          "coefficient": -0.6450690745928691,
+          "contribution": 0.8733442754752132,
+          "feature_provenance": {
+            "derivation_method": "phase2b6_frozen_formula_v1",
+            "input_fields": [
+              "repayment_status.delinquency_level"
+            ],
+            "source_record_ids": [
+              "2026-01",
+              "2026-02",
+              "2026-03",
+              "2026-04",
+              "2026-05",
+              "2026-06"
+            ]
+          },
+          "raw_feature_value": "3",
+          "woe": -1.3538771425779765
+        }
+      },
+      {
+        "code": "mean_statement_balance",
+        "contribution": 0.5621423708655136,
+        "direction": "increases_default_logit",
+        "label": "Average statement balance",
+        "trace": {
+          "bin": {
+            "bin_id": 0,
+            "interval_closure": "[-inf, upper]",
+            "iv_contribution": 0.007411363888728245,
+            "lower_bound": "-Infinity",
+            "missing_bin": false,
+            "observed_training_default_rate": 0.2552083333333333,
+            "training_count": 4800,
+            "training_default_count": 1225,
+            "training_nondefault_count": 3575,
+            "upper_bound": 2857.2000000000003,
+            "woe": -0.18768027859219305
+          },
+          "bin_id": 0,
+          "coefficient": -2.995212789975563,
+          "contribution": 0.5621423708655136,
+          "feature_provenance": {
+            "derivation_method": "phase2b6_frozen_formula_v1",
+            "input_fields": [
+              "statement_balance"
+            ],
+            "source_record_ids": [
+              "2026-01",
+              "2026-02",
+              "2026-03",
+              "2026-04",
+              "2026-05",
+              "2026-06"
+            ]
+          },
+          "raw_feature_value": "350",
+          "woe": -0.18768027859219305
+        }
+      }
+    ],
+    "result_type": "EXPERIMENTAL_SHADOW_SCORE",
+    "risk_tier": null,
+    "score": 282.73056512249605,
+    "source_phase": "Phase 2B.6 frozen raw LR PD; Phase 2F shadow-only PDO presentation",
+    "source_records": [
+      "stmt-2026-01",
+      "stmt-2026-02",
+      "stmt-2026-03",
+      "stmt-2026-04",
+      "stmt-2026-05",
+      "stmt-2026-06",
+      "repay-2026-01",
+      "repay-2026-02",
+      "repay-2026-03",
+      "repay-2026-04",
+      "repay-2026-05",
+      "repay-2026-06"
+    ],
+    "use_label": "NOT_FOR_CREDIT_DECISION",
+    "woe_values": {
+      "mean_statement_balance": -0.18768027859219305,
+      "months_with_delinquency": -1.3538771425779765,
+      "payment_to_statement_ratio": 0.40889681863656524,
+      "recent_delinquency_level": -2.0895984742813423
+    }
+  },
+  "trace_id": "187d5415ddde8160671eb530",
+  "validation_scope": [
+    "ENGINEERING_VERIFIED",
+    "MATHEMATICALLY_RECONSTRUCTED"
+  ]
+}

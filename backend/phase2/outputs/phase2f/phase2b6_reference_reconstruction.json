@@ -1,0 +1,485 @@
+{
+  "maximum_absolute_pd_error": 1.3877787807814457e-16,
+  "method": "no-fit frozen-feature derivation + independent bins/WoE/LR reconstruction",
+  "passed": true,
+  "rows": [
+    {
+      "ID": 1,
+      "absolute_error": 0.0,
+      "bins": {
+        "mean_statement_balance": 0,
+        "months_with_delinquency": 1,
+        "payment_to_statement_ratio": 2,
+        "recent_delinquency_level": 1
+      },
+      "logit": 1.726998750909073,
+      "reconstructed_pd": 0.8490281248880341,
+      "stored_pd": 0.8490281248880341,
+      "woe": {
+        "mean_statement_balance": -0.18768027859219305,
+        "months_with_delinquency": -1.3538771425779765,
+        "payment_to_statement_ratio": -0.05524090079340384,
+        "recent_delinquency_level": -2.0895984742813423
+      }
+    },
+    {
+      "ID": 6,
+      "absolute_error": 1.3877787807814457e-16,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 0,
+        "recent_delinquency_level": 0
+      },
+      "logit": -1.6297612394065313,
+      "reconstructed_pd": 0.16386307165615885,
+      "stored_pd": 0.1638630716561587,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.3454822333225566,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 10,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 3,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.157089219370687,
+      "reconstructed_pd": 0.10367061812542308,
+      "stored_pd": 0.103670618125423,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.40889681863656524,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 12,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 3,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.157089219370687,
+      "reconstructed_pd": 0.10367061812542308,
+      "stored_pd": 0.103670618125423,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.40889681863656524,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 20,
+      "absolute_error": 0.0,
+      "bins": {
+        "mean_statement_balance": 0,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": -1,
+        "recent_delinquency_level": 0
+      },
+      "logit": -0.7540667415136011,
+      "reconstructed_pd": 0.3199358246512139,
+      "stored_pd": 0.3199358246512139,
+      "woe": {
+        "mean_statement_balance": -0.18768027859219305,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.700872644280431,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 22,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 0,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 4,
+        "recent_delinquency_level": 0
+      },
+      "logit": -1.5820126741201737,
+      "reconstructed_pd": 0.1705106271229297,
+      "stored_pd": 0.1705106271229296,
+      "woe": {
+        "mean_statement_balance": -0.18768027859219305,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.4835611264358745,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 23,
+      "absolute_error": 1.1102230246251565e-16,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 1,
+        "payment_to_statement_ratio": 1,
+        "recent_delinquency_level": 1
+      },
+      "logit": 1.1985470210351206,
+      "reconstructed_pd": 0.7682662057773734,
+      "stored_pd": 0.7682662057773733,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": -1.3538771425779765,
+        "payment_to_statement_ratio": -0.1966052233044872,
+        "recent_delinquency_level": -2.0895984742813423
+      }
+    },
+    {
+      "ID": 30,
+      "absolute_error": 2.7755575615628914e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 2,
+        "recent_delinquency_level": 0
+      },
+      "logit": -1.8326464801714042,
+      "reconstructed_pd": 0.13792330381776544,
+      "stored_pd": 0.1379233038177654,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.05524090079340384,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 31,
+      "absolute_error": 5.551115123125783e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 4,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.2092812553305685,
+      "reconstructed_pd": 0.09892011996806425,
+      "stored_pd": 0.0989201199680642,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.4835611264358745,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 39,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 0,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 4,
+        "recent_delinquency_level": 0
+      },
+      "logit": -1.5820126741201737,
+      "reconstructed_pd": 0.1705106271229297,
+      "stored_pd": 0.1705106271229296,
+      "woe": {
+        "mean_statement_balance": -0.18768027859219305,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.4835611264358745,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 41,
+      "absolute_error": 4.163336342344337e-17,
+      "bins": {
+        "mean_statement_balance": 2,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 2,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.1805968134902534,
+      "reconstructed_pd": 0.10150648381946714,
+      "stored_pd": 0.1015064838194671,
+      "woe": {
+        "mean_statement_balance": 0.13791225286103986,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.05524090079340384,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 43,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 3,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.157089219370687,
+      "reconstructed_pd": 0.10367061812542308,
+      "stored_pd": 0.103670618125423,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.40889681863656524,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 51,
+      "absolute_error": 0.0,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 1,
+        "payment_to_statement_ratio": 0,
+        "recent_delinquency_level": 0
+      },
+      "logit": -0.45322995787622156,
+      "reconstructed_pd": 0.3885930896298733,
+      "stored_pd": 0.3885930896298733,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": -1.3538771425779765,
+        "payment_to_statement_ratio": -0.3454822333225566,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 55,
+      "absolute_error": 5.551115123125783e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 2,
+        "recent_delinquency_level": 1
+      },
+      "logit": -0.07680111183163163,
+      "reconstructed_pd": 0.48080915407260366,
+      "stored_pd": 0.4808091540726036,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.05524090079340384,
+        "recent_delinquency_level": -2.0895984742813423
+      }
+    },
+    {
+      "ID": 57,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 3,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.157089219370687,
+      "reconstructed_pd": 0.10367061812542308,
+      "stored_pd": 0.103670618125423,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.40889681863656524,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 68,
+      "absolute_error": 1.1102230246251565e-16,
+      "bins": {
+        "mean_statement_balance": 0,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 4,
+        "recent_delinquency_level": 1
+      },
+      "logit": 0.1738326942195989,
+      "reconstructed_pd": 0.5433490690130828,
+      "stored_pd": 0.5433490690130827,
+      "woe": {
+        "mean_statement_balance": -0.18768027859219305,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.4835611264358745,
+        "recent_delinquency_level": -2.0895984742813423
+      }
+    },
+    {
+      "ID": 73,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 3,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.157089219370687,
+      "reconstructed_pd": 0.10367061812542308,
+      "stored_pd": 0.103670618125423,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.40889681863656524,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 75,
+      "absolute_error": 5.551115123125783e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 4,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.2092812553305685,
+      "reconstructed_pd": 0.09892011996806425,
+      "stored_pd": 0.0989201199680642,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.4835611264358745,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 81,
+      "absolute_error": 6.938893903907228e-17,
+      "bins": {
+        "mean_statement_balance": 2,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 0,
+        "recent_delinquency_level": 0
+      },
+      "logit": -1.9777115727253807,
+      "reconstructed_pd": 0.12156299703862666,
+      "stored_pd": 0.1215629970386266,
+      "woe": {
+        "mean_statement_balance": 0.13791225286103986,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.3454822333225566,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 89,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 3,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.157089219370687,
+      "reconstructed_pd": 0.10367061812542308,
+      "stored_pd": 0.103670618125423,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.40889681863656524,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 102,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 3,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.157089219370687,
+      "reconstructed_pd": 0.10367061812542308,
+      "stored_pd": 0.103670618125423,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": 0.40889681863656524,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 111,
+      "absolute_error": 2.7755575615628914e-17,
+      "bins": {
+        "mean_statement_balance": 2,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 1,
+        "recent_delinquency_level": 0
+      },
+      "logit": -2.081779962153811,
+      "reconstructed_pd": 0.11088036594408172,
+      "stored_pd": 0.1108803659440817,
+      "woe": {
+        "mean_statement_balance": 0.13791225286103986,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.1966052233044872,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 112,
+      "absolute_error": 2.7755575615628914e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 2,
+        "recent_delinquency_level": 0
+      },
+      "logit": -1.8326464801714042,
+      "reconstructed_pd": 0.13792330381776544,
+      "stored_pd": 0.1379233038177654,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.05524090079340384,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 114,
+      "absolute_error": 8.326672684688674e-17,
+      "bins": {
+        "mean_statement_balance": 1,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 1,
+        "recent_delinquency_level": 0
+      },
+      "logit": -1.7338296288349615,
+      "reconstructed_pd": 0.1500983834441074,
+      "stored_pd": 0.1500983834441073,
+      "woe": {
+        "mean_statement_balance": 0.02174343357602067,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.1966052233044872,
+        "recent_delinquency_level": 0.35422892674623363
+      }
+    },
+    {
+      "ID": 124,
+      "absolute_error": 0.0,
+      "bins": {
+        "mean_statement_balance": 2,
+        "months_with_delinquency": 0,
+        "payment_to_statement_ratio": 0,
+        "recent_delinquency_level": 1
+      },
+      "logit": -0.22186620438560833,
+      "reconstructed_pd": 0.4447598610880541,
+      "stored_pd": 0.4447598610880541,
+      "woe": {
+        "mean_statement_balance": 0.13791225286103986,
+        "months_with_delinquency": 0.47000703955068834,
+        "payment_to_statement_ratio": -0.3454822333225566,
+        "recent_delinquency_level": -2.0895984742813423
+      }
+    }
+  ],
+  "sample_n": 25,
+  "source_prediction_sha256": "DD2987A1D34E0FB985555098191B1E7559CD3548BB3FCFF5D7DA194238CE1E6F",
+  "tolerance": 1e-12
+}

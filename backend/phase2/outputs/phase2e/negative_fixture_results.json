@@ -1,0 +1,153 @@
+{
+  "all_fail_closed": true,
+  "scenario_count": 18,
+  "scenarios": {
+    "conflicting_repayment_status": {
+      "blockers": [
+        "CONFLICTING_EVIDENCE"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "CONFLICTING_EVIDENCE"
+    },
+    "duplicate_month": {
+      "blockers": [
+        "DUPLICATE_MONTH",
+        "MONTH_WINDOW_OR_CONTINUITY_INVALID"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "DUPLICATE_MONTH"
+    },
+    "future_month": {
+      "blockers": [
+        "MONTH_WINDOW_OR_CONTINUITY_INVALID",
+        "FUTURE_OR_PARTIAL_MONTH",
+        "MISSING_REPAYMENT_STATUS"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "FUTURE_OR_PARTIAL_MONTH"
+    },
+    "incomplete_provenance": {
+      "blockers": [
+        "PROVENANCE_INCOMPLETE"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "PROVENANCE_INCOMPLETE"
+    },
+    "insufficient_consent": {
+      "blockers": [
+        "CONSENT_REQUIRED"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "CONSENT_REQUIRED"
+    },
+    "invalid_currency": {
+      "blockers": [
+        "INVALID_CURRENCY"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "INVALID_EVIDENCE"
+    },
+    "invalid_numeric": {
+      "blockers": [
+        "INVALID_EVIDENCE"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "INVALID_EVIDENCE"
+    },
+    "low_link_confidence": {
+      "blockers": [
+        "ACCOUNT_LINK_UNCERTAIN"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "ACCOUNT_LINK_UNCERTAIN"
+    },
+    "missing_balance": {
+      "blockers": [
+        "MISSING_STATEMENT_BALANCE"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "MISSING_STATEMENT_BALANCE"
+    },
+    "missing_payment": {
+      "blockers": [
+        "MISSING_PAYMENT_AMOUNT"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "MISSING_PAYMENT_AMOUNT"
+    },
+    "missing_repayment_status": {
+      "blockers": [
+        "MISSING_REPAYMENT_STATUS"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "MISSING_REPAYMENT_STATUS"
+    },
+    "missing_statement_month": {
+      "blockers": [
+        "EXACTLY_SIX_MONTHS_REQUIRED",
+        "MONTH_WINDOW_OR_CONTINUITY_INVALID"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "INSUFFICIENT_HISTORY"
+    },
+    "mixed_accounts": {
+      "blockers": [
+        "STATEMENT_ACCOUNT_IDENTITY_MISMATCH"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "ACCOUNT_LINK_UNCERTAIN"
+    },
+    "statement_bureau_account_mismatch": {
+      "blockers": [
+        "REPAYMENT_ACCOUNT_IDENTITY_MISMATCH"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "ACCOUNT_LINK_UNCERTAIN"
+    },
+    "statement_bureau_month_mismatch": {
+      "blockers": [
+        "MISSING_REPAYMENT_STATUS"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "ACCOUNT_LINK_UNCERTAIN"
+    },
+    "unsupported_loan_product": {
+      "blockers": [
+        "CONSENT_REQUIRED",
+        "UNSUPPORTED_PRODUCT"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "UNSUPPORTED_PRODUCT"
+    },
+    "withdrawn_consent": {
+      "blockers": [
+        "CONSENT_REQUIRED"
+      ],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "CONSENT_REQUIRED"
+    },
+    "zero_denominator": {
+      "blockers": [],
+      "eligible": false,
+      "feature_vector_returned": false,
+      "state": "ZERO_DENOMINATOR"
+    }
+  }
+}

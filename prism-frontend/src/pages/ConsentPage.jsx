@@ -1,7 +1,6 @@
 // src/pages/ConsentPage.jsx
 import { Nav } from "../components/Nav";
-
-const BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+import { api } from "../services/api";
 
 const CONSENT_ITEMS = [
   { key: "bank",    label: "Bank Statement Access",       required: true,
@@ -16,30 +15,31 @@ const CONSENT_ITEMS = [
     desc: "You acknowledge that your data will be processed under India's Digital Personal Data Protection Act, 2023."},
 ];
 
-export default function ConsentPage({ go, session, setSession, consents, setConsents, setError }) {
+export default function ConsentPage({ go, session, consents, setConsents, setFiles, setError }) {
 
-  const handleConsent = async () => {
-    try {
-      const res = await fetch(`${BASE}/consent`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          borrower_id:     session.borrowerId,
-          consent_bank:    consents.bank,
-          consent_salary:  consents.salary,
-          consent_utility: consents.utility,
-          consent_bureau:  consents.bureau,
-          consent_dpdpa:   consents.dpdpa,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail?.message || "Consent failed");
-      setSession(s => ({ ...s, id: data.session_id }));
-      go("upload");
-    } catch (e) {
-      setError(e.message);
-    }
-  };
+const handleConsent = async () => {
+  try {
+    await api.recordConsent({
+        session_id: session.session_id,
+        consent_bank: consents.bank,
+        consent_salary: consents.salary,
+        consent_utility: consents.utility,
+        consent_dpdpa: consents.dpdpa,
+    });
+
+    setFiles(current => ({
+      ...current,
+      salary: consents.salary ? current.salary : [],
+      utility: consents.utility ? current.utility : [],
+    }));
+    go("upload");
+
+  } catch (e) {
+    console.error(e);
+    setError(e.message);
+    alert(e.message);
+  }
+};
 
   const toggle = (key) => {
     const item = CONSENT_ITEMS.find(c => c.key === key);
@@ -53,7 +53,7 @@ export default function ConsentPage({ go, session, setSession, consents, setCons
     <div className="dot-grid" style={{ minHeight: "100vh" }}>
       <Nav currentPage="consent" onLogoClick={() => go("landing")} />
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 48px",
+      <div className="consent-layout" style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 48px",
         display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, alignItems: "start" }}>
 
         {/* Left — intro */}
@@ -67,7 +67,7 @@ export default function ConsentPage({ go, session, setSession, consents, setCons
           </h1>
           <p className="fade-up-2" style={{ color: "var(--muted)", fontSize: 15, lineHeight: 1.7,
             fontWeight: 300, marginBottom: 32 }}>
-            Hi <strong style={{ color: "var(--ink)" }}>{session?.borrowerId}</strong>.
+            Hi <strong style={{ color: "var(--ink)" }}>{session?.phone_number}</strong>.
             Select which data sources you consent to share.
             Mandatory items are required to proceed. Optional items improve your score accuracy.
           </p>

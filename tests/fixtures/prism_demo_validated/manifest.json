@@ -1,0 +1,161 @@
+{
+  "label": "VALIDATED SYNTHETIC / FICTIONAL DOSSIER - NOT CUSTOMER DATA",
+  "cutoff_month": "2026-09",
+  "assumptions": [
+    "All 24 files are fictional synthetic repairs; originals are unchanged negative fixtures.",
+    "All page declarations are added to the existing one-page synthetic layouts; no pages/transactions are inferred for genuine documents.",
+    "The 48-row bank ledger, dates, debit/credit amounts, narration and opening/closing balances are unchanged.",
+    "Cards issue on day 1 of their explicit statement month. Purchase dates move to the preceding calendar billing period; purchase and balance/payment amounts are unchanged.",
+    "Card payment date is day 17 from the preserved bank ledger. Due dates are day 20 for explicit CURRENT labels and day 15 for explicit DELINQUENT labels; these are new fictional schedule assumptions.",
+    "Severity codes 0,0,1,1,2,1 are the original constructed categorical labels, not inferred from payment dates or claimed issuer-certified DPD buckets. July level 2 is a supplied synthetic history assumption.",
+    "Monthly repayment status is explicitly observed at month end. Every observation and settled payment precedes the exclusive historical cutoff 2026-09.",
+    "Each payment amount is explicitly applied to its matching TEST-CARD-4821-YYYY-MM statement reference; the matching bank debit remains unchanged.",
+    "Frozen features retain their exact existing definitions and units; no supporting salary/utility values enter the frozen model."
+  ],
+  "files": [
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-03.pdf",
+      "sha256": "194527d8339fd763091e348afaff4467d628ed0ba6e9b231788ba94f758d4f6a",
+      "original_sha256": "2bb684a7f75be4609c1e52008c49f4f51a04abe1afdf8cb6b4b2e1d95b216f43"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-04.pdf",
+      "sha256": "c6c06b3880ddc373c7c05df9da3e1976d215d3851aed5044e152775ac4a25338",
+      "original_sha256": "547a495fd631c82056160f413bc967b319f34efffeb05ae44900f5476267439c"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-05.pdf",
+      "sha256": "002c2bf843c503779eeb79f1444757e76b3bea0251dcc41e9c04f19e977c5752",
+      "original_sha256": "9b772e6a9a5b1ef3bb26f3d023edf8fd1da8071e3c464e70c9ee7895b480b15b"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-06.pdf",
+      "sha256": "1f7fea1b2e1950b6948174aff4f5d525d9d9758edd22d449492053758dde8e8b",
+      "original_sha256": "4ea90025d405ed141dd12a3b932274ad8aefc4f081ce3c8ea7928e634b0cabef"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-07.pdf",
+      "sha256": "35f4bddac4003894f62a77bf370a8a461c8346a24ae203136fcabad9371a5b93",
+      "original_sha256": "95469d9f13b3d171f18bd814221902b87ce55f70589a3f380b6105b1f8c1dd26"
+    },
+    {
+      "category": "bank",
+      "name": "Bank_Statement_2026-08.pdf",
+      "sha256": "f0c6cb8c9dd5aabdb52e5328953a66cc5c2aca43566d5a4e47d5959a3dc0cf9e",
+      "original_sha256": "641b7b49641e208b776a91d2edf54f57b00a0a9b76992273827fb7ea90d28705"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-03.pdf",
+      "sha256": "182dc6aa5a537620a6f6d9d53ebca889ffedba22be9e1ff78da70c3c7796e874",
+      "original_sha256": "4a99ca44164d19c043e49180d92e405aedaac7ec02425efc1a92d5dac4846dbe"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-04.pdf",
+      "sha256": "3f4fc3faf97350c91d62e52cf308ebaf2e5590b95fe917c60aaf6c637cbaf00e",
+      "original_sha256": "d653570549504842772ab16c84d179b6de8eb813ed0586ab70d7cc6b89cb86ef"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-05.pdf",
+      "sha256": "69673e72f6e256cdbe8c32c4b1a2f3d53d9da3796b1cfdde9941de91b2ebe041",
+      "original_sha256": "e6078d4041e74d507d0a32fbe78b49dc9278cecec7b591236cf2f6f4fb761eed"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-06.pdf",
+      "sha256": "63e13c660faa25851fc877535de0a2a743dd77a2fb6cabd3d6b41fffd5599239",
+      "original_sha256": "7dbdc3d2ab8387f824c761ec3919c89fa60a6e862d06f8108b93add78af4edbb"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-07.pdf",
+      "sha256": "a2bbaa6ac7df3dcc2f9ef42b0e3bfd1aee93e6eeef86c49a4f55363923ddb693",
+      "original_sha256": "e8e35ff4217d84cfd9f19a439765cc91b2ac09ef4023d53a5cb87fccc1092c9e"
+    },
+    {
+      "category": "creditCards",
+      "name": "Credit_Card_2026-08.pdf",
+      "sha256": "949a679a2f516ac4e01ff303e6bf0027d32d5c5d310ad159706cbfa53765eef1",
+      "original_sha256": "d71275830056e9dff9c2a5daf1909410fc8e4f6c35c57e384b29fdccfe42db36"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-03.pdf",
+      "sha256": "dc12b69a51a357499585825c71bc17964ff7e8a7c50c4bd2df1d02d3a0f87af9",
+      "original_sha256": "2454e580858937f5060036e2953df3af805607291920bcdd2334a5243412b3b6"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-04.pdf",
+      "sha256": "9daf0df2720147143d06dc9ff4badbb3ada916b286b58a6d74502cafc9de8257",
+      "original_sha256": "ef19a84e372d79018a12127fdb4b9cdf17f95198606bc2cbe77e3fbe806f26fd"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-05.pdf",
+      "sha256": "726232bd1fbeac27831bd2e6d20724add44c9ba90340d6c797b354735ded4cc7",
+      "original_sha256": "3abd7e385b800caabccbf74e50d5b1ba0026c0244b889313b201a1aa48c9adb4"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-06.pdf",
+      "sha256": "905a947fac5632ed40d08bbcda1ea98e6fdab82f6f5fedbb53c4e831f9d782db",
+      "original_sha256": "39840b87b3aad994204b6d484645252bef68c238fcdfcdea66e061415be08b3d"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-07.pdf",
+      "sha256": "9bc3b5e4b31897c3d7a6ff93bd60553d470b1d499b50b2b599803baecc62c78b",
+      "original_sha256": "50a558b0715dbc0cde47713a4a694506153c943eeb4196190c7f476c9bd49186"
+    },
+    {
+      "category": "salary",
+      "name": "Salary_Slip_2026-08.pdf",
+      "sha256": "e8fb512f45f53d712ad3e485d5150927df194b6f002233537479665bf87f45dc",
+      "original_sha256": "ce6d9fdc8c1533dd996beccdef36fefe700a41801a5f553c076afd5033b8c39f"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-03.pdf",
+      "sha256": "315a12a979ec6130fd1be035c17f5b71b4dfe592def982cf4a5ba15f9bb139d7",
+      "original_sha256": "cb67894287156629a93e5086e0fae60a2d2403533a45604c56ea588f725acad5"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-04.pdf",
+      "sha256": "17bd3ecd6c20a930d4a29beb7dae6b516b03a5a27092d0f00b9736d448e1256c",
+      "original_sha256": "e099162e092ee133fd3245c3d77a9f13c468e1be32bf1490049961fc372760de"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-05.pdf",
+      "sha256": "cfb962ca78af7ede9f89fc8e0b29398f0f5b8bba7402616415fefdb9192cb295",
+      "original_sha256": "e03f20b82efeea9a124b7e7c4710b3d8be5910ed20e94b27bea9a33d09d815a7"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-06.pdf",
+      "sha256": "fdb6228f647e9d9c5a4e1f9d9932fd82e70a66e581658875fd9af971aac2a296",
+      "original_sha256": "fa01004b0045c76e4ea9ad564363a69a73c38b1376ac192ce8fb0c1e0e7364b2"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-07.pdf",
+      "sha256": "a8bfb4a2d4c3bbaa607e177dfdb14e4d6beb0f79c8906d2f637714390944174a",
+      "original_sha256": "6898ca7021b3de893e9a2f7d987a9d718842e97ced1ac8ff06df72e83a9e34da"
+    },
+    {
+      "category": "utility",
+      "name": "Utility_Bill_2026-08.pdf",
+      "sha256": "dabdbbfc90dcecf777a32c8d5bc59365b8674a15c3ad2d73a2ea2ca16a0795b5",
+      "original_sha256": "17778252a0eae5f9f9c4617d3f7415a3772cc65d1f803618ebf91e9c313bb190"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "declaration": "Predeclared before the sole recovered final fit; do not adjust after result inspection.",
+  "dataset_sha256": "exact equality",
+  "dataset_rows_columns_target_counts": "exact equality",
+  "development_test_indices_and_id_hashes": "exact equality to deterministic original split reconstruction",
+  "selected_features_and_feature_order": "exact equality to frozen Phase 2B.6 reported test model_features and runner-produced order",
+  "serialized_bin_edges_woe_and_mapping": "exact equality to the single recovered final development fit serialization; no historical exact artifact exists for direct comparison",
+  "historical_test_counts": "exact equality: N=6000, defaults=1327",
+  "historical_metrics_absolute_tolerance": 1e-10,
+  "manual_prediction_absolute_tolerance": 1e-12,
+  "coefficient_intercept_direct_historical_tolerance": null,
+  "note": "Historical coefficient/bin artifact was never persisted, so the only permitted comparator is one deterministic re-execution of the original implementation. No tolerance will be changed after results are observed."
+}

@@ -1,0 +1,20 @@
+{
+  "acceptance_gates_passed": true,
+  "api_path": "POST /experimental/shadow-assess",
+  "calibration_calls": 0,
+  "feature_flag_default": false,
+  "frontend_build_passed": true,
+  "full_phase2_tests": 258,
+  "golden_raw_pd": 0.8025891757561177,
+  "golden_shadow_score": 282.73056512249605,
+  "negative_cases": 19,
+  "negative_cases_all_fail_closed": true,
+  "phase2b6_status": "PHASE_2B6_INCONCLUSIVE",
+  "phase2g_api_tests": 31,
+  "production_status": "UNVERIFIED_REAL_WORLD",
+  "protected_file_count": 99,
+  "protected_hashes_unchanged": true,
+  "runtime_environment_note": "Python 3.14 on this host lacks pytesseract and scikit-learn required by the pre-existing production app import. Phase 2G endpoint integration was tested via TestClient on the mounted application with import-only stubs; production scoring was never invoked. Use the backend lock/Python 3.12 environment for local server startup.",
+  "status": "PHASE_2G_SHADOW_DEMO_READY",
+  "training_calls": 0
+}

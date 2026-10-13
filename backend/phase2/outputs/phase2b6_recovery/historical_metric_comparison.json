@@ -1,0 +1,101 @@
+{
+  "counts_exact": true,
+  "historical_artifact": {
+    "auc": 0.7578636013037103,
+    "brier": 0.13813731100133694,
+    "calibration_intercept": 0.004264634003188088,
+    "calibration_slope": 1.0030537869570124,
+    "defaults_test": 1327,
+    "gini": 0.5157272026074207,
+    "ks": 0.4267191909268576,
+    "log_loss": 0.4407430536155524,
+    "mean_predicted_pd": 0.2210796505541152,
+    "model_features": [
+      "recent_delinquency_level",
+      "months_with_delinquency",
+      "payment_to_statement_ratio",
+      "mean_statement_balance"
+    ],
+    "n_test": 6000,
+    "observed_default_rate": 0.22116666666666668,
+    "status": "single final evaluation; no variant selection on test"
+  },
+  "metrics": {
+    "auc": {
+      "absolute_difference": 0.0,
+      "historical": 0.7578636013037103,
+      "recovered": 0.7578636013037103,
+      "within_tolerance": true
+    },
+    "brier": {
+      "absolute_difference": 0.0,
+      "historical": 0.13813731100133694,
+      "recovered": 0.13813731100133694,
+      "within_tolerance": true
+    },
+    "calibration_intercept": {
+      "absolute_difference": 0.0,
+      "historical": 0.004264634003188088,
+      "recovered": 0.004264634003188088,
+      "within_tolerance": true
+    },
+    "calibration_slope": {
+      "absolute_difference": 0.0,
+      "historical": 1.0030537869570124,
+      "recovered": 1.0030537869570124,
+      "within_tolerance": true
+    },
+    "gini": {
+      "absolute_difference": 0.0,
+      "historical": 0.5157272026074207,
+      "recovered": 0.5157272026074207,
+      "within_tolerance": true
+    },
+    "ks": {
+      "absolute_difference": 0.0,
+      "historical": 0.4267191909268576,
+      "recovered": 0.4267191909268576,
+      "within_tolerance": true
+    },
+    "log_loss": {
+      "absolute_difference": 0.0,
+      "historical": 0.4407430536155524,
+      "recovered": 0.4407430536155524,
+      "within_tolerance": true
+    },
+    "mean_predicted_pd": {
+      "absolute_difference": 0.0,
+      "historical": 0.2210796505541152,
+      "recovered": 0.2210796505541152,
+      "within_tolerance": true
+    },
+    "observed_default_rate": {
+      "absolute_difference": 0.0,
+      "historical": 0.22116666666666668,
+      "recovered": 0.22116666666666668,
+      "within_tolerance": true
+    }
+  },
+  "no_test_informed_changes": true,
+  "predeclared_absolute_tolerance": 1e-10,
+  "recovered_metrics": {
+    "auc": 0.7578636013037103,
+    "brier": 0.13813731100133694,
+    "calibration_intercept": 0.004264634003188088,
+    "calibration_slope": 1.0030537869570124,
+    "defaults_test": 1327,
+    "gini": 0.5157272026074207,
+    "ks": 0.4267191909268576,
+    "log_loss": 0.4407430536155524,
+    "mean_predicted_pd": 0.2210796505541152,
+    "model_features": [
+      "recent_delinquency_level",
+      "months_with_delinquency",
+      "payment_to_statement_ratio",
+      "mean_statement_balance"
+    ],
+    "n_test": 6000,
+    "observed_default_rate": 0.22116666666666668
+  },
+  "status": "PASS"
+}

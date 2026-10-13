@@ -1,0 +1,18 @@
+{
+  "full_phase2_suite": {
+    "baseline_passed": 206,
+    "command": "python -m pytest backend/phase2/tests -q",
+    "failed": 0,
+    "passed": 227,
+    "skipped": 0
+  },
+  "log": "backend\\phase2\\outputs\\phase2f\\pytest_full_phase2.log",
+  "phase2f_specific": {
+    "command": "python -m pytest backend/phase2/tests/test_phase2f_shadow_scorecard.py -q",
+    "failed": 0,
+    "passed": 21,
+    "skipped": 0
+  },
+  "phase2f_tests_added": 21,
+  "suite_passed": true
+}
