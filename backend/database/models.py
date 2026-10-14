@@ -1,5 +1,6 @@
 from sqlalchemy import (
     Column,
+    CheckConstraint,
     Integer,
     String,
     Boolean,
@@ -8,7 +9,8 @@ from sqlalchemy import (
     Numeric,
     ForeignKey,
     UniqueConstraint,
-    Index
+    Index,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -208,7 +210,10 @@ class AssessmentDetail(Base):
 
 class AuditEvent(Base):
     __tablename__ = "audit_events"
-    __table_args__ = {"schema": "prism"}
+    __table_args__ = (
+        Index("idx_prism_audit_events_app_time", "application_id", text("event_timestamp DESC")),
+        {"schema": "prism"},
+    )
 
     event_id = Column(Integer, primary_key=True)
     application_id = Column(Integer, ForeignKey("prism.applications.application_id"), nullable=False)
@@ -216,7 +221,7 @@ class AuditEvent(Base):
     entity = Column(String(80), nullable=False)
     status = Column(String(20), nullable=False)
     event_timestamp = Column(TIMESTAMP, nullable=False)
-    details = Column(JSONB, nullable=False, default=dict)
+    details = Column(JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb"))
 
 
 class ExperimentalAssessment(Base):
@@ -225,6 +230,7 @@ class ExperimentalAssessment(Base):
     __table_args__ = (
         UniqueConstraint("application_id", "input_sha256", name="uq_experimental_assessment_application_input"),
         Index("ix_experimental_assessments_app_created", "application_id", "created_at"),
+        Index("ix_experimental_assessments_user", "user_id"),
         {"schema": "prism"},
     )
 
@@ -242,11 +248,11 @@ class ExperimentalAssessment(Base):
     logit = Column(Numeric(24, 16))
     probability_default = Column(Numeric(24, 16))
     score = Column(Numeric(24, 12))
-    reason_codes = Column(JSONB, nullable=False, default=list)
-    recommendations = Column(JSONB, nullable=False, default=list)
-    source_document_ids = Column(JSONB, nullable=False, default=list)
+    reason_codes = Column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
+    recommendations = Column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
+    source_document_ids = Column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
     evidence_validation = Column(JSONB, nullable=False)
-    document_findings = Column(JSONB, nullable=False, default=dict)
+    document_findings = Column(JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb"))
     consent_record = Column(JSONB, nullable=False)
     created_at = Column(TIMESTAMP, nullable=False)
 
@@ -257,6 +263,9 @@ class BankCashflowAssessment(Base):
     __table_args__ = (
         UniqueConstraint("application_id", "input_sha256", name="uq_bank_cashflow_app_input"),
         Index("ix_bank_cashflow_app_created", "application_id", "created_at"),
+        Index("ix_bank_cashflow_user", "user_id"),
+        CheckConstraint("probability_default IS NULL", name="ck_bank_cashflow_no_pd"),
+        CheckConstraint("score IS NULL OR (score >= 300 AND score <= 900)", name="ck_bank_cashflow_score_range"),
         {"schema": "prism"},
     )
     assessment_id = Column(String(36), primary_key=True)
@@ -266,12 +275,12 @@ class BankCashflowAssessment(Base):
     assessment_type = Column(String(40), nullable=False)
     model_version = Column(String(64), nullable=False)
     assessment_status = Column(String(40), nullable=False)
-    evidence_document_ids = Column(JSONB, nullable=False, default=list)
-    feature_values = Column(JSONB, nullable=False, default=dict)
+    evidence_document_ids = Column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
+    feature_values = Column(JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb"))
     score = Column(Integer)
     probability_default = Column(Numeric(10, 8))
-    feature_contributions = Column(JSONB, nullable=False, default=list)
-    reason_codes = Column(JSONB, nullable=False, default=list)
+    feature_contributions = Column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
+    reason_codes = Column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
     validation_status = Column(String(32), nullable=False)
     result_json = Column(JSONB, nullable=False)
     created_at = Column(TIMESTAMP, nullable=False)

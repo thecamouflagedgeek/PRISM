@@ -8,7 +8,7 @@ A file that cannot supply readable, consistent bank transactions returns an acti
 
 ## Local demonstration
 
-From prism-frontend, run npm run demo:backend and npm run demo:frontend in separate terminals. Open http://127.0.0.1:5173, use the locally generated fictional OTP, record consent, and upload a bank PDF. The corrected files in C:/Users/hp/Downloads/PRISM_Synthetic_Financial_Documents support individual selection. March scores 696 and August scores 759 from their different transaction patterns.
+From prism-frontend, run npm run demo:backend and npm run demo:frontend in separate terminals. Local OTP login requires backend `PRISM_ENV=development` and `PRISM_OTP_LOGGING=true`; the console displays a development-only OTP without a phone number, and no SMS is sent. Use synthetic test identities only. First-login verification requires the database schema migration prerequisites. Open http://127.0.0.1:5173, record consent, and upload only synthetic bank PDFs.
 
 Bulk import & fictional demo is an optional collapsed convenience. The validated 24-file dossier remains available under tests/fixtures/prism_demo_validated and output/PRISM_Validated_Synthetic_Dossier.zip. For the optional historical card assessment, review the explicit 2026-09 exclusive cutoff and card consent. The full bank set scores 775; eligible historical cards retain their independent frozen calculation of 454.635898966963. Neither number is a universal fallback.
 

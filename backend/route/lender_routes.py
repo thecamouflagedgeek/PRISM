@@ -22,6 +22,9 @@ from database.models import (
     BankCashflowAssessment,
 )
 from route.experimental_assessment_routes import _assessment_payload
+from route.tenure_schemas import TenureComparisonRequest
+from features.portfolio_sentiment import portfolio_sentiment_status
+from features.repayment_tenure import compare_repayment_tenures
 
 router = APIRouter(prefix="/lender", tags=["Lender"])
 FROZEN_MODEL_NAME = "PRISM_PHASE2F_FROZEN"
@@ -70,6 +73,31 @@ def require_lender(session_id: str | None = Header(None)):
     return session
 
 
+@router.get("/portfolio/sentiment")
+def lender_portfolio_sentiment(_session=Depends(require_lender)):
+    """Return an honest unavailable state until a defensible model is approved."""
+    return portfolio_sentiment_status()
+
+
+@router.post("/applications/{application_id}/tenure-comparison")
+def lender_tenure_comparison(application_id: int, request: TenureComparisonRequest,
+        db: Session = Depends(get_db), _session=Depends(require_lender)):
+    application = db.query(Application).filter_by(application_id=application_id).first()
+    if application is None:
+        raise HTTPException(404, "Application not found")
+    baseline = (db.query(BankCashflowAssessment)
+        .filter_by(application_id=application_id)
+        .order_by(BankCashflowAssessment.created_at.desc()).first())
+    if baseline is None:
+        raise HTTPException(409, "A saved bank assessment is required before comparing repayment terms")
+    try:
+        result = compare_repayment_tenures(**request.dict())
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    result["assessment_id"] = baseline.assessment_id
+    return result
+
+
 def _latest_score_subquery():
     return (
         select(func.max(RiskScore.score_id))
@@ -115,10 +143,14 @@ def _application_summary(application, user, score, document_count, db=None):
         result['bank_methodology'] = bank.model_version if bank else None
         bank_payload = bank.result_json or {} if bank else {}
         fraud = bank_payload.get("fraud_findings") or {}
+        obligation_review = bank_payload.get("loan_obligation_review") or {}
         result["bank_assessment_status"] = bank.assessment_status if bank else None
         result["bank_assessment_timestamp"] = bank.created_at.isoformat() if bank and bank.created_at else None
         result["bank_months_observed"] = bank_payload.get("months_observed", 0)
         result["bank_transaction_count"] = bank_payload.get("transaction_count", 0)
+        result["loan_obligation_status"] = obligation_review.get("status", "NOT_AVAILABLE" if bank else None)
+        result["loan_candidate_stream_count"] = len(obligation_review.get("candidate_payment_streams") or [])
+        result["loan_overlapping_month_count"] = len(obligation_review.get("overlapping_months") or {})
         result["bank_fraud_status"] = fraud.get("fraud_status")
         result["bank_fraud_flag_count"] = len(fraud.get("flags") or [])
         result["review"] = _case_snapshot(db, application.application_id)

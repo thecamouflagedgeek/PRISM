@@ -7,6 +7,7 @@ from route.bank_cashflow_routes import router as bank_cashflow_router
 from auth.routes import router as auth_router
 from route.lender_routes import router as lender_router
 from route.demo_fixture_routes import router as demo_fixture_router
+from route.demo_loan_stacking import router as demo_loan_stacking_router
 
 router = APIRouter()
 
@@ -17,3 +18,4 @@ router.include_router(experimental_assessment_router)
 router.include_router(bank_cashflow_router)
 router.include_router(lender_router)
 router.include_router(demo_fixture_router)
+router.include_router(demo_loan_stacking_router)

@@ -15,11 +15,12 @@ export default function LoginPage({ go, setSession,setError}){
   setLoading(true);
 
   try {
-    await api.signup(phoneNumber);
+    const delivery = await api.signup(phoneNumber);
 
     // Store phone number temporarily
     setSession({
       phone_number: phoneNumber,
+      otp_delivery_message: delivery.message,
     });
 
     go("otp");
@@ -72,14 +73,14 @@ export default function LoginPage({ go, setSession,setError}){
                 style={{ fontFamily: "'Syne', sans-serif", letterSpacing: "0.02em" }}
               />
               <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>
-                An OTP will be sent to this number for verification.
+                In local development, the backend console displays a development-only OTP. No SMS is sent.
               </div>
             </div>
 
             <button className="btn-primary btn-orange"
               onClick={handleContinue} disabled={!phone.trim()}
               style={{ padding: "14px 28px", fontSize: 15, alignSelf: "flex-start" }}>
-                {loading ? "Sending OTP..." : "Continue →"}
+                {loading ? "Preparing OTP..." : "Continue →"}
             </button>
           </div>
 

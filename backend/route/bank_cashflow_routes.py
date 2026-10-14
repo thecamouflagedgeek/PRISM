@@ -30,6 +30,9 @@ from services.ocr_service import get_ocr_engine
 from core.demo_receipt import record_demo_receipt
 from fraud.integration import assess_fraud
 from features.thin_file_score import calculate_cashflow_snapshot, simulate_cashflow_snapshot, SNAPSHOT_VERSION
+from features.loan_obligations import RULE_VERSION as LOAN_REVIEW_VERSION, review_loan_obligations
+from features.repayment_tenure import compare_repayment_tenures
+from route.tenure_schemas import TenureComparisonRequest
 
 router = APIRouter(prefix="/assess/bank-cashflow", tags=["Experimental Bank Cashflow Assessment"])
 MAX_FILES = 12
@@ -123,6 +126,13 @@ class ScenarioRequest(BaseModel):
     income_volatility: float | None = None
 
 
+def _tenure_result(request: TenureComparisonRequest) -> dict:
+    try:
+        return compare_repayment_tenures(**request.dict())
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
 @router.post('/preview')
 async def preview_bank_statements(statement_files: list[UploadFile] = File(...),
         statement_password: str | None = Form(None), session_id: str = Header(...),
@@ -157,6 +167,21 @@ def _payload(row: BankCashflowAssessment) -> dict:
         "assessment_type": ASSESSMENT_TYPE, "model_version": row.model_version,
         "assessment_timestamp": row.created_at.replace(tzinfo=timezone.utc).isoformat(),
         "score": row.score, "pd": None})
+    return result
+
+
+@router.post('/tenure-comparison')
+def borrower_tenure_comparison(request: TenureComparisonRequest,
+        session_id: str | None = Header(None), db: Session = Depends(get_db)):
+    """Hypothetical comparison tied to the authenticated borrower's saved workflow."""
+    session, app = _session_owner(session_id, db)
+    baseline = (db.query(BankCashflowAssessment)
+        .filter_by(application_id=app.application_id, user_id=session.user_id)
+        .order_by(BankCashflowAssessment.created_at.desc()).first())
+    if baseline is None:
+        raise HTTPException(409, "A saved bank assessment is required before comparing repayment terms")
+    result = _tenure_result(request)
+    result["assessment_id"] = baseline.assessment_id
     return result
 
 
@@ -423,12 +448,17 @@ async def assess_bank_cashflow(statement_files: list[UploadFile] = File(...),
         for month,group in trend.groupby('month',sort=True)]
     result['fraud_findings']['coverage'] = {
         'transactions_reviewed': len(tx), 'transaction_rules': 'evaluated',
-        'identity_and_loan_stacking': 'not assessed: verified identity/history unavailable'}
+        'identity_verification': identity_check['status'],
+        'loan_obligation_review': 'attached as a separate manual-review signal'}
+    result['loan_obligation_review'] = review_loan_obligations(
+        tx, observed_months=sorted(pd.to_datetime(tx.date, errors='coerce', dayfirst=True)
+            .dropna().dt.to_period('M').astype(str).unique().tolist()),
+        extraction_quality=evidence['extraction_quality_min'])
     for finding in findings:
         finding.update({'account_linked': account_linked, 'validation_result': result['validation_status'],
             'rejection_reasons': result.get('evidence_gaps', [])})
     result['processing_trace'] = ['UPLOAD_RECEIVED','DOCUMENT_CLASSIFIED','PDF_EXTRACTED','FIELDS_PARSED','EVIDENCE_AGGREGATED'] + (
-        ['VALIDATION_PASSED','FEATURES_COMPUTED','SCORE_COMPUTED','ASSESSMENT_PERSISTED'] if result.get('score') is not None else ['VALIDATION_FAILED','ASSESSMENT_PERSISTED'])
+        ['VALIDATION_PASSED','FEATURES_COMPUTED','SCORE_COMPUTED','LOAN_OBLIGATION_REVIEWED','ASSESSMENT_PERSISTED'] if result.get('score') is not None else ['VALIDATION_FAILED','LOAN_OBLIGATION_REVIEWED','ASSESSMENT_PERSISTED'])
     result['aggregation_receipt'] = {'bank_documents': len(statement_files), 'supporting_documents': len(salary_files)+len(utility_files),
         'transactions_parsed': len(tx), 'debits_parsed': int(tx.type.eq('DR').sum()), 'credits_parsed': int(tx.type.eq('CR').sum()),
         'account_linked': account_linked, 'balances_reconciled': evidence['balance_reconciled'],
@@ -440,7 +470,7 @@ async def assess_bank_cashflow(statement_files: list[UploadFile] = File(...),
     result_version = result['model_version']
     identity = {"application_id": app.application_id, "input_hashes": sorted(digests), "version": result_version,
         "parser_version": "native-coordinate-v7", "supporting_document_ids": sorted(item['document_id'] for item in result['supporting_documents'] if item.get('document_id')),
-        "consent_scope": "BANK_CASHFLOW_EXPERIMENTAL"}
+        "consent_scope": "BANK_CASHFLOW_EXPERIMENTAL", "loan_obligation_review_version": LOAN_REVIEW_VERSION}
     input_hash = sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     row = db.query(BankCashflowAssessment).filter_by(application_id=app.application_id, input_sha256=input_hash).first()
     created = row is None
@@ -457,7 +487,9 @@ async def assess_bank_cashflow(statement_files: list[UploadFile] = File(...),
         db.add(AuditEvent(application_id=app.application_id, action="bank_cashflow_assessment_created",
             entity="bank_cashflow_assessment", status="scored" if row.score is not None else "insufficient", event_timestamp=now,
             details={"assessment_id": row.assessment_id, "assessment_type": ASSESSMENT_TYPE,
-                     "model_version": INDEX_VERSION, "source_document_count": len(docs), "score_generated": row.score is not None}))
+                     "model_version": INDEX_VERSION, "source_document_count": len(docs), "score_generated": row.score is not None,
+                     "loan_obligation_review_status": result["loan_obligation_review"]["status"],
+                     "loan_candidate_stream_count": len(result["loan_obligation_review"]["candidate_payment_streams"])}))
         try:
             db.commit(); db.refresh(row)
         except Exception:
@@ -529,7 +561,8 @@ def borrower_assessment_history(session_id: str = Header(...), db: Session = Dep
             "feature_values": payload.get("feature_values", {}),
             "feature_contributions": payload.get("feature_contributions", []),
             "methodology": payload.get("methodology", {}),
-            "evidence": payload.get("evidence", {})}
+            "evidence": payload.get("evidence", {}),
+            "loan_obligation_review": payload.get("loan_obligation_review")}
         assessments.append(item)
         timestamp = item["assessment_timestamp"] or ""
         if row.score is None:
@@ -649,6 +682,12 @@ def bank_cashflow_pdf(assessment_id: str, session_id: str = Header(...), db: Ses
     for item in p.get("feature_contributions", []):
         lines.append(f"{item['feature']}: value {item['value']}; {item['score_contribution']} points; {item['direction']}")
     lines.extend(["", "GUIDANCE"] + (p.get("recommendations") or []))
+    review = p.get("loan_obligation_review") or {}
+    lines.extend(["", "RECURRING LOAN-LIKE PAYMENT REVIEW", review.get("status", "Not available"),
+        review.get("observed_signal", "No saved review is available.")])
+    for stream in review.get("candidate_payment_streams", []):
+        lines.append(f"Candidate stream {stream.get('candidate_id')}; months {', '.join(stream.get('months_observed', []))}; "
+                     f"source rows {', '.join(stream.get('source_transaction_ids', []))}; not a verified loan.")
     lines.extend(["", "This experimental analytical index is not a validated credit score, bureau score, or PD.",
         "No RBI certification, CIBIL equivalence, or production lending readiness is claimed."])
     doc = fitz.open()

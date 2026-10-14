@@ -33,7 +33,7 @@ def get_user_by_phone(db: Session, phone: str):
     )
 
 
-def create_user(db: Session, phone: str):
+def create_user(db: Session, phone: str, *, commit: bool = True):
 
     user = User(
     phone=phone,
@@ -41,7 +41,10 @@ def create_user(db: Session, phone: str):
 )
 
     db.add(user)
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     db.refresh(user)
 
     return user
@@ -51,7 +54,7 @@ def create_user(db: Session, phone: str):
 # APPLICATIONS
 # ==========================
 
-def create_application(db: Session, user_id: int):
+def create_application(db: Session, user_id: int, *, commit: bool = True):
 
     application = Application(
         user_id=user_id,
@@ -60,7 +63,10 @@ def create_application(db: Session, user_id: int):
     )
 
     db.add(application)
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     db.refresh(application)
 
     return application
@@ -326,10 +332,13 @@ def save_features(
     db.commit()
 
 
-def save_audit_event(db: Session, application_id: int, action: str, entity: str, status: str = "success", details: dict | None = None):
+def save_audit_event(db: Session, application_id: int, action: str, entity: str, status: str = "success", details: dict | None = None, *, commit: bool = True):
     event = AuditEvent(application_id=application_id, action=action, entity=entity, status=status.lower(),
         event_timestamp=datetime.utcnow(), details=details or {})
     db.add(event)
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     db.refresh(event)
     return event

@@ -6,7 +6,9 @@ Set `PRISM_LENDER_PHONES` to a comma-separated list of authorized lender phone n
 
 Set `PRISM_CORS_ORIGINS` to additional frontend origins as a comma-separated list. Local Vite origins on ports 5173 and 5174 are allowed by default. Set `VITE_API_URL` for a non-local backend; development defaults to `http://127.0.0.1:8000`.
 
-OTP delivery remains a local demonstration behavior: generated codes are written to backend logs rather than sent through an SMS provider.
+There is no SMS provider. Local OTP console delivery is disabled by default and is permitted only when both `PRISM_ENV=development` and `PRISM_OTP_LOGGING=true` are set. In that mode the backend logs a clearly labeled development-only OTP without the phone number; the API and UI state that no SMS was sent. Other environments fail signup with HTTP 503 rather than claiming delivery. Never enable this logging in production or shared environments.
+
+Loan-like repayment review, repayment-tenure comparisons, and the unavailable portfolio-sentiment status are described in [`advanced-feature-status.md`](advanced-feature-status.md). The loan review runs as part of new bank-cashflow assessments; the tenure tool requires all proposed terms and affordability inputs explicitly; sentiment produces no output until approved data and validation exist.
 
 ## IIT Bombay assessment demonstration
 

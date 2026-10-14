@@ -18,6 +18,7 @@ import ExplainabilityPage from "./pages/ExplainabilityPage";
 import AuditLogPage from "./pages/AuditLogPage";
 import ExperimentalCreditEvidenceLab from "./pages/ExperimentalCreditEvidenceLab";
 import DemonstrationPortal from "./pages/DemonstrationPortal";
+import LoanStackingDemo from "./pages/LoanStackingDemo";
 import "./index.css";
 
 export default function App() {
@@ -90,6 +91,11 @@ export default function App() {
     return <ExperimentalCreditEvidenceLab />;
   }
   if (window.location.pathname === "/demo") return <DemonstrationPortal />;
+  if (window.location.pathname === "/loan-stacking-demo"
+      && import.meta.env.DEV
+      && import.meta.env.VITE_PRISM_DEMO_FIXTURES === "true") {
+    return <LoanStackingDemo />;
+  }
   if (page === "restoring") return <main role="status" style={{ padding: 48 }}>Loading your saved assessment…</main>;
 
   const props = {

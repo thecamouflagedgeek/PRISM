@@ -81,6 +81,7 @@ export const api = {
   borrowerBankCashflow: (sessionId, assessmentId) => request(`/assess/bank-cashflow/${assessmentId || 'latest'}`, { headers: { "session-id": sessionId } }),
   borrowerBankHistory: (sessionId) => request('/assess/bank-cashflow/history', { headers: { 'session-id': sessionId } }),
   bankCashflowWhatIf: (assessmentId, sessionId, scenario) => request(`/assess/bank-cashflow/${assessmentId}/what-if`, { method: "POST", headers: { "Content-Type": "application/json", "session-id": sessionId }, body: JSON.stringify(scenario) }),
+  borrowerTenureComparison: (payload, sessionId) => request('/assess/bank-cashflow/tenure-comparison', { method: 'POST', headers: { 'Content-Type': 'application/json', 'session-id': sessionId }, body: JSON.stringify(payload) }),
   bankCashflowPdf: async (assessmentId, sessionId) => {
     const response = await fetch(`${API_BASE_URL}/assess/bank-cashflow/${assessmentId}/report.pdf`, { headers: { "session-id": sessionId } });
     if (!response.ok) throw new Error(`Bank assessment PDF request failed (${response.status}).`);
@@ -96,6 +97,8 @@ export const api = {
   lenderApplications: (sessionId) => request("/lender/applications", { headers: { "session-id": sessionId } }),
   lenderApplication: (applicationId, sessionId) => request(`/lender/applications/${applicationId}`, { headers: { "session-id": sessionId } }),
   lenderUpdateCase: (applicationId, sessionId, update) => request(`/lender/applications/${applicationId}/case-updates`, { method: "POST", headers: { "Content-Type": "application/json", "session-id": sessionId }, body: JSON.stringify(update) }),
+  lenderTenureComparison: (applicationId, payload, sessionId) => request(`/lender/applications/${applicationId}/tenure-comparison`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'session-id': sessionId }, body: JSON.stringify(payload) }),
+  lenderPortfolioSentiment: (sessionId) => request('/lender/portfolio/sentiment', { headers: { 'session-id': sessionId } }),
   lenderAuditEvents: (sessionId) => request("/lender/audit-events", { headers: { "session-id": sessionId } }),
 };
 

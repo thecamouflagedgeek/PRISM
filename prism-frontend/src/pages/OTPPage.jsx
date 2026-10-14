@@ -115,14 +115,7 @@ export default function OTPPage({
             lineHeight: 1.6,
           }}
         >
-          Enter the OTP sent to
-          <br />
-
-          <strong>
-            {lenderSession?.role === "lender"
-              ? lenderSession.phone_number
-              : session?.phone_number}
-          </strong>
+          {session?.otp_delivery_message || lenderSession?.otp_delivery_message || "Enter the OTP generated for local development."}
         </p>
 
         <label

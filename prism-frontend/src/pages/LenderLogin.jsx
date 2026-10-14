@@ -16,12 +16,13 @@ export default function LenderLogin({ go, setLenderSession, setError }) {
     setLoading(true);
 
     try {
-      await api.signup(phoneNumber, "lender");
+      const delivery = await api.signup(phoneNumber, "lender");
 
       // Store lender session temporarily
       setLenderSession({
         phone_number: phoneNumber,
         role: "lender",
+        otp_delivery_message: delivery.message,
       });
 
       // Reuse existing OTP page
@@ -149,7 +150,7 @@ export default function LenderLogin({ go, setLenderSession, setError }) {
                   marginTop: 6,
                 }}
               >
-                An OTP will be sent to this number for verification.
+                In local development, the backend console displays a development-only OTP. No SMS is sent.
               </div>
             </div>
 
@@ -164,7 +165,7 @@ export default function LenderLogin({ go, setLenderSession, setError }) {
                 alignSelf: "flex-start",
               }}
             >
-              {loading ? "Sending OTP..." : "Continue →"}
+              {loading ? "Preparing OTP..." : "Continue →"}
             </button>
           </div>
 

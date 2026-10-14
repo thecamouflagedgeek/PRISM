@@ -101,7 +101,7 @@ Screenshot of both scorecards: `both-scorecards.png`. Lender screenshot: `lender
 - The earlier broader suite's 361 passed, 57 failed and three errors were not reclassified as green or repaired by modifying historical artifacts. Missing research fixtures, historical protected-manifest differences and obsolete scorer tests remain outside this P0 fix. The full earlier triage remains in `../scorecard-recovery-report.md`.
 - This verifies a fictional synthetic local demonstration, not real issuer-layout coverage, calibrated Indian lending risk, issuer-certified repayment evidence or production readiness. The raw credit PD remains experimental/inconclusive. The bank index is descriptive and produces no PD or lending tier.
 - The original banks still lack page declarations. The historical September cutoff is explicit; October eligibility is not silently altered. The demo selector is unavailable outside development/demo.
-- OTP is logged locally for test phones; sessions expire in 60 minutes and are held in memory. A backend restart requires login again. Production SMS and persistent authentication remain deployment work.
+- Local OTP login requires PRISM_ENV=development and PRISM_OTP_LOGGING=true. Only a clearly labeled development OTP is written to the backend console; no phone number is logged and no SMS is sent. Sessions expire in 60 minutes and are held in memory. A backend restart requires login again. Production SMS and persistent authentication remain deployment work.
 ''', encoding='utf-8')
     print(json.dumps({k:v for k,v in result.items() if k != 'original_browser_negative'}, indent=2))
 
